@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Project Docs Maintainer"
+  short_description: "Agent-first project documentation"
+  default_prompt: "Use $ai-project-docs-maintainer to create or maintain an AI-agent-first project documentation system."
