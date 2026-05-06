@@ -42,7 +42,88 @@ Default to a parent `README.md` when the topic is short, the topics change toget
 - the content is machine-readable or validated by tooling;
 - splitting reduces real edit conflicts between people or agents.
 
-For example, a compact client app may use `api/README.md` for auth, errors, and examples; `engineering/README.md` for setup, repo map, testing, debugging, release, and migrations; and `operations/README.md` for runbooks, monitoring, incidents, and rollback. A larger backend with a public API may split those same sections into standalone files.
+For example, a compact client app may use `api/README.md` for API direction, consumed upstreams, auth, errors, and examples; `engineering/README.md` for setup, repo map, testing, debugging, release, and migrations; and `operations/README.md` for runbooks, monitoring, incidents, and rollback. A larger backend with a public API may split those same sections into standalone files.
+
+## C4 Component View Rule
+
+Derive `architecture/c4/03-components/` from the project's actual C4 L2 containers and module boundaries. This directory is a C4 L3 view area, not a fixed set of files.
+
+When creating or refreshing component docs:
+
+1. Start with `03-components/README.md` for compact projects or when the component view is short.
+2. Create standalone component files only for real containers or component groups that are complex enough to need their own page.
+3. Name files after the actual architecture, such as `web-api.md`, `mobile-app.md`, `admin-console.md`, `orchard-modules.md`, `checkout-service.md`, `background-jobs.md`, `integration-adapters.md`, or `ml-pipeline.md`.
+4. Do not create `backend-api.md`, `worker.md`, or `frontend-app.md` just because they appear in an example. Create those files only when they are accurate, useful views for this specific project.
+5. Omit component views that do not exist. For example, a client-only app should not have an empty `worker.md`, and a backend-only service should not have a placeholder frontend component doc.
+
+## Code Locator Rule
+
+Preserve high-value code-location knowledge when it helps future agents start in the right files. A code locator is a compact problem-to-code map, not an exhaustive source inventory.
+
+Use a code locator when existing docs, handoffs, or repeated work contain practical "if you see this issue, start here" knowledge, such as feature entry points, owning repositories/controllers, state files, platform config, tests, and common traps.
+
+Default placement:
+
+1. Use a `Code Locator` section inside `engineering/README.md` for broad repo-wide or developer-workflow navigation.
+2. Use a `Code Locator` section inside `architecture/c4/README.md` or `architecture/c4/03-components/README.md` when the paths are tied to C4 components, dynamic flows, or cross-cutting architecture concerns.
+3. Create a standalone `engineering/code-locator.md` only when the locator is large, heavily linked, independently maintained, or would exceed the README-first split guidance.
+
+Good code locator entries usually include:
+
+- the problem, feature, or workflow;
+- the first files or directories to inspect;
+- the invariant, trap, or ownership rule that matters;
+- the focused tests, smoke checks, runbooks, or source-of-truth docs to verify.
+
+Avoid turning the locator into a generated file list. Keep complete file inventories in `other.md` or generated tooling output, and keep stable module maps in architecture or repo-map docs.
+
+## Future Work And Requirement Backlog Rule
+
+Keep unimplemented suggestions separate from current facts. Future development ideas, optional libraries, candidate providers, rollout sequences, "could/should later" advice, and backlog items must not be written as if they are current architecture, API, operations, or code facts.
+
+Default placement:
+
+1. Use `product/requirements/README.md` for a compact backlog or roadmap section.
+2. Create a standalone `product/requirements/<feature>-roadmap.md`, `<feature>-backlog.md`, or dated requirement file when the suggestion set has its own lifecycle, acceptance criteria, owner, decision status, or many incoming links.
+3. Use an ADR only after the team makes a consequential architecture or technology decision.
+
+Future-work docs should label each item with its decision state, such as `Candidate`, `Proposed`, `Accepted`, `Rejected`, or `Implemented`. Include the source, trigger condition, constraints, rough rollout order, acceptance criteria needed before implementation, and which docs must move when the item becomes accepted or implemented.
+
+When a candidate becomes accepted or implemented, promote only the stable resulting facts into architecture, C4, API, engineering, operations, runbooks, changelog, facts, or gotchas as appropriate. Leave historical candidate context in the requirement doc or ADR rather than copying it everywhere.
+
+## API Direction Rule
+
+Every `api/` document must state whether it documents provided APIs, consumed APIs, or both. Do not mix these directions without explicit headings.
+
+- **Provided APIs** are interfaces this project exposes to callers: HTTP routes, RPC methods, SDK methods, events, webhooks, plugin hooks, schemas, and error contracts. Facts of record are server routes/controllers, handlers, schemas, OpenAPI/AsyncAPI files, contract tests, and implementation tests.
+- **Consumed APIs** are upstream interfaces this project calls or depends on: backend services, third-party APIs, SDKs, payment/auth/map/email providers, webhooks received from vendors, or sibling services. Facts of record are client/adaptor code, upstream official docs, observed responses, fixtures, mocks, and integration tests.
+
+Use README sections for small projects:
+
+```text
+api/README.md
+  Provided APIs
+    Authentication
+    Error model
+    Examples
+  Consumed APIs
+    Authentication
+    Error model
+    Examples
+```
+
+When a direction has no content, either omit that direction entirely or include only `(None)` under its heading. Direction-specific topics such as authentication, error model, examples, quotas, and adapters must be nested under the relevant direction heading, not placed as siblings of `Provided APIs` or `Consumed APIs`.
+
+Use subdirectories when both directions are substantial or owned independently:
+
+```text
+api/
+  README.md
+  provided/README.md
+  consumed/README.md
+```
+
+Backend services usually have substantial **provided** API docs and may also have **consumed** API docs for upstream dependencies. Client apps usually have substantial **consumed** API docs and may explicitly state that they provide no public API.
 
 ```text
 docs/                                      # Long-lived project documentation root
@@ -53,8 +134,9 @@ docs/                                      # Long-lived project documentation ro
   product/                                # Product and domain knowledge: why the system exists and who it serves
     vision.md                             # Product goals, boundaries, non-goals, and success criteria
     users.md                              # User roles, permissions, core jobs, and important workflows
-    requirements/                         # PRDs, user stories, acceptance criteria, and scope changes
-      README.md                           # Requirements index with links to active and historical requirement docs
+    requirements/                         # PRDs, user stories, acceptance criteria, scope changes, and candidate roadmaps
+      README.md                           # Requirements index with links to active, historical, and candidate requirement docs
+      feature-roadmap.md                  # Optional candidate backlog/roadmap for unimplemented future capabilities; label decision status
     glossary.md                           # Domain vocabulary shared by people, code, tests, and AI agents
 
   architecture/                           # System design knowledge: how the system is organized and constrained
@@ -62,12 +144,12 @@ docs/                                      # Long-lived project documentation ro
     c4/                                   # C4 views from system boundary down to selected code-level structures
       01-system-context.md                # C4 L1: users, external systems, system boundary, and trust boundary
       02-container.md                     # C4 L2: apps, services, databases, queues, workers, and third-party containers
-      03-components/                      # C4 L3: important components inside each container
-        backend-api.md                    # Backend API components: routes, services, persistence, integrations
-        worker.md                         # Async worker components: queues, schedules, retries, idempotency
-        frontend-app.md                   # Frontend components: routes, state, data loading, UI boundaries
+      03-components/                      # C4 L3: project-specific components inside selected containers
+        README.md                         # Compact component view index with sections per real container or component group
+        project-specific-component.md     # Optional standalone L3 view named after an actual container/module, not a template label
       04-code/                            # C4 L4: only complex code structures that need explanation
         core-domain.md                    # Core domain code: state machines, algorithms, plugin models, or invariants
+      code-locator.md                     # Optional problem-to-code locator when tightly tied to C4 components or flows; prefer a README section when compact
       dynamic/                            # Runtime behavior: sequences, state transitions, and cross-boundary flows
         login-flow.md                     # Login flow: authentication, sessions, error paths, and security boundaries
         order-lifecycle.md                # Business lifecycle: important states from creation through completion/cancelation
@@ -84,10 +166,16 @@ docs/                                      # Long-lived project documentation ro
     conventions.md                        # Engineering conventions: naming, layering, errors, logging, commits
     testing.md                            # Testing strategy: unit, integration, end-to-end, fixtures, coverage boundaries
     debugging.md                          # Debugging guide: logs, traces, useful commands, common diagnosis paths
+    code-locator.md                       # Optional problem-to-code map: first files, ownership notes, traps, and focused checks for AI handoff
     release.md                            # Release process: versioning, build, approval, deployment, verification
     migrations.md                         # Migration guide: database, config, data repair, and rollback considerations
 
-  api/                                    # Interface contracts, preferably machine-readable
+  api/                                    # Interface contracts, separated by API direction
+    README.md                             # API direction index: provided APIs, consumed APIs, auth, errors, examples
+    provided/                             # APIs this project exposes to callers; use when substantial enough to split
+      README.md                           # Provided routes/events/SDK/plugin contracts and source-of-truth links
+    consumed/                             # APIs this project calls or depends on; use when substantial enough to split
+      README.md                           # Upstream APIs, third-party services, auth, quotas, risks, and adapters
     openapi.yaml                          # REST API contract: paths, requests, responses, errors, examples
     asyncapi.yaml                         # Event/message contract: channels, payloads, producers, consumers
     auth.md                               # Authentication and authorization: tokens, scopes, roles, permissions
@@ -138,10 +226,13 @@ If the project already has a preferred automation system, `docs/ai/prompts/` may
 Apply this impact matrix when reviewing changes:
 
 ```text
-Public API change          -> Update docs/api/openapi.yaml, docs/api/examples.md, docs/changelog.md
-Event/message change       -> Update docs/api/asyncapi.yaml, consumer notes, relevant runbooks
+Provided public API change -> Update docs/api/provided or docs/api/README.md#provided-apis, machine-readable contracts, examples, changelog
+Consumed upstream API change -> Update docs/api/consumed or docs/api/README.md#consumed-apis, adapters, examples, runbooks, risks
+Event/message change       -> Update docs/api/asyncapi.yaml or direction-specific event docs, consumer/provider notes, relevant runbooks
 Architecture boundary      -> Update docs/architecture/c4/02-container.md or 03-components/, add ADR if consequential
 Core technology decision   -> Add docs/architecture/adr/NNNN-title.md
+Feature ownership or first-read code paths -> Update engineering/README.md#code-locator, architecture/c4/README.md#code-locator, or a split code-locator.md
+Future feature suggestion  -> Update docs/product/requirements/README.md or a candidate roadmap/backlog; label decision status and do not present it as current architecture/API fact until accepted
 Data model change          -> Update docs/architecture/data-model.md and docs/engineering/migrations.md
 Deployment/config change   -> Update docs/architecture/deployment.md, docs/engineering/setup.md, rollback docs
 Testing strategy change    -> Update docs/engineering/testing.md
@@ -149,19 +240,24 @@ Alert/incident change      -> Update docs/operations/runbooks/ or docs/operation
 Repeated AI mistake        -> Update docs/ai/AGENTS.md, docs/ai/context-map.md, or docs/ai/gotchas.md
 ```
 
-If the project uses README-first consolidation, apply the same impact matrix to the matching section in the nearest parent `README.md`. For example, update `docs/api/README.md#examples` instead of creating `docs/api/examples.md` unless the examples have grown enough to justify a standalone file.
+If the project uses README-first consolidation, apply the same impact matrix to the matching section in the nearest parent `README.md`. For example, update `docs/api/README.md#examples` instead of creating `docs/api/examples.md` unless the examples have grown enough to justify a standalone file. For API changes, preserve direction first: update `docs/api/README.md#provided-apis` for exposed contracts and `docs/api/README.md#consumed-apis` for upstream dependencies.
 
 ## Agent Documentation Principles
 
 - Treat code, schemas, tests, deployment files, and ADRs as facts of record.
 - Make `docs/doc-map.md` and `docs/ai/context-map.md` short, current, and highly linkable.
 - Keep C4 L1 and L2 stable and hand-maintained.
-- Use C4 L3 for complex containers; use C4 L4 only for code structures that cannot be understood locally.
+- Use C4 L3 for complex containers, deriving component docs from real L2 containers and module boundaries; use C4 L4 only for code structures that cannot be understood locally.
+- Keep code locators current when feature ownership, first-read files, state entry points, platform config, or focused tests move.
+- Keep future work out of current-fact docs until accepted or implemented. Store optional libraries, provider candidates, rollout advice, and backlog notes under product requirements or an ADR with explicit decision status.
 - Write ADRs for consequential decisions, not routine implementation details.
 - Prefer machine-readable contracts for APIs and events.
+- Separate API direction clearly. Never let a client-side consumed API note masquerade as the service's provided API contract, and never document a backend's provided API as if it were merely a client dependency.
 - Avoid duplicating setup commands, environment variables, and API examples across many prose files.
 - When multiple agent instruction files exist, keep one canonical source and link or mirror intentionally.
 - Treat the annotated structure as categories to preserve, not files to blindly create. Prefer fewer, denser, well-indexed files over many thin stubs.
+- Treat `03-components/` filenames as project-specific. Avoid placeholder component files that do not match the actual system.
+- Treat code locators as curated maps, not generated inventories. They should help an agent choose where to start, then point back to code as the fact of record.
 
 ## Starter Task Prompts
 

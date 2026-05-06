@@ -20,6 +20,16 @@
 
 下面是默认目标结构。注释用于解释每一项，实际文件名和目录名里不要包含这些注释。
 
+## C4 第 3 层组件视图规则
+
+`architecture/c4/03-components/` 应从项目真实的 C4 第 2 层容器和模块边界推导出来。它是 C4 第 3 层组件视图区，不是固定文件清单。
+
+- 小型或中型项目优先用 `03-components/README.md`，按真实容器或组件组分节。
+- 只有当某个真实容器或组件组足够复杂、需要独立维护时，才拆成单独文件。
+- 文件名应来自项目真实架构，例如 `web-api.md`、`mobile-app.md`、`admin-console.md`、`orchard-modules.md`、`checkout-service.md`、`background-jobs.md`、`integration-adapters.md`、`ml-pipeline.md`。
+- 不要因为示例里出现过 `backend-api.md`、`worker.md`、`frontend-app.md` 就创建这些文件；只有它们确实是当前项目准确、有用的组件视图时才创建。
+- 不存在的组件视图应直接省略。例如纯客户端项目不应有空的 `worker.md`，纯后端服务也不应有占位的前端组件文档。
+
 ```text
 docs/                                      # 长期项目文档根目录
   index.md                                # 文档入口：项目是什么，以及不同读者或 Agent 从哪里开始
@@ -38,10 +48,9 @@ docs/                                      # 长期项目文档根目录
     c4/                                   # C4 视图：从系统边界逐层到必要的代码级结构
       01-system-context.md                # C4 第 1 层：用户、外部系统、系统边界、信任边界
       02-container.md                     # C4 第 2 层：应用、服务、数据库、队列、Worker、第三方容器
-      03-components/                      # C4 第 3 层：每个重要容器内部的组件
-        backend-api.md                    # 后端 API 组件：路由、服务、持久化、外部集成
-        worker.md                         # 异步 Worker 组件：队列、调度、重试、幂等
-        frontend-app.md                   # 前端组件：路由、状态、数据加载、UI 边界
+      03-components/                      # C4 第 3 层：按项目实际容器和模块拆分的组件视图
+        README.md                         # 紧凑组件视图索引，按真实容器或组件组分节
+        project-specific-component.md     # 可选独立组件视图，文件名来自真实容器或模块，而不是模板标签
       04-code/                            # C4 第 4 层：只记录确实需要解释的复杂代码结构
         core-domain.md                    # 核心领域代码：状态机、算法、插件模型、不变量
       dynamic/                            # 动态视图：时序、状态变化、跨边界流程
@@ -156,11 +165,12 @@ AI 反复犯错          -> 更新 docs/ai/AGENTS.md、docs/ai/context-map.md �
 - 把代码、Schema、测试、部署文件、ADR 当作事实源。
 - 让 `docs/doc-map.md` 和 `docs/ai/context-map.md` 短、准、链接清楚。
 - C4 第 1 层和第 2 层要稳定维护。
-- C4 第 3 层用于复杂容器；第 4 层只用于难以就地理解的复杂代码。
+- C4 第 3 层用于复杂容器，并应从真实 C4 第 2 层容器和模块边界推导；第 4 层只用于难以就地理解的复杂代码。
 - ADR 用来记录重要决策，不记录普通实现细节。
 - API 和事件优先使用机器可读契约。
 - 不要在很多文档里重复启动命令、环境变量、API 示例。
 - 如果项目里存在多个 Agent 指令文件，要明确一个规范来源，并有意地链接或同步。
+- `03-components/` 下的文件名应是项目特定的，不要保留与真实系统不匹配的占位组件文件。
 
 ## 可复用任务提示词
 
