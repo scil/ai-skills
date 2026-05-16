@@ -1,206 +1,141 @@
-# AI 时代项目文档结构模板（中文人类阅读版）
+# AI Agent 项目文档系统
 
-这个文件是 `ai-project-docs-maintainer/SKILL.md` 的等价中文版本，只供人类阅读，因此放在 `for-human/` 目录下。真正给 AI Agent 执行的技能说明以英文 `SKILL.md` 为准。
+## 目的
 
-## 目标
+使用这个技能来创建和维护以 AI 编程 Agent 为第一读者的项目文档。人类可读性仍然重要，但这套文档系统首先要让项目事实可发现、稳定、可链接，并且让 Agent 可以安全使用。
 
-这套文档体系的第一读者是 AI 编程 Agent，而不只是人类开发者。它要让项目事实可发现、可链接、可验证、可维护，并尽量减少 Agent 依赖猜测。
+英文 `SKILL.md` 是 Agent 执行时读取的正式版本。这个中文文件只供人类阅读。
 
-## 工作方式
+## 工作模式
 
-1. 先检查仓库结构、现有文档、API 契约、部署文件、测试和最近变更。
-2. 找出事实源：源码、Schema、测试、ADR、部署配置、API 规范、Runbook、产品词汇表。
-3. 从下面的模板中创建最小可维护结构，不要盲目生成空目录。
-4. 文档要便于 Agent 读取：标题清楚、段落短、链接明确、owner 明确。
-5. 易变的实现细节尽量留在代码和 Schema 附近，文档用链接指向事实源。
-6. 每次代码或架构变更，只更新受影响的文档；重大技术选择写 ADR。
-7. 用 Markdown lint、链接检查、拼写检查、OpenAPI/AsyncAPI 校验、图表渲染或项目 CI 验证文档。
+根据任务选择对应路径。
 
-## 带注释的目录结构
+### 新建文档
 
-下面是默认目标结构。注释用于解释每一项，实际文件名和目录名里不要包含这些注释。
+1. 检查仓库结构、源码、现有文档、API 契约、部署文件、测试和示例。
+2. 识别事实源：源码、schema、测试、ADR、部署配置、API 规范、runbook 和产品词汇表。
+3. 先用带注释的结构选择 owning node，再应用 File-First Split Rule。
+4. 创建最小有用的文档结构。不要生成项目维护不起的空目录或大量薄文件。
+5. 文档应稳定、便于 Agent 读取：标题清楚、段落短、链接明确、owner 明确。
+6. 用可用检查验证文档，例如 Markdown lint、链接检查、拼写检查、OpenAPI/AsyncAPI 校验、图表渲染或项目 CI。
 
-## C4 第 3 层组件视图规则
+### 更新文档
 
-`architecture/c4/03-components/` 应从项目真实的 C4 第 2 层容器和模块边界推导出来。它是 C4 第 3 层组件视图区，不是固定文件清单。
+1. 检查代码或架构变更、受影响源码、现有文档、测试和最近 diff。
+2. 从带注释结构里的 owning node 出发，只更新受影响文档。
+3. 易变实现细节应靠近代码和 schema；文档用链接指向它们，不要在 prose docs 里复制。
+4. 如果变更跨边界，同一次变更中更新所有受影响 owner。
+5. 对重要架构、技术或策略决策写 ADR。
+6. 用项目可用检查验证变更过的文档。
 
-- 小型或中型项目优先用 `03-components/README.md`，按真实容器或组件组分节。
-- 只有当某个真实容器或组件组足够复杂、需要独立维护时，才拆成单独文件。
-- 文件名应来自项目真实架构，例如 `web-api.md`、`mobile-app.md`、`admin-console.md`、`orchard-modules.md`、`checkout-service.md`、`background-jobs.md`、`integration-adapters.md`、`ml-pipeline.md`。
-- 不要因为示例里出现过 `backend-api.md`、`worker.md`、`frontend-app.md` 就创建这些文件；只有它们确实是当前项目准确、有用的组件视图时才创建。
-- 不存在的组件视图应直接省略。例如纯客户端项目不应有空的 `worker.md`，纯后端服务也不应有占位的前端组件文档。
+## File-First Split Rule
 
-```text
-docs/                                      # 长期项目文档根目录
-  index.md                                # 文档入口：项目是什么，以及不同读者或 Agent 从哪里开始
-  doc-map.md                              # 问题到文档的索引，帮助人和 AI 快速检索
-  ownership.md                            # 文档 owner、更新频率、事实源、过期检查规则
+先用带注释结构选择 owning node，再决定该节点应该是 section、独立文件，还是目录。
 
-  product/                                # 产品和领域知识：系统为什么存在、服务谁
-    vision.md                             # 产品目标、边界、非目标、成功标准
-    users.md                              # 用户角色、权限、核心任务、重要流程
-    requirements/                         # PRD、用户故事、验收标准、范围变更
-      README.md                           # 需求索引，链接当前有效需求和历史需求
-    glossary.md                           # 领域词汇表，统一人、代码、测试和 AI Agent 的语言
+默认每个文档主题使用一个 Markdown 文件。只有当主题很大、高风险、独立 owner、链接很多、机器可读、频繁 review，或容易造成真实编辑冲突时，才拆分。
 
-  architecture/                           # 架构知识：系统如何组织、受哪些约束
-    overview.md                           # 架构总览：主要模块、依赖、设计原则
-    c4/                                   # C4 视图：从系统边界逐层到必要的代码级结构
-      01-system-context.md                # C4 第 1 层：用户、外部系统、系统边界、信任边界
-      02-container.md                     # C4 第 2 层：应用、服务、数据库、队列、Worker、第三方容器
-      03-components/                      # C4 第 3 层：按项目实际容器和模块拆分的组件视图
-        README.md                         # 紧凑组件视图索引，按真实容器或组件组分节
-        project-specific-component.md     # 可选独立组件视图，文件名来自真实容器或模块，而不是模板标签
-      04-code/                            # C4 第 4 层：只记录确实需要解释的复杂代码结构
-        core-domain.md                    # 核心领域代码：状态机、算法、插件模型、不变量
-      dynamic/                            # 动态视图：时序、状态变化、跨边界流程
-        login-flow.md                     # 登录流程：认证、会话、错误路径、安全边界
-        order-lifecycle.md                # 业务生命周期：从创建到完成或取消的关键状态
-      deployment.md                       # 部署视图：环境、网络、配置、发布拓扑
-    adr/                                  # 架构决策记录，解释为什么做出某个重要选择
-      0001-record-architecture-decisions.md # ADR 示例或模板：状态、背景、决策、备选、后果
-    data-model.md                         # 数据模型：实体、关系、约束、迁移、数据归属
-    security.md                           # 安全设计：认证、授权、密钥、数据保护、威胁模型
-    quality-attributes.md                 # 质量属性：性能、可靠性、可观测性、合规、可维护性
-
-  engineering/                            # 工程实践：开发者如何安全修改和交付系统
-    setup.md                              # 本地启动：依赖、环境变量、初始化、常见错误
-    repo-map.md                           # 代码地图：目录职责、模块边界、主要入口文件
-    conventions.md                        # 工程约定：命名、分层、错误处理、日志、提交规范
-    testing.md                            # 测试策略：单测、集成、端到端、夹具、覆盖边界
-    debugging.md                          # 调试指南：日志、追踪、常用命令、排障路径
-    release.md                            # 发布流程：版本、构建、审批、部署、验证
-    migrations.md                         # 迁移指南：数据库、配置、数据修复、回滚注意事项
-
-  api/                                    # 接口契约，尽量机器可读
-    openapi.yaml                          # REST API 契约：路径、请求、响应、错误、示例
-    asyncapi.yaml                         # 事件或消息契约：通道、payload、生产者、消费者
-    auth.md                               # 认证与授权：Token、Scope、角色、权限
-    errors.md                             # 错误模型：错误码、语义、重试行为、用户提示
-    examples.md                           # 集成示例：真实请求、响应、边界情况
-
-  operations/                             # 运行维护知识，保障线上可恢复、可解释
-    runbooks/                             # 操作手册：告警、事故、人工任务的步骤
-      README.md                           # Runbook 索引，按告警、服务或场景组织
-    incidents/                            # 事故记录：时间线、影响、根因、修复、预防措施
-      README.md                           # 事故索引，按日期、系统、严重程度组织
-    monitoring.md                         # 指标、日志、追踪、仪表盘、告警阈值
-    rollback.md                           # 回滚指南：应用、数据、配置、回滚后验证
-
-  ai/                                     # AI Agent 上下文，帮助模型可靠理解和修改项目
-    AGENTS.md                             # Agent 工作规则：流程、禁止事项、测试要求、Review 期望
-    context-map.md                        # Agent 首读地图：重要文件、模块边界、事实源
-    facts.md                              # 稳定事实，Agent 可以可靠引用，不必每次重新推导
-    gotchas.md                            # 常见坑、隐藏约束、Agent 容易重复犯的错误
-    prompts/                              # 可选：给人、CI、自动化 Agent 复用的任务提示词
-      doc-audit.md                        # 文档审计提示词：检查过期、缺失、重复、不一致
-      adr-writer.md                       # ADR 写作提示词：把技术选择整理成决策记录
-      release-notes.md                    # 发布说明提示词：从 diff、issue、PR 生成变更摘要
-    evals/                                # 文档评测：测试 Agent 能否正确回答项目问题
-      doc-freshness.md                    # 新鲜度评测：检查文档是否匹配代码、配置、API、测试
-      api-doc-consistency.md              # API 一致性评测：检查示例、契约、实现是否一致
-    llms.txt                              # 可选的 LLM 入口文件，提供精选链接和推荐阅读顺序
-
-  changelog.md                            # 面向用户的变化、迁移提醒、破坏性变更、发布说明
-```
-
-## Diataxis 的位置
-
-不要把顶层文档结构强行改成 Diataxis 的四个目录。对 AI 来说，按领域和事实源组织通常更好，因为 Agent 更常问：“API 契约在哪里？”“架构决策在哪里？”“Runbook 在哪里？”
-
-Diataxis 更适合作为文档意图层：
-
-```text
-Tutorial     # 教程：新人学习路径或入门流程
-How-to       # 操作指南：为了完成某个明确任务的步骤
-Reference    # 参考：精确事实、Schema、命令、选项、契约
-Explanation  # 解释：背景、取舍、概念、为什么这么做
-```
-
-可以在 `docs/doc-map.md` 或重要文档顶部标注：
-
-```text
-Intent: Reference
-Audience: AI agents, backend engineers
-Facts of record: openapi.yaml, src/routes/, integration tests
-Staleness trigger: any API route, schema, or auth behavior change
-```
-
-Diataxis 适合 AI，因为它告诉 Agent 应该如何读取文档：How-to 应该按步骤执行，Reference 应该当成事实查询，Explanation 应该辅助推理但不能覆盖代码或 Schema。
-
-但 Diataxis 本身不够。AI 时代的文档还需要事实源、owner、检索地图、变更影响规则和评测。
-
-## `docs/ai/prompts/` 的作用
-
-`docs/ai/prompts/` 是可选目录。它不是事实源，不应该放项目真相。
-
-它用于保存可复用的任务提示词，供人、CI、定时任务或文档 Agent 反复运行。例如：
-
-- 大 PR 后审计文档是否需要更新。
-- 根据技术决策生成 ADR 草稿。
-- 根据合并的 PR 生成发布说明。
-- 检查 API 示例是否仍匹配契约。
-- 让 Agent 刷新 `docs/ai/context-map.md`。
-
-如果项目已经有更成熟的自动化系统，可以把它改名为 `docs/ai/tasks/`、`docs/ai/workflows/`，或者直接删除。只有这些提示词真的会被复用时，才保留这个目录。
-
-## 维护规则
-
-审查变更时使用下面的影响矩阵：
-
-```text
-公共 API 改动        -> 更新 docs/api/openapi.yaml、docs/api/examples.md、docs/changelog.md
-事件/消息改动        -> 更新 docs/api/asyncapi.yaml、消费者说明、相关 Runbook
-架构边界改动         -> 更新 docs/architecture/c4/02-container.md 或 03-components/，必要时新增 ADR
-核心技术选择改动     -> 新增 docs/architecture/adr/NNNN-title.md
-数据模型改动         -> 更新 docs/architecture/data-model.md、docs/engineering/migrations.md
-部署/配置改动        -> 更新 docs/architecture/deployment.md、docs/engineering/setup.md、回滚文档
-测试策略改动         -> 更新 docs/engineering/testing.md
-告警/事故改动        -> 更新 docs/operations/runbooks/ 或 docs/operations/incidents/
-AI 反复犯错          -> 更新 docs/ai/AGENTS.md、docs/ai/context-map.md 或 docs/ai/gotchas.md
-```
+拆分时，不要默认创建目录 `README.md`。目录结构和文件名本身就是有用索引。只有当导航确实有价值时，才把导航放在父主题文件、仓库 `README.md` 或 `docs/ai.md` 里。
 
 ## Agent 文档原则
 
-- 把代码、Schema、测试、部署文件、ADR 当作事实源。
-- 让 `docs/doc-map.md` 和 `docs/ai/context-map.md` 短、准、链接清楚。
-- C4 第 1 层和第 2 层要稳定维护。
-- C4 第 3 层用于复杂容器，并应从真实 C4 第 2 层容器和模块边界推导；第 4 层只用于难以就地理解的复杂代码。
-- ADR 用来记录重要决策，不记录普通实现细节。
+- 把代码、schema、测试、部署文件和 ADR 当作事实源。
+- 仓库 `README.md` 和 `docs/ai.md` 应短、准确、链接清楚；除非项目明确要求，不要创建单独的 index 或 context-map 文件。
+- 保留一个规范 AI first-read list。默认把 AI first-read 链接、问题路由、Agent 运行规则和 gotchas 放在 `docs/ai.md`。
+- `docs/ai/prompts/` 和 `docs/ai/evals/` 只放可复用任务资产。不要把项目事实、Agent 规则、first-read 路由或 gotchas 放进去。
+- C4 L1 和 L2 应稳定、手动维护；C4 L3 用于复杂 container；C4 L4 只用于无法就地理解的代码结构。
+- Future work 在 accepted 或 implemented 前，不要进入 current-fact docs。可选库、候选 provider、rollout 建议和 backlog notes 应放在 product requirements 或带明确 decision status 的 ADR 里。
+- ADR 记录重要架构、技术或策略决策，不记录普通实现细节。
 - API 和事件优先使用机器可读契约。
-- 不要在很多文档里重复启动命令、环境变量、API 示例。
-- 如果项目里存在多个 Agent 指令文件，要明确一个规范来源，并有意地链接或同步。
-- `03-components/` 下的文件名应是项目特定的，不要保留与真实系统不匹配的占位组件文件。
+- 不要在多处 prose 文件里重复 setup 命令、环境变量和 API 示例。
+- 项目文档之间使用普通相对 Markdown 链接；同文件标题使用 `#anchors`。
+- 避免 root-relative 链接，例如 `/docs/architecture/config.md`，除非仓库已有约定。移动或重命名文档后要验证链接。
+- 如果项目有多个 Agent 指令文件，保留一个规范来源，并有意链接或同步。
+- 把带注释结构当作要保留的信息类别，而不是必须盲目创建的文件。偏好更少、更密、更有索引价值的文件，而不是很多薄 stub。
+- 拆分后的 C4 component 文件名应是项目特定的。不要保留与真实系统不匹配的占位 component 文件。
+- code locator 是人工维护的地图，不是生成式 inventory。它应帮助 Agent 选择从哪里开始，然后指回代码这个事实源。
 
-## 可复用任务提示词
+## 带注释的结构
 
-这些提示词可以放在 `docs/ai/prompts/`，也可以作为自动化任务使用。
-
-```text
-Review the current git diff and identify documentation impact.
-Output affected docs, reasons, proposed updates, whether an ADR is needed, and whether API contracts, runbooks, changelog, or agent rules must change.
-Do not edit files yet; provide the plan first.
-```
+这是信息架构，不是必建文件树。把稳定项目事实路由到下面的 owning node；不要在 AI helper docs 中复制 product、architecture、API、testing、operations、repo-map 或 code-locator 事实。节点名故意省略 `.md`：每个节点可以是 section、独立文件，或按 File-First Split Rule 拆出的目录。注释说明 ownership 和更新触发条件；不要把注释写进实际名称。
 
 ```text
-Generate or refresh docs/ai/context-map.md from the repository.
-Include first-read files, module boundaries, facts of record, common traps, areas where agents must not guess, and docs that must be updated after code changes.
+docs/                                      # 长期项目文档根
+  product                                 # Owns 产品目标、用户、词汇、需求、边界和非目标；当产品行为、命名、UX 契约、已接受需求或未来范围变化时更新。
+    requirements                          # Owns accepted、implemented、candidate、rejected 或 historical requirements，并带 Candidate、Proposed、Accepted、Rejected、Implemented 等 decision state labels；当范围、验收标准、UX 契约或 decision state 变化时更新。
+    feature-roadmap                       # Owns 可选 candidate backlog/roadmap，并带 decision state labels、sources、trigger conditions、constraints 和 rollout order；当候选范围、decision state 或 rollout order 变化时更新。
+
+  architecture                            # Owns 架构总览、C4 L1/L2、数据模型、配置摘要、安全摘要、部署摘要和质量属性；当边界、职责、状态模型、拓扑、主要流程或质量约束变化时更新。
+    overview                              # Owns 主要模块、依赖、边界、职责拆分和设计原则；当架构边界或职责变化时更新。
+    c4-system-context                     # Owns C4 L1 用户、外部系统、系统边界和信任边界；当 actor、外部系统或信任边界变化时更新。
+    c4-container                          # Owns C4 L2 应用、服务、数据库、队列、worker 和第三方 container；当 container 或运行时拓扑变化时更新。
+    c4-components                         # Owns 真实 container 或 component group 的 C4 L3 component view；当 component 边界、ownership 或重要交互变化时更新。
+    data-model                            # Owns 实体、关系、约束、迁移、状态定义、enum 语义和数据 ownership；当 schema、状态、生命周期语义或数据字典条目变化时更新。
+    config                                # Owns config roots、profiles、schema、path rules、examples、environment expansion、removed names 和 migrations；当 config 字段、profile 行为、路径、默认值或迁移变化时更新。
+    security                              # Owns 认证、授权、密钥、数据保护、破坏性操作安全、权限和 threat model；当 safety、preview/confirmation、权限或 trust behavior 变化时更新。
+    dynamic-login-flow                    # Owns 一个重要运行时序列、状态转换或跨边界流程；当该流程变化时更新。
+    deployment                            # Owns 托管环境、网络、运行时拓扑、部署信任边界和生产布局；当部署拓扑或运行时架构变化时更新。
+    adr                                   # Owns Architecture Decision Records；当出现重要架构、技术或策略决策时新增 ADR。
+      0001-record-architecture-decisions
+
+  engineering                             # Owns setup、repo map、约定、testing、debugging、release、migrations 和 code locator；当命令、workflow、build/package 布局、migration guidance、tests、repo structure 或 problem entry paths 变化时更新。
+    setup                                 # Owns 本地 setup、依赖、环境变量、初始化、常见失败和本地运行时布局；当 install、run、debug、env 或本地路径行为变化时更新。
+    testing                               # Owns 测试策略、检查命令、fixtures、覆盖边界和必需回归主题；当测试命令、覆盖预期或 fixture profile 变化时更新。
+    release                               # Owns 版本、build/package 步骤、release 默认值、审批、部署交接和验证；当 packaging、release config 或 release verification 变化时更新。
+    migrations                            # Owns 数据库、config、数据修复和 rollback migration guidance；当 schema、config 或数据迁移行为变化时更新。
+    repo-map                              # Owns 系统地图：目录/模块职责、主要功能分布、入口点和 ownership；当 repo structure、module boundaries、feature locations 或 entry points 移动时更新。
+    code-locator                          # Owns problem-to-file 入口索引和 change recipes；解决 recurring 或 subtle problems 后，用涉及文件、invariants/traps 和 focused verification 更新。
+
+  api                                     # Owns API contracts 和 direction rules；把方向相关的 auth、errors、examples、quotas 和 adapters 放在对应方向下；当 signatures、payloads、return types、errors、examples、events、webhooks 或 upstream contracts 变化时更新。
+    command-api                           # Owns 可选本地 app command bridge；适用时加载 framework-specific rules，并当 command signatures、payloads、side effects 或 safety behavior 变化时更新。
+    provided                              # Owns 本项目暴露给调用方的接口：HTTP routes、RPC methods、SDK methods、events、webhooks、plugin hooks、schemas 和 error contracts；事实源是 server routes/controllers、handlers、schemas、OpenAPI/AsyncAPI files、contract tests 和 implementation tests；当暴露的 routes、methods、SDKs、events、webhooks、schemas、errors、examples 或 compatibility behavior 变化时更新。
+    consumed                              # Owns 本项目调用或依赖的上游接口：backend services、third-party APIs、SDKs、payment/auth/map/email providers、vendor webhooks 和 sibling services；事实源是 clients/adapters、上游官方文档、observed responses、fixtures、mocks 和 integration tests；当 upstream contracts、adapters、auth、quotas、mocks、fixtures 或 risks 变化时更新。
+    openapi.yaml                          # Owns REST API 机器可读契约；当 REST paths、requests、responses、errors 和 examples 变化时更新。
+    asyncapi.yaml                         # Owns event/message 机器可读契约；当 channels、payloads、producers、consumers 和 compatibility notes 变化时更新。
+
+  operations                              # Owns monitoring、runbooks、incidents、rollback 和 recovery procedures；当 logging、alerting、rollback、manual repair、partial-failure 或 incident response 变化时更新。
+    rollback                              # Owns application、data、config 和 post-rollback verification；当 recovery、undo、backup/restore 或 partial-failure repair behavior 变化时更新。
+    monitoring                            # Owns metrics、logs、traces、dashboards、alerts 和 thresholds；当 observability、logging 或 alert behavior 变化时更新。
+    runbook-alert-name                    # Owns 某个 alert 或 scenario 的 step-by-step operational procedure；当 manual action、escalation 或 verification 变化时更新。
+    incident-YYYY-MM-DD-title             # Owns incident record：timeline、impact、root cause、fix 和 prevention；重要事故后新增。
+
+  ai                                      # Owns Agent 规则、first-read map、question routing 和 gotchas；当 repeated AI mistakes、retrieval paths、guardrails 或 docs routing 变化时更新。
+    prompts                               # 可选 reusable AI prompts；只在确实复用时保留。不是 facts-of-record 区域。
+      doc-audit                           # Owns 可复用的人类/CI/Agent 文档审计 prompt；不得包含项目事实；当 audit 输出预期或 docs impact categories 变化时更新。
+      adr-writer                          # Owns 可复用 ADR drafting prompt；不得包含项目事实；当 ADR 格式或决策 workflow 变化时更新。
+    evals                                 # 可选 reusable documentation evals；只在确实复用时保留。不是 facts-of-record 区域。
+      doc-freshness                       # Owns 用于检查 Agent 是否能从当前 docs 和 code 回答项目问题的 eval；当 questions、expected source docs 或 facts of record 变化时更新。
+
+  ownership                               # Owns owners、update cadence、facts of record 和 stale-document review rules；当 ownership、review cadence 或 canonical fact sources 变化时更新。
+  changelog                               # Owns 面向用户的 changes、migrations、breaking changes 和 release notes；发布、破坏性变更、迁移和用户可见行为变化时更新。
 ```
 
-```text
-Draft an ADR for the following technical decision.
-Include Status, Context, Decision, Alternatives, Consequences, Migration, and Follow-up.
-Explain why the decision was made; do not repeat low-level implementation details.
-```
+## Cross-Cutting Change Rule
 
-```text
-Review docs/ using Diataxis.
-Classify existing documents as Tutorial, How-to, Reference, or Explanation.
-Report duplicated, missing, stale, or misplaced documents and propose a migration plan.
-```
+从带注释结构中的 owning node 出发。如果变更跨边界，同一次变更中更新每个受影响 owner，而不是把同一事实复制到多处。
 
-```text
-Check whether documentation matches the codebase.
-Focus on setup commands, environment variables, API examples, config options, directory descriptions, and test commands.
-Output mismatches, evidence locations, and recommended fixes.
-```
+- API 行为变化可能影响 API docs、机器可读契约、示例、测试和 changelog entries。
+- Config schema、profile、path 或 default 变化可能影响 architecture config docs、engineering setup/migration docs、examples 和 tests。
+- 破坏性操作、permission、preview、confirmation 或 rollback 行为变化可能影响 architecture security docs、operations rollback docs、API safety notes 和 tests。
+- Architecture boundary、runtime topology 或 responsibility 变化可能影响 architecture overview、C4 views、deployment 或 operations docs；如果决策重要，还要写 ADR。
+- Local setup、build、packaging、release 或 test workflow 变化可能影响 engineering docs 和仓库 README。
+- Framework-specific command 或 API bridge 变化必须先加载相关 rule file，例如 `rules/tauri-command-api.md`，再更新 API docs 和 wrappers。
+- Future-work suggestions 在 accepted 或 implemented 前属于 product requirements 或 roadmap docs，并带 decision status；只把稳定结果事实提升到 current-fact docs。
+- Repeated AI mistakes 或 retrieval failures 属于 `docs/ai.md`；重复的跨主题事实应移动到 owning docs，并从 helper prose 中删除。
+
+## Repo Map And Code Locator Rule
+
+当结构导航和 problem-first navigation 都有用时，保持二者分离。
+
+`repo-map` 是系统地图。它帮助 Agent 在修改前理解代码库形状。
+
+`code-locator` 是问题入口索引。它回答：遇到这个 issue 或 workflow，应先看哪里，什么 invariant 不能破，应该运行什么 focused check？
+
+## Future Work Promotion Rule
+
+Future work、backlog、optional providers、rollout advice 和 candidate ideas 在 accepted 或 implemented 前，不得进入 current-fact docs。
+
+当 candidate 变成 accepted 或 implemented，只把稳定结果事实提升到 owning current-fact nodes。历史 candidate context 留在 `product/requirements`、`product/feature-roadmap` 或 ADR。
+
+## Framework-Specific Rules
+
+对于 Tauri desktop apps，在创建或更新 Tauri command API documentation 前，加载 `rules/tauri-command-api.md`。
