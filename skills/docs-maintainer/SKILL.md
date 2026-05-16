@@ -13,275 +13,134 @@ For the human-readable Chinese equivalent of this skill, see `for-human/SKILL.zh
 
 ## Operating Model
 
-1. Inspect the repository shape, existing docs, API contracts, deployment files, tests, and recent diffs.
+Use the path that matches the task.
+
+### Creating Documentation
+
+1. Inspect the repository shape, source code, existing docs, API contracts, deployment files, tests, and examples.
 2. Identify facts of record: source code, schemas, tests, ADRs, deployment config, API specs, runbooks, and product glossary.
-3. Create the smallest useful documentation structure from the information architecture below. Do not scaffold empty folders or many tiny files that the project cannot maintain.
-4. Prefer stable, agent-readable files with clear headings, short sections, explicit links, and unambiguous ownership.
-5. Keep volatile implementation details close to code and schemas; link to them instead of duplicating them across prose docs.
-6. For each code or architecture change, update only the affected docs and record consequential decisions as ADRs.
-7. Validate documentation with available checks such as Markdown lint, link checks, spell checks, OpenAPI/AsyncAPI validation, diagram rendering, or repo-specific CI.
+3. Choose owning nodes from the Annotated Structure, then apply the File-First Split Rule.
+4. Create the smallest useful documentation structure. Do not scaffold empty folders or many tiny files that the project cannot maintain.
+5. Prefer stable, agent-readable docs with clear headings, short sections, explicit links, and unambiguous ownership.
+6. Validate documentation with available checks such as Markdown lint, link checks, spell checks, OpenAPI/AsyncAPI validation, diagram rendering, or repo-specific CI.
 
-## Annotated Structure
+### Updating Documentation
 
-Use this as the default information architecture, not a required file tree. The comments explain each entry; do not include the comments in actual file or directory names.
+1. Inspect the code or architecture change, affected source files, existing docs, tests, and recent diffs.
+2. Start from the owning nodes in the Annotated Structure and update only the affected docs.
+3. Keep volatile implementation details close to code and schemas; link to them instead of duplicating them across prose docs.
+4. When a change crosses boundaries, update each affected owner in the same change.
+5. Record consequential architecture, technology, or policy decisions as ADRs.
+6. Validate changed docs with the available project checks.
 
-## README-First Structure Rule
+## File-First Split Rule
 
-Prefer a README-first layout for small or medium projects. A leaf in the structure below may be represented as:
+Use the Annotated Structure to choose the owning node, then decide whether that node should be a section, standalone file, or directory.
 
-1. a section inside the nearest parent `README.md`;
-2. a standalone Markdown file;
-3. a machine-readable contract file such as `openapi.yaml` or `asyncapi.yaml`.
+Start with one Markdown file per documentation topic. Split only when the topic is large, high-risk, independently owned, heavily linked, machine-readable, frequently reviewed, or likely to create real edit conflicts.
 
-Default to a parent `README.md` when the topic is short, the topics change together, the project has no separate owner for that topic, or a standalone file would contain only a few paragraphs. Split a leaf into its own file only when at least one of these is true:
-
-- the file is expected to exceed roughly 80-120 lines or needs its own table of contents;
-- the topic is high risk or frequently reviewed, such as security, deployment, rollback, or public API contracts;
-- the topic has independent ownership, update cadence, or many incoming links;
-- the topic has a durable lifecycle, such as ADRs, incidents, runbooks, or release notes;
-- the content is machine-readable or validated by tooling;
-- splitting reduces real edit conflicts between people or agents.
-
-For example, a compact client app may use `api/README.md` for API direction, consumed upstreams, auth, errors, and examples; `engineering/README.md` for setup, repo map, testing, debugging, release, and migrations; and `operations/README.md` for runbooks, monitoring, incidents, and rollback. A larger backend with a public API may split those same sections into standalone files.
-
-## C4 Component View Rule
-
-Derive `architecture/c4/03-components/` from the project's actual C4 L2 containers and module boundaries. This directory is a C4 L3 view area, not a fixed set of files.
-
-When creating or refreshing component docs:
-
-1. Start with `03-components/README.md` for compact projects or when the component view is short.
-2. Create standalone component files only for real containers or component groups that are complex enough to need their own page.
-3. Name files after the actual architecture, such as `web-api.md`, `mobile-app.md`, `admin-console.md`, `orchard-modules.md`, `checkout-service.md`, `background-jobs.md`, `integration-adapters.md`, or `ml-pipeline.md`.
-4. Do not create `backend-api.md`, `worker.md`, or `frontend-app.md` just because they appear in an example. Create those files only when they are accurate, useful views for this specific project.
-5. Omit component views that do not exist. For example, a client-only app should not have an empty `worker.md`, and a backend-only service should not have a placeholder frontend component doc.
-
-## Code Locator Rule
-
-Preserve high-value code-location knowledge when it helps future agents start in the right files. A code locator is a compact problem-to-code map, not an exhaustive source inventory.
-
-Use a code locator when existing docs, handoffs, or repeated work contain practical "if you see this issue, start here" knowledge, such as feature entry points, owning repositories/controllers, state files, platform config, tests, and common traps.
-
-Default placement:
-
-1. Use a `Code Locator` section inside `engineering/README.md` for broad repo-wide or developer-workflow navigation.
-2. Use a `Code Locator` section inside `architecture/c4/README.md` or `architecture/c4/03-components/README.md` when the paths are tied to C4 components, dynamic flows, or cross-cutting architecture concerns.
-3. Create a standalone `engineering/code-locator.md` only when the locator is large, heavily linked, independently maintained, or would exceed the README-first split guidance.
-
-Good code locator entries usually include:
-
-- the problem, feature, or workflow;
-- the first files or directories to inspect;
-- the invariant, trap, or ownership rule that matters;
-- the focused tests, smoke checks, runbooks, or source-of-truth docs to verify.
-
-Avoid turning the locator into a generated file list. Keep complete file inventories in `other.md` or generated tooling output, and keep stable module maps in architecture or repo-map docs.
-
-## Future Work And Requirement Backlog Rule
-
-Keep unimplemented suggestions separate from current facts. Future development ideas, optional libraries, candidate providers, rollout sequences, "could/should later" advice, and backlog items must not be written as if they are current architecture, API, operations, or code facts.
-
-Default placement:
-
-1. Use `product/requirements/README.md` for a compact backlog or roadmap section.
-2. Create a standalone `product/requirements/<feature>-roadmap.md`, `<feature>-backlog.md`, or dated requirement file when the suggestion set has its own lifecycle, acceptance criteria, owner, decision status, or many incoming links.
-3. Use an ADR only after the team makes a consequential architecture or technology decision.
-
-Future-work docs should label each item with its decision state, such as `Candidate`, `Proposed`, `Accepted`, `Rejected`, or `Implemented`. Include the source, trigger condition, constraints, rough rollout order, acceptance criteria needed before implementation, and which docs must move when the item becomes accepted or implemented.
-
-When a candidate becomes accepted or implemented, promote only the stable resulting facts into architecture, C4, API, engineering, operations, runbooks, changelog, facts, or gotchas as appropriate. Leave historical candidate context in the requirement doc or ADR rather than copying it everywhere.
-
-## API Direction Rule
-
-Every `api/` document must state whether it documents provided APIs, consumed APIs, or both. Do not mix these directions without explicit headings.
-
-- **Provided APIs** are interfaces this project exposes to callers: HTTP routes, RPC methods, SDK methods, events, webhooks, plugin hooks, schemas, and error contracts. Facts of record are server routes/controllers, handlers, schemas, OpenAPI/AsyncAPI files, contract tests, and implementation tests.
-- **Consumed APIs** are upstream interfaces this project calls or depends on: backend services, third-party APIs, SDKs, payment/auth/map/email providers, webhooks received from vendors, or sibling services. Facts of record are client/adaptor code, upstream official docs, observed responses, fixtures, mocks, and integration tests.
-
-Use README sections for small projects:
-
-```text
-api/README.md
-  Provided APIs
-    Authentication
-    Error model
-    Examples
-  Consumed APIs
-    Authentication
-    Error model
-    Examples
-```
-
-When a direction has no content, either omit that direction entirely or include only `(None)` under its heading. Direction-specific topics such as authentication, error model, examples, quotas, and adapters must be nested under the relevant direction heading, not placed as siblings of `Provided APIs` or `Consumed APIs`.
-
-Use subdirectories when both directions are substantial or owned independently:
-
-```text
-api/
-  README.md
-  provided/README.md
-  consumed/README.md
-```
-
-Backend services usually have substantial **provided** API docs and may also have **consumed** API docs for upstream dependencies. Client apps usually have substantial **consumed** API docs and may explicitly state that they provide no public API.
-
-```text
-docs/                                      # Long-lived project documentation root
-  index.md                                # Entry point: what the project is and where each reader or agent should start
-  doc-map.md                              # Question-to-document map for fast retrieval by humans and AI agents
-  ownership.md                            # Owners, update cadence, facts of record, and stale-document review rules
-
-  product/                                # Product and domain knowledge: why the system exists and who it serves
-    vision.md                             # Product goals, boundaries, non-goals, and success criteria
-    users.md                              # User roles, permissions, core jobs, and important workflows
-    requirements/                         # PRDs, user stories, acceptance criteria, scope changes, and candidate roadmaps
-      README.md                           # Requirements index with links to active, historical, and candidate requirement docs
-      feature-roadmap.md                  # Optional candidate backlog/roadmap for unimplemented future capabilities; label decision status
-    glossary.md                           # Domain vocabulary shared by people, code, tests, and AI agents
-
-  architecture/                           # System design knowledge: how the system is organized and constrained
-    overview.md                           # Architecture summary: major modules, dependencies, and design principles
-    c4/                                   # C4 views from system boundary down to selected code-level structures
-      01-system-context.md                # C4 L1: users, external systems, system boundary, and trust boundary
-      02-container.md                     # C4 L2: apps, services, databases, queues, workers, and third-party containers
-      03-components/                      # C4 L3: project-specific components inside selected containers
-        README.md                         # Compact component view index with sections per real container or component group
-        project-specific-component.md     # Optional standalone L3 view named after an actual container/module, not a template label
-      04-code/                            # C4 L4: only complex code structures that need explanation
-        core-domain.md                    # Core domain code: state machines, algorithms, plugin models, or invariants
-      code-locator.md                     # Optional problem-to-code locator when tightly tied to C4 components or flows; prefer a README section when compact
-      dynamic/                            # Runtime behavior: sequences, state transitions, and cross-boundary flows
-        login-flow.md                     # Login flow: authentication, sessions, error paths, and security boundaries
-        order-lifecycle.md                # Business lifecycle: important states from creation through completion/cancelation
-      deployment.md                       # Deployment view: environments, networks, config, release topology
-    adr/                                  # Architecture Decision Records explaining why decisions were made
-      0001-record-architecture-decisions.md # ADR example/template: status, context, decision, alternatives, consequences
-    data-model.md                         # Entities, relationships, constraints, migrations, and data ownership
-    security.md                           # Authentication, authorization, secrets, data protection, and threat model
-    quality-attributes.md                 # Performance, reliability, observability, compliance, maintainability
-
-  engineering/                            # Developer workflow knowledge: how to safely change and ship the system
-    setup.md                              # Local setup, dependencies, environment variables, initialization, common failures
-    repo-map.md                           # Codebase map: directory responsibilities, module boundaries, main entry points
-    conventions.md                        # Engineering conventions: naming, layering, errors, logging, commits
-    testing.md                            # Testing strategy: unit, integration, end-to-end, fixtures, coverage boundaries
-    debugging.md                          # Debugging guide: logs, traces, useful commands, common diagnosis paths
-    code-locator.md                       # Optional problem-to-code map: first files, ownership notes, traps, and focused checks for AI handoff
-    release.md                            # Release process: versioning, build, approval, deployment, verification
-    migrations.md                         # Migration guide: database, config, data repair, and rollback considerations
-
-  api/                                    # Interface contracts, separated by API direction
-    README.md                             # API direction index: provided APIs, consumed APIs, auth, errors, examples
-    provided/                             # APIs this project exposes to callers; use when substantial enough to split
-      README.md                           # Provided routes/events/SDK/plugin contracts and source-of-truth links
-    consumed/                             # APIs this project calls or depends on; use when substantial enough to split
-      README.md                           # Upstream APIs, third-party services, auth, quotas, risks, and adapters
-    openapi.yaml                          # REST API contract: paths, requests, responses, errors, examples
-    asyncapi.yaml                         # Event/message contract: channels, payloads, producers, consumers
-    auth.md                               # Authentication and authorization: tokens, scopes, roles, permissions
-    errors.md                             # Error model: codes, semantics, retry behavior, user-facing messages
-    examples.md                           # Integration examples: realistic requests, responses, edge cases
-
-  operations/                             # Runtime operations knowledge for recovery and production safety
-    runbooks/                             # Step-by-step operational procedures for alerts, incidents, and manual tasks
-      README.md                           # Runbook index organized by alert, service, or scenario
-    incidents/                            # Incident records: timeline, impact, root cause, fix, prevention
-      README.md                           # Incident index organized by date, system, and severity
-    monitoring.md                         # Metrics, logs, traces, dashboards, alerts, thresholds
-    rollback.md                           # Rollback guide: application, data, config, and post-rollback verification
-
-  ai/                                     # AI-agent context that helps models understand and modify the project reliably
-    AGENTS.md                             # Agent operating rules: workflow, forbidden actions, tests, review expectations
-    context-map.md                        # First-read map for agents: important files, module boundaries, facts of record
-    facts.md                              # Stable facts that agents may rely on without re-deriving every time
-    gotchas.md                            # Common traps, hidden constraints, and repeated agent mistakes
-    prompts/                              # Optional reusable task prompts for humans, CI, and automation agents
-      doc-audit.md                        # Prompt for finding stale, missing, duplicated, or inconsistent docs
-      adr-writer.md                       # Prompt for turning a technical decision into an ADR draft
-      release-notes.md                    # Prompt for generating release notes from diffs, issues, or PRs
-    evals/                                # Documentation evals that test whether agents can answer project questions
-      doc-freshness.md                    # Freshness eval: checks whether docs match code, config, API, and tests
-      api-doc-consistency.md              # API consistency eval: checks examples, contracts, and implementation behavior
-    llms.txt                              # Optional LLM entry file with curated links and recommended reading order
-
-  changelog.md                            # User-visible changes, migrations, breaking changes, and release notes
-```
-
-## About `docs/ai/prompts/`
-
-`docs/ai/prompts/` is optional. It is not a facts-of-record directory and should not contain project truth.
-
-Use it for reusable task prompts that humans, CI jobs, scheduled agents, or documentation agents can run repeatedly. Good examples:
-
-- Audit documentation after a large PR.
-- Draft an ADR from a technical decision.
-- Generate release notes from merged PRs.
-- Check whether examples still match the API contract.
-- Ask an agent to refresh `docs/ai/context-map.md`.
-
-If the project already has a preferred automation system, `docs/ai/prompts/` may be renamed to `docs/ai/tasks/`, `docs/ai/workflows/`, or removed. Keep it only when the prompts are actually reused.
-
-## Maintenance Rules
-
-Apply this impact matrix when reviewing changes:
-
-```text
-Provided public API change -> Update docs/api/provided or docs/api/README.md#provided-apis, machine-readable contracts, examples, changelog
-Consumed upstream API change -> Update docs/api/consumed or docs/api/README.md#consumed-apis, adapters, examples, runbooks, risks
-Event/message change       -> Update docs/api/asyncapi.yaml or direction-specific event docs, consumer/provider notes, relevant runbooks
-Architecture boundary      -> Update docs/architecture/c4/02-container.md or 03-components/, add ADR if consequential
-Core technology decision   -> Add docs/architecture/adr/NNNN-title.md
-Feature ownership or first-read code paths -> Update engineering/README.md#code-locator, architecture/c4/README.md#code-locator, or a split code-locator.md
-Future feature suggestion  -> Update docs/product/requirements/README.md or a candidate roadmap/backlog; label decision status and do not present it as current architecture/API fact until accepted
-Data model change          -> Update docs/architecture/data-model.md and docs/engineering/migrations.md
-Deployment/config change   -> Update docs/architecture/deployment.md, docs/engineering/setup.md, rollback docs
-Testing strategy change    -> Update docs/engineering/testing.md
-Alert/incident change      -> Update docs/operations/runbooks/ or docs/operations/incidents/
-Repeated AI mistake        -> Update docs/ai/AGENTS.md, docs/ai/context-map.md, or docs/ai/gotchas.md
-```
-
-If the project uses README-first consolidation, apply the same impact matrix to the matching section in the nearest parent `README.md`. For example, update `docs/api/README.md#examples` instead of creating `docs/api/examples.md` unless the examples have grown enough to justify a standalone file. For API changes, preserve direction first: update `docs/api/README.md#provided-apis` for exposed contracts and `docs/api/README.md#consumed-apis` for upstream dependencies.
+When splitting, do not create a directory `README.md` by default. The directory structure and file names are already useful index information. Put navigation in the parent topic file, repository `README.md`, or `docs/ai.md` only when it adds real value.
 
 ## Agent Documentation Principles
 
 - Treat code, schemas, tests, deployment files, and ADRs as facts of record.
-- Make `docs/doc-map.md` and `docs/ai/context-map.md` short, current, and highly linkable.
-- Keep C4 L1 and L2 stable and hand-maintained.
-- Use C4 L3 for complex containers, deriving component docs from real L2 containers and module boundaries; use C4 L4 only for code structures that cannot be understood locally.
-- Keep code locators current when feature ownership, first-read files, state entry points, platform config, or focused tests move.
+- Make the repository `README.md` and `docs/ai.md` short, current, and highly linkable; do not create separate index or context-map files unless the project explicitly asks for them.
+- Keep one canonical AI first-read list. Keep AI-specific first-read links, question routing, agent operating rules, and gotchas in `docs/ai.md` by default.
+- Keep `docs/ai/prompts/` and `docs/ai/evals/` for reusable task assets. Do not move project facts, agent rules, first-read routing, or gotchas there.
+- Keep C4 L1 and L2 stable and hand-maintained; use C4 L3 for complex containers, and use C4 L4 only for code structures that cannot be understood locally.
 - Keep future work out of current-fact docs until accepted or implemented. Store optional libraries, provider candidates, rollout advice, and backlog notes under product requirements or an ADR with explicit decision status.
-- Write ADRs for consequential decisions, not routine implementation details.
+- Write ADRs for consequential architecture, technology, or policy decisions, not routine implementation details.
 - Prefer machine-readable contracts for APIs and events.
-- Separate API direction clearly. Never let a client-side consumed API note masquerade as the service's provided API contract, and never document a backend's provided API as if it were merely a client dependency.
 - Avoid duplicating setup commands, environment variables, and API examples across many prose files.
+- Use normal relative Markdown links between project docs, and use same-file `#anchors` for headings.
+- Avoid root-relative links such as `/docs/architecture/config.md` unless the repository already requires them. After moving or renaming docs, validate changed links.
 - When multiple agent instruction files exist, keep one canonical source and link or mirror intentionally.
 - Treat the annotated structure as categories to preserve, not files to blindly create. Prefer fewer, denser, well-indexed files over many thin stubs.
-- Treat `03-components/` filenames as project-specific. Avoid placeholder component files that do not match the actual system.
+- Treat split C4 component filenames as project-specific. Avoid placeholder component files that do not match the actual system.
 - Treat code locators as curated maps, not generated inventories. They should help an agent choose where to start, then point back to code as the fact of record.
 
-## Starter Task Prompts
+## Annotated Structure
 
-Use these as files under `docs/ai/prompts/` or as automation prompts.
-
-```text
-Review the current git diff and identify documentation impact.
-Output affected docs, reasons, proposed updates, whether an ADR is needed, and whether API contracts, runbooks, changelog, or agent rules must change.
-Do not edit files yet; provide the plan first.
-```
+Use this as an information architecture, not a required file tree. Route durable project facts to the owning node below; do not duplicate product, architecture, API, testing, operations, repo-map, or code-locator facts in AI helper docs. Node labels intentionally omit `.md`: each node may be a section, a standalone file, or a directory with child files according to the File-First Split Rule. The comments explain ownership and update triggers; do not include the comments in actual names.
 
 ```text
-Generate or refresh docs/ai/context-map.md from the repository.
-Include first-read files, module boundaries, facts of record, common traps, areas where agents must not guess, and docs that must be updated after code changes.
+docs/                                      # Long-lived project documentation root
+  product                                 # Owns product goals, users, vocabulary, requirements, boundaries, and non-goals; update when product behavior, naming, UX contracts, accepted requirements, or future scope changes.
+    requirements                          # Owns accepted, implemented, candidate, rejected, or historical requirements with decision state labels such as Candidate, Proposed, Accepted, Rejected, or Implemented; update when scope, acceptance criteria, UX contracts, or decision state changes.
+    feature-roadmap                       # Owns optional candidate backlog/roadmap with decision state labels, sources, trigger conditions, constraints, and rollout order; update when candidate scope, decision state, or rollout order changes.
+
+  architecture                            # Owns architecture overview, C4 L1/L2, data model, config summary, security summary, deployment summary, and quality attributes; update when boundaries, responsibilities, state model, topology, major flows, or quality constraints change.
+    overview                              # Owns major modules, dependencies, boundaries, responsibility splits, and design principles; update when architecture boundaries or responsibilities change.
+    c4-system-context                     # Owns C4 L1 users, external systems, system boundary, and trust boundary; update when actors, external systems, or trust boundaries change.
+    c4-container                          # Owns C4 L2 apps, services, databases, queues, workers, and third-party containers; update when containers or runtime topology change.
+    c4-components                         # Owns C4 L3 component views for real containers or component groups; update when component boundaries, ownership, or important interactions change.
+    data-model                            # Owns entities, relationships, constraints, migrations, status definitions, enum semantics, and data ownership; update when schema, states, lifecycle semantics, or data dictionary entries change.
+    config                                # Owns config roots, profiles, schema, path rules, examples, environment expansion, removed names, and migrations; update when config fields, profile behavior, paths, defaults, or migrations change.
+    security                              # Owns authentication, authorization, secrets, data protection, destructive-operation safety, permissions, and threat model; update when safety, preview/confirmation, permissions, or trust behavior changes.
+    dynamic-login-flow                    # Owns one important runtime sequence, state transition, or cross-boundary flow; update when that flow changes.
+    deployment                            # Owns hosted environments, networks, runtime topology, deployment trust boundaries, and production layout; update when deployment topology or runtime architecture changes.
+    adr                                   # Owns Architecture Decision Records; add an ADR when a consequential architecture, technology, or policy decision is made.
+      0001-record-architecture-decisions
+
+  engineering                             # Owns setup, repo map, conventions, testing, debugging, release, migrations, and code locator; update when commands, workflow, build/package layout, migration guidance, tests, repo structure, or problem entry paths change.
+    setup                                 # Owns local setup, dependencies, environment variables, initialization, common failures, and local runtime layout; update when install, run, debug, env, or local path behavior changes.
+    testing                               # Owns test strategy, check commands, fixtures, coverage boundaries, and required regression themes; update when test commands, coverage expectations, or fixture profiles change.
+    release                               # Owns versioning, build/package steps, release defaults, approval, deployment handoff, and verification; update when packaging, release config, or release verification changes.
+    migrations                            # Owns database, config, data repair, and rollback migration guidance; update when schema, config, or data migration behavior changes.
+    repo-map                              # Owns system map: directory/module responsibilities, major feature distribution, entry points, and ownership; update when repo structure, module boundaries, feature locations, or entry points move.
+    code-locator                          # Owns problem-to-file entry index and change recipes; update after solving recurring or subtle problems with files involved, invariants/traps, and focused verification.
+
+  api                                     # Owns API contracts and direction rules; keep direction-specific auth, errors, examples, quotas, and adapters under the relevant direction; update when signatures, payloads, return types, errors, examples, events, webhooks, or upstream contracts change.
+    command-api                           # Owns optional local app command bridge; load framework-specific rules when applicable and update when command signatures, payloads, side effects, or safety behavior change.
+    provided                              # Owns interfaces this project exposes to callers: HTTP routes, RPC methods, SDK methods, events, webhooks, plugin hooks, schemas, and error contracts; facts of record are server routes/controllers, handlers, schemas, OpenAPI/AsyncAPI files, contract tests, and implementation tests; update when exposed routes, methods, SDKs, events, webhooks, schemas, errors, examples, or compatibility behavior change.
+    consumed                              # Owns upstream interfaces this project calls or depends on: backend services, third-party APIs, SDKs, payment/auth/map/email providers, vendor webhooks, and sibling services; facts of record are clients/adapters, upstream official docs, observed responses, fixtures, mocks, and integration tests; update when upstream contracts, adapters, auth, quotas, mocks, fixtures, or risks change.
+    openapi.yaml                          # Owns REST API machine-readable contract; update with REST paths, requests, responses, errors, and examples.
+    asyncapi.yaml                         # Owns event/message machine-readable contract; update with channels, payloads, producers, consumers, and compatibility notes.
+
+  operations                              # Owns monitoring, runbooks, incidents, rollback, and recovery procedures; update when logging, alerting, rollback, manual repair, partial-failure, or incident response changes.
+    rollback                              # Owns application, data, config, and post-rollback verification; update when recovery, undo, backup/restore, or partial-failure repair behavior changes.
+    monitoring                            # Owns metrics, logs, traces, dashboards, alerts, and thresholds; update when observability, logging, or alert behavior changes.
+    runbook-alert-name                    # Owns step-by-step operational procedure for one alert or scenario; update when manual action, escalation, or verification changes.
+    incident-YYYY-MM-DD-title             # Owns incident record: timeline, impact, root cause, fix, and prevention; add after notable incidents.
+
+  ai                                      # Owns agent rules, first-read map, question routing, and gotchas; update when repeated AI mistakes, retrieval paths, guardrails, or docs routing changes.
+    prompts                               # Optional reusable AI prompts; keep only when actually reused. Not a facts-of-record area.
+      doc-audit                           # Owns reusable human/CI/agent documentation audit prompt; must not contain project truth; update when audit output expectations or docs impact categories change.
+      adr-writer                          # Owns reusable ADR drafting prompt; must not contain project truth; update when ADR format or decision workflow changes.
+    evals                                 # Optional reusable documentation evals; keep only when actually reused. Not a facts-of-record area.
+      doc-freshness                       # Owns reusable eval for whether agents can answer project questions from current docs and code; update when questions, expected source docs, or facts of record change.
+
+  ownership                               # Owns owners, update cadence, facts of record, and stale-document review rules; update when ownership, review cadence, or canonical fact sources change.
+  changelog                               # Owns user-visible changes, migrations, breaking changes, and release notes; update for releases, breaking changes, migrations, and user-visible behavior changes.
 ```
 
-```text
-Draft an ADR for the following technical decision.
-Include Status, Context, Decision, Alternatives, Consequences, Migration, and Follow-up.
-Explain why the decision was made; do not repeat low-level implementation details.
-```
+## Cross-Cutting Change Rule
 
-```text
-Check whether documentation matches the codebase.
-Focus on setup commands, environment variables, API examples, config options, directory descriptions, and test commands.
-Output mismatches, evidence locations, and recommended fixes.
-```
+Start from the owning node named in the Annotated Structure. When a change crosses boundaries, update each affected owner in the same change instead of copying the same facts into multiple places.
+
+- API behavior changes may affect API docs, machine-readable contracts, examples, tests, and changelog entries.
+- Config schema, profile, path, or default changes may affect architecture config docs, engineering setup/migration docs, examples, and tests.
+- Destructive-operation, permission, preview, confirmation, or rollback behavior may affect architecture security docs, operations rollback docs, API safety notes, and tests.
+- Architecture boundary, runtime topology, or responsibility changes may affect architecture overview, C4 views, deployment or operations docs, and ADRs when the decision is consequential.
+- Local setup, build, packaging, release, or test workflow changes may affect engineering docs and the repository README when the project entry point changes.
+- Framework-specific command or API bridge changes must load the relevant rule file, such as `rules/tauri-command-api.md`, before updating API docs and wrappers.
+- Future-work suggestions belong in product requirements or roadmap docs with decision status until accepted or implemented; promote only stable resulting facts into current-fact docs.
+- Repeated AI mistakes or retrieval failures belong in `docs/ai.md`; duplicated cross-topic facts should be moved to their owning docs and removed from helper prose.
+
+## Repo Map And Code Locator Rule
+
+Keep structural navigation and problem-first navigation separate when both are useful.
+
+`repo-map` is the system map. It helps an agent understand the codebase shape before making changes.
+
+`code-locator` is the problem entry index. It answers: for this issue or workflow, where should I look first, what invariant must not break, and what focused check should I run?
+
+## Future Work Promotion Rule
+
+Future work, backlog, optional providers, rollout advice, and candidate ideas must stay out of current-fact docs until accepted or implemented.
+
+When a candidate becomes accepted or implemented, promote only the stable resulting facts into the owning current-fact nodes. Leave historical candidate context in `product/requirements`, `product/feature-roadmap`, or an ADR.
+
+## Framework-Specific Rules
+
+For Tauri desktop apps, load `rules/tauri-command-api.md` before creating or updating Tauri command API documentation.
