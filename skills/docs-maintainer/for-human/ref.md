@@ -2,7 +2,7 @@
 
 Reference date: 2026-05-04
 
-This file is for humans maintaining `ai-project-docs-maintainer`. It lives under `for-human/` because it is not part of the runtime skill instructions and should not be copied wholesale into `SKILL.md`.
+This file is for humans maintaining `docs-maintainer`. It lives under `for-human/` because it is not part of the runtime skill instructions and should not be copied wholesale into `SKILL.md`.
 
 ## Why This File Exists
 

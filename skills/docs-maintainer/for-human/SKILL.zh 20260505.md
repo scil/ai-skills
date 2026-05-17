@@ -1,6 +1,6 @@
 # AI 时代项目文档结构模板（中文人类阅读版）
 
-这个文件是 `ai-project-docs-maintainer/SKILL.md` 的等价中文版本，只供人类阅读，因此放在 `for-human/` 目录下。真正给 AI Agent 执行的技能说明以英文 `SKILL.md` 为准。
+这个文件是 `docs-maintainer/SKILL.md` 的等价中文版本，只供人类阅读，因此放在 `for-human/` 目录下。真正给 AI Agent 执行的技能说明以英文 `SKILL.md` 为准。
 
 ## 目标
 

@@ -1,5 +1,5 @@
 ---
-name: ai-project-docs-maintainer
+name: docs-maintainer
 description: Create, organize, audit, or maintain an AI-agent-first software project documentation system. Use when an AI agent needs to scaffold a docs/ structure, prepare agent-readable project context, define documentation facts of record, add C4 architecture docs, create ADR/API/runbook documentation, or review code changes for documentation impact.
 ---
 
@@ -28,10 +28,11 @@ Use the path that matches the task.
 
 1. Inspect the code or architecture change, affected source files, existing docs, tests, and recent diffs.
 2. Start from the owning nodes in the Annotated Structure and update only the affected docs.
-3. Keep volatile implementation details close to code and schemas; link to them instead of duplicating them across prose docs.
-4. When a change crosses boundaries, update each affected owner in the same change.
-5. Record consequential architecture, technology, or policy decisions as ADRs.
-6. Validate changed docs with the available project checks.
+3. If an implemented change introduces a new concept, domain term, UI label category, config/API name, status, role, or grouping, add it to the owning vocabulary, glossary, data dictionary, or API/config documentation.
+4. Keep volatile implementation details close to code and schemas; link to them instead of duplicating them across prose docs.
+5. When a change crosses boundaries, update each affected owner in the same change.
+6. Record consequential architecture, technology, or policy decisions as ADRs.
+7. Validate changed docs with the available project checks.
 
 ## File-First Split Rule
 
@@ -45,8 +46,8 @@ When splitting, do not create a directory `README.md` by default. The directory 
 
 - Treat code, schemas, tests, deployment files, and ADRs as facts of record.
 - Make the repository `README.md` and `docs/ai.md` short, current, and highly linkable; do not create separate index or context-map files unless the project explicitly asks for them.
-- Keep one canonical AI first-read list. Keep AI-specific first-read links, question routing, agent operating rules, and gotchas in `docs/ai.md` by default.
-- Keep `docs/ai/prompts/` and `docs/ai/evals/` for reusable task assets. Do not move project facts, agent rules, first-read routing, or gotchas there.
+- Keep one canonical `docs/ai.md` for project-specific navigation anchors, routing pointers, agent operating rules, and gotchas. Do not make its entry-point list a required reading list.
+- Keep `docs/ai/prompts/` and `docs/ai/evals/` for reusable task assets. Do not move project facts, agent rules, navigation anchors, routing pointers, or gotchas there.
 - Keep C4 L1 and L2 stable and hand-maintained; use C4 L3 for complex containers, and use C4 L4 only for code structures that cannot be understood locally.
 - Keep future work out of current-fact docs until accepted or implemented. Store optional libraries, provider candidates, rollout advice, and backlog notes under product requirements or an ADR with explicit decision status.
 - Write ADRs for consequential architecture, technology, or policy decisions, not routine implementation details.
@@ -103,7 +104,7 @@ docs/                                      # Long-lived project documentation ro
     runbook-alert-name                    # Owns step-by-step operational procedure for one alert or scenario; update when manual action, escalation, or verification changes.
     incident-YYYY-MM-DD-title             # Owns incident record: timeline, impact, root cause, fix, and prevention; add after notable incidents.
 
-  ai                                      # Owns agent rules, first-read map, question routing, and gotchas; update when repeated AI mistakes, retrieval paths, guardrails, or docs routing changes.
+  ai                                      # Owns compact project navigation anchors, routing pointers, agent operating rules, and gotchas; update when agent rules, navigation anchors, retrieval paths, repeated AI mistakes, guardrails, or docs routing changes. Use templates/docs-ai.md as the starter shape.
     prompts                               # Optional reusable AI prompts; keep only when actually reused. Not a facts-of-record area.
       doc-audit                           # Owns reusable human/CI/agent documentation audit prompt; must not contain project truth; update when audit output expectations or docs impact categories change.
       adr-writer                          # Owns reusable ADR drafting prompt; must not contain project truth; update when ADR format or decision workflow changes.
@@ -123,6 +124,7 @@ Start from the owning node named in the Annotated Structure. When a change cross
 - Destructive-operation, permission, preview, confirmation, or rollback behavior may affect architecture security docs, operations rollback docs, API safety notes, and tests.
 - Architecture boundary, runtime topology, or responsibility changes may affect architecture overview, C4 views, deployment or operations docs, and ADRs when the decision is consequential.
 - Local setup, build, packaging, release, or test workflow changes may affect engineering docs and the repository README when the project entry point changes.
+- New concepts or terms may cross documentation boundaries; route them through the owning glossary, data model, API/config docs, or AI gotchas as appropriate.
 - Framework-specific command or API bridge changes must load the relevant rule file, such as `rules/tauri-command-api.md`, before updating API docs and wrappers.
 - Future-work suggestions belong in product requirements or roadmap docs with decision status until accepted or implemented; promote only stable resulting facts into current-fact docs.
 - Repeated AI mistakes or retrieval failures belong in `docs/ai.md`; duplicated cross-topic facts should be moved to their owning docs and removed from helper prose.
@@ -134,6 +136,10 @@ Keep structural navigation and problem-first navigation separate when both are u
 `repo-map` is the system map. It helps an agent understand the codebase shape before making changes.
 
 `code-locator` is the problem entry index. It answers: for this issue or workflow, where should I look first, what invariant must not break, and what focused check should I run?
+
+## Templates
+
+Use `templates/docs-ai.md` as the starter template for project `docs/ai.md` files. Keep the generated file short, project-specific, and navigational: it should point to the owning documentation system rather than duplicate product, architecture, API, config, safety, testing, repo-map, or code-locator facts.
 
 ## Future Work Promotion Rule
 
