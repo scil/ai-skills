@@ -1,0 +1,4 @@
+interface:
+  display_name: "Obsidian Vault Ops"
+  short_description: "Author notes and wire plugin-driven buttons in an Obsidian vault"
+  default_prompt: "Use $obsidian-vault-ops to author Obsidian notes or wire a control-panel note whose buttons run project commands."
