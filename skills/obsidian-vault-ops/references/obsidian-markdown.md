@@ -96,9 +96,54 @@ has none, keep it minimal — `tags` plus one or two facts that would be useful 
 - **Tables**: Obsidian (and some linters) reformat table column widths on save. Do not be surprised
   when a table you wrote comes back re-padded — it is cosmetic.
 
-## Editing existing notes
+## Creating and editing note files
 
-- Users reorganize between sessions. **Confirm the file exists at the expected path before editing**;
-  if the edit fails, search the vault by name rather than recreating the note.
-- Preserve the user's own edits. If a note has changed since you wrote it (new lines, reworded
-  content), work around their changes rather than overwriting the file wholesale.
+### Where the file goes
+
+Follow the vault's existing shape rather than imposing one. Look before writing:
+
+```powershell
+Get-ChildItem "<vault>" -Recurse -Filter "*.md" | Select-Object -First 20 FullName
+```
+
+If notes are grouped in per-project folders, put yours in the matching folder and use the short
+local name (`控制台.md` inside `Carema-Kis-AI/`) rather than a globally-qualified one
+(`Carema-Kis-AI 控制台.md` at the root). Users reorganize toward this shape on their own; matching
+it up front avoids a later move that breaks links.
+
+### Filenames
+
+- Spaces, CJK, `·`, `—` are all fine and common in vaults.
+- **Avoid `# ^ [ ] |`** — they are meaningful in wikilinks and heading anchors, and a filename
+  containing them cannot be linked cleanly.
+- `/` and `\` are path separators, and Windows additionally forbids `: * ? " < >`.
+- The filename *is* the note's identity for `[[wikilinks]]`. Renaming breaks every hand-written link
+  to it; if you rename, grep the vault for the old name and fix the referrers.
+
+### Encoding
+
+Plain UTF-8, **no BOM**. (The BOM requirement in `windows-scripts.md` applies to `.ps1` files
+executed by `powershell.exe`, not to notes.)
+
+### Editing while Obsidian is running
+
+Unlike `.obsidian/**/data.json` — which must never be touched while the app runs — **note files are
+safe to edit externally**. Obsidian watches the vault and reloads changed files.
+
+Still:
+
+- **Prefer targeted edits over wholesale rewrites** of a note the user may have open. A rewrite
+  discards anything they changed since you last read it.
+- **Re-read before editing** if time has passed. Notes get moved, renamed, and hand-edited between
+  turns; an edit that fails with "file does not exist" usually means the note moved, not that it is
+  gone. Search by name before recreating it — recreating produces a duplicate and orphans the links.
+- **Expect cosmetic reformatting.** Obsidian and Markdown linters re-pad table columns and normalize
+  spacing on save. A table coming back with different column widths is not a conflict; do not
+  "fix" it.
+- Preserve the user's own content. If they added lines to something you wrote, work around their
+  additions rather than reverting to your version.
+
+### Companion notes
+
+When adding a note that belongs with an existing one, **edit the existing note too** to link back.
+One-directional links rot — the new note is discoverable only if something points at it.

@@ -1,14 +1,18 @@
 ---
 name: obsidian-vault-ops
-description: Use when working inside an Obsidian vault - authoring or restructuring notes, building dashboard/control-panel notes with clickable buttons, wiring notes to shell commands or scripts, or configuring community plugins by writing their data.json directly. Trigger for requests mentioning Obsidian, vault, callouts, wikilinks, "a note with buttons", the Buttons plugin, the Shell commands plugin, or "make a note that runs X".
+description: Use when creating or editing notes in a local Obsidian vault - writing primers, runbooks, decision records or reference docs, restructuring existing notes, and also building dashboard/control-panel notes whose buttons run shell commands, or configuring community plugins by writing their data.json directly. Trigger for requests mentioning Obsidian, vault, notes, callouts, wikilinks, "write this up as a note", "a note with buttons", the Buttons plugin, or the Shell commands plugin.
 ---
 
 # Obsidian Vault Ops
 
 Two kinds of work happen in a vault: **authoring** (notes a human reads) and **wiring** (notes that
-*do* things via plugins). Authoring is forgiving. Wiring is not: plugin config lives in JSON files
-that the running app owns, button actions are matched by exact string, and shell interpolation can
-execute arbitrary text. This skill encodes the failure modes that are invisible until they bite.
+*do* things via plugins).
+
+They fail differently. Authoring fails *softly* — the document is technically fine and simply does
+not land, usually because it was pitched at the wrong reader. Wiring fails *hard* — plugin config
+lives in JSON files the running app owns, button actions are matched by exact string, and shell
+interpolation can execute arbitrary text. This skill encodes both sets of failure modes, because
+both are invisible until they bite.
 
 ## Non-negotiable rules
 
@@ -47,15 +51,33 @@ too; if an existing note should link to the new one, add the link in both direct
 
 ### 2. Author
 
-Write Obsidian-flavored Markdown, not plain Markdown — callouts, wikilinks, collapsible sections and
-native Mermaid are what make a note feel native. See `references/obsidian-markdown.md`.
+**Decide the reader and the job before writing.** Who reads this, what vocabulary do they already
+have, and will they read it once to act or repeatedly to learn? A document pitched at the wrong
+level is the most common failure here, and it is only discovered after delivery. When the reader is
+new to the domain, establish the vocabulary in its own section first and reuse it throughout —
+do not sprinkle definitions inline as you go.
 
-High-value patterns:
-- **Collapsible callouts** (`> [!tip]- title`) for reference material that would otherwise bury the
-  actionable content — memos, glossaries, self-test answers.
-- **Wikilinks with heading anchors** (`[[Note#Heading]]`) so a dashboard can point at the exact
-  explanation instead of a whole document.
-- **Backlink both ways** when adding a companion note.
+Then pick a structure that fits the job (`references/document-design.md` has the full patterns):
+
+| Job | Shape |
+|---|---|
+| Teach a domain | cast → concept cards → architecture (naive, then real) → incidents → methodology → folded self-test → glossary |
+| Run something | actions first, every reference table folded underneath |
+| Record a decision | context → options → choice → **why the others were rejected** |
+
+Write Obsidian-flavored Markdown, not plain Markdown (`references/obsidian-markdown.md`):
+
+- **Collapsible callouts** (`> [!tip]- title`) for anything the reader does not need on first pass —
+  glossaries, cheat sheets, self-test answers. They make a long note read like a short one.
+- **Wikilinks with heading anchors** (`[[Note#Heading]]`) so a dashboard points at the exact
+  explanation rather than a whole document.
+- **Native Mermaid** (```` ```mermaid ````) for architecture; show the design that failed before the
+  one that works.
+- **Backlink both ways** when adding a companion note — one-directional links rot.
+
+File-level care: match the vault's existing folder shape and naming, avoid `# ^ [ ] |` in filenames,
+re-read before editing (notes get moved and hand-edited between turns), and prefer targeted edits
+over wholesale rewrites of a note the user may have open.
 
 ### 3. Wire (only if button/automation plugins are installed)
 
@@ -116,6 +138,10 @@ green result proves the whole chain without side effects.
 
 | Anti-pattern | Why it fails |
 |---|---|
+| Writing a document without deciding its reader | Ends up pitched at the writer, i.e. at nobody |
+| Terms used before they are defined | Reader bounces in paragraph three |
+| Wholesale rewrite of a note the user may have edited | Discards their changes |
+| Recreating a note whose edit failed | It moved, not vanished — you just made a duplicate |
 | Writing plugin config while Obsidian runs | Overwritten on next plugin save |
 | `{{selection}}` in a cmd.exe command | No escaper; text becomes executable |
 | Guessing a plugin's config schema | Silent load failure or reset settings |
@@ -126,8 +152,10 @@ green result proves the whole chain without side effects.
 
 ## References
 
+- `references/document-design.md` — reader calibration, document structures (primer / runbook /
+  decision record), and the patterns that make a note worth returning to.
 - `references/obsidian-markdown.md` — callouts, wikilinks, embeds, Mermaid, frontmatter, `file:///`
-  links and their encoding traps.
+  encoding traps, plus filenames, encoding and safe external editing.
 - `references/plugin-config.md` — the data.json protocol, schema-extraction recipes, and verified
   reference for Shell commands + Buttons.
 - `references/windows-scripts.md` — making scripts safe to call from a plugin on Windows.
