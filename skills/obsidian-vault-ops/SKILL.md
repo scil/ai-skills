@@ -104,8 +104,14 @@ Design rules that come from real breakage:
 - **Set `confirm_execution: true`** on anything destructive, irreversible, or physically noticeable
   (stops a service, plays audio in someone's home, deletes data).
 - **Route output by size**: `notification` for a line or two, `modal` for a report.
-- Details, exact schemas and the full data.json protocol: `references/plugin-config.md`.
-- Windows script pitfalls (`pause` hanging, `.ps1` encoding): `references/windows-scripts.md`.
+
+The usual shape of this work is a **project console** — one note grouping every recurring operation.
+`references/project-console.md` is the end-to-end recipe: deriving the button set from the project's
+own docs, grouping by intent, the per-button checklist, a note skeleton, the "scratch note as input"
+pattern, and what to re-verify when adding a button later.
+
+Exact schemas and the data.json protocol: `references/plugin-config.md`.
+Windows script pitfalls (`pause` hanging, `.ps1` encoding): `references/windows-scripts.md`.
 
 ### 4. Verify
 
@@ -156,6 +162,8 @@ green result proves the whole chain without side effects.
   decision record), and the patterns that make a note worth returning to.
 - `references/obsidian-markdown.md` — callouts, wikilinks, embeds, Mermaid, frontmatter, `file:///`
   encoding traps, plus filenames, encoding and safe external editing.
+- `references/project-console.md` — end-to-end recipe for a project console: button set, grouping,
+  per-button checklist, note skeleton, text-input pattern, maintenance.
 - `references/plugin-config.md` — the data.json protocol, schema-extraction recipes, and verified
   reference for Shell commands + Buttons.
 - `references/windows-scripts.md` — making scripts safe to call from a plugin on Windows.
