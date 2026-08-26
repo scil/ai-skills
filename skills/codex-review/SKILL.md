@@ -11,6 +11,20 @@ description: Review a change with the codex CLI and iterate until it reports not
 
 Stop when a round returns no findings **that belong to the change**. Findings about files outside the diff are reported to the user, not silently fixed (see [Findings that are not yours](#findings-that-are-not-yours)).
 
+### A loop that will not converge is telling you about the design
+
+Budget it: roughly **five rounds, then a confirming round**. Past that, stop reviewing and re-read the design, because a loop that keeps producing findings is rarely a change with many small faults — it is usually one wrong decision generating them.
+
+Measured, and the reason this section exists: a confirmation-flow change took **22 rounds and ~45 findings**, of which about **30 were a single class** (state describing the current user going stale) and **two** were defects no amount of self-review would have found. The class traced to one decision made before any code was written — moving a branch that needed to know "is this reader signed in" from the server to the client. Every stale-state finding was a consequence. Nine rounds of patching instances did not touch it.
+
+So the cheapest round is the one that reviews the **design**. When a change has a written design (an openspec `design.md`, an ADR, a plan), review that *before* implementing:
+
+```bash
+codex exec -s read-only "Review openspec/changes/<name>/design.md as a design, not as prose. What will be hard to get right, and what will keep going wrong?"
+```
+
+Ten minutes there is worth more than any later round: at that point the fix is a paragraph, not a refactor across a dozen files with tests to re-prove.
+
 ## Before the first round
 
 Run the local gate first. A review round costs minutes of wall clock; a failing unit suite costs seconds to find yourself, and spending a round on it wastes the round *and* delays the findings only codex will catch:
@@ -18,6 +32,14 @@ Run the local gate first. A review round costs minutes of wall clock; a failing 
 ```bash
 pnpm -F @porch/tanstack-start typecheck && pnpm -F @porch/tanstack-start lint && pnpm -F @porch/tanstack-start test
 ```
+
+**Run it unfiltered, and run it over every package the change touches.** A filter may add context; it may never drop a line. Piping the gate through `| Select-Object -Last 5` or `| Select-String "passed"` is how a lint error and a typecheck error both reached codex in one session and cost a round each — the command exits non-zero, the summary line says nothing, and a filtered tail shows only the tests that passed. If you want a summary, tee the whole output to a file and search that:
+
+```bash
+pnpm -F <pkg> typecheck 2>&1 | Tee-Object gate.log ; Select-String -Path gate.log -Pattern "error"
+```
+
+Narrowing the gate to "the package I edited" fails the same way, and more quietly: a change lands in the app, and the API package it imports from stops compiling.
 
 ## Invoking it
 
@@ -88,3 +110,10 @@ Such a finding never blocks convergence — the loop ends when nothing in the ch
 ## The trap that costs the most rounds
 
 A review names the **instance** it can see. Fixing exactly the region named, round after round, is what turns a three-round review into a nine-round one: in the shelf-row case, four consecutive rounds each reported a different dead click region, and each patch created the next one. On the **second** finding of the same shape, stop fixing the instance and find the rule that makes the whole class impossible.
+
+Two things make this harder to obey than it reads:
+
+- **The class wears a different costume every round**, so the shape is easier to see in your own notes than in the findings. "Stale after sign-in", "stale after navigating away", "stale across language variants", "stale after the session expires" arrive over four rounds looking like four bugs. Keep a one-line tally of what each round was ABOUT; when two lines rhyme, the next round is structural.
+- **Saying "this is the class fix" is not doing one.** The tell is what the patch touches: a class fix removes the possibility (key the component so stale state cannot survive; move the value out of the shared cache; tag in-flight work with a generation), where an instance fix adds a condition at the site named. If the diff is another `if` next to the last `if`, it is an instance fix wearing the word "structural".
+
+And when the structural move lands, **spend that round on it alone**. Mixing it with two more instance patches makes the next round's findings unattributable — you cannot tell what the structure fixed and what it did not.
