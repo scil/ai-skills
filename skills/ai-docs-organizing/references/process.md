@@ -24,7 +24,7 @@ One row per block of the contract:
 | an executable recipe | move to the doc that owns hands-on procedures, or delete if superseded (check the route/command it names still exists) | that doc |
 | an inventory of scripts/commands | delete — `ls` and `package.json` answer it | environment |
 | retired-environment history | one line each | contract + the doc that tells the story |
-| per-skill routing paragraphs | one line each; triggers belong in each skill's `description` | contract |
+| per-skill routing paragraphs | delete — each skill's `description` is its trigger, and the contract lists no skills; trace the meta-rule that produced the list (§7) | (none) |
 | a product rule with tests but no spec | a spec requirement written from the tests; one sentence + test name stays | spec |
 
 Then a rule-by-rule checklist (old line → new home) kept beside the change, so "every rule survived" is checkable rather than claimed.
@@ -63,7 +63,30 @@ Write the requirement from the shipped behaviour and the tests that prove it, an
 
 Write the table first, delete second, regenerate the index from the survivors, and check every survivor is indexed. Expect roughly half of a mature memory store to be bin a: the repo caught up with it.
 
-## 7. Reviewing the plan with the other agent
+## 7. Tracing a symptom to its source
+
+Questions to ask of every problem the inventory surfaces, with the command that answers each:
+
+| Question | How to answer |
+|---|---|
+| Which commit introduced this section or sentence? | `git log --format='%h %ad %an %s' --date=short -S'<heading or distinctive phrase>' -- <file>` — the oldest hit is the origin; read its diff for the rule that arrived with it |
+| Where else was the rule copied? | `git grep -n -i '<phrase>' -- <contract> <docs skill> <hooks> .gitignore`, plus the agent's memory directory (outside git: `Select-String` / `rg` there) |
+| Is a tool regenerating it? | look for `generatedBy`, a lock file, a CLI (`openspec`, a skills installer, TanStack Intent markers) — then change the generator's input and regenerate, never the output |
+| Is a hook nudging toward it? | read the hook script's regexes and the reason text it emits |
+| Did an event happen that nobody propagated? | `ls` the thing the sentence describes (the app, the route, the environment); check the commit that removed it for what it forgot |
+| What will make it regrow? | whatever answered the first question — a rule still standing, a generator unchanged, a memory still loaded |
+
+Kinds of source seen so far, and the fix for each:
+
+- **A meta-rule in the contract** ("routing stays here; skill files must not reference each other") → delete or invert it in the contract, and delete the ownership row it spawned in the docs skill, in one change; then remove the section it produced.
+- **A memory that enshrined a habit** ("a skill is not registered until listed in AGENTS.md") → delete the memory; its owner is now the docs skill.
+- **A recipe that outlived the environment** (a smoke script opening a route that no longer exists) → delete the recipe; the event that obsoleted it (the one-command dev environment) is already recorded where it happened.
+- **A removal nobody propagated** (an app deleted, its skill and two sentences kept) → delete the leftovers; the guard is the path-exists check in the inventory.
+- **A measurement in the wrong unit** (words, when the harness cuts by bytes) → change the unit, add the byte guard, re-count.
+
+The trace goes into the change's design or proposal, one line per source: *commit · rule · copies touched · guard added*.
+
+## 8. Reviewing the plan with the other agent
 
 ```bash
 codex exec -s read-only -c approval_policy="never" -c model_reasoning_effort="medium" \

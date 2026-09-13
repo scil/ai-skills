@@ -28,6 +28,17 @@ A procedural skill, not one lesson deep: it holds the norms and the process for 
 7. The contract carried a "Project Skills" section — one line to a paragraph per skill, ~3 KB — because its first version (2026-05-28) had ruled "routing stays here; skill files must not route to other skills", and the docs skill had turned that into an ownership row. Traced to the source and deleted the same day: descriptions carry triggers, the ignore manifest carries membership, the contract names no skill. The harness re-read the changed descriptions within the session. A first attempt moved the skills' *order* ("domain model → data layer → implementation") into three descriptions; the user cut it — that order was already a rule about the work in the contract, and restating it per skill only lengthened three always-loaded lines. → *The contract lists no skills; fix the meta-rule, not the list; a description is a trigger, not a workflow.*
    契约里有一节"Project Skills"，每个 skill 一行到一段，约 3 KB——因为第一版契约（2026-05-28）规定"路由只在这里，skill 不得互相引用"，文档 skill 又把它写成了归属规则。当天追到源头并删除：description 承担触发，忽略清单承担成员关系，契约不点任何 skill 的名。壳在会话内就重新读到了改后的 description。第一版尝试把 skill 的*顺序*写进三条 description，用户砍掉了——那个顺序本就是契约里关于工作的规则，逐个 skill 重述只是让三行常驻文字变长。→ *契约不列 skill；改元规则，不改清单；description 是触发条件，不是工作流。*
 
+## The trace, in the format the skill asks for / 追溯记录
+
+| Symptom | Source (commit · rule) | Copies touched | Guard |
+|---|---|---|---|
+| `## Project Skills`, ~3 KB, one line to a paragraph per skill, regrowing with every skill added | `7d40898` (2026-05-28, the contract's first commit) · "Keep project skill routing in this section; skill files describe only their own scope and do not route to other skills" | the contract's meta-rule (deleted); `local-docs-maintainer` Ownership Map row "skill routing → AGENTS.md" (replaced by rows for description / ignore manifest / overlay); memory "a skill is not registered until listed" (deleted); the hard-coded name list in the link script (now reads `.gitignore`) | the byte-budget test; the harness re-reading descriptions is the mechanism itself |
+| `apps/nextjs` "exists, scheduled for removal" + a skill kept for it | the commit that removed the app propagated nothing | two sentences and the skill + lock entry (deleted) | inventory step: `ls` what a sentence describes |
+| a smoke recipe opening `/signup` | predates the one-command dev environment; the route was renamed later | the recipe (deleted) | none needed — the environment is the truth |
+| a diet planned in words | the plan measured the wrong unit | re-measured in bytes | the byte-budget test |
+
+症状 → 源头（提交·规则）→ 触及的副本 → 守卫：这是 skill 要求的追溯格式；上表是本次的实例。
+
 ## How to maintain / 怎么维护
 
 Keep `SKILL.md` a router with the principles and the process; put per-harness facts in `references/harness-loading.md` with the date they were verified, and templates in `references/process.md`. When a harness changes its loading rules, update the table and re-run the probe; when a new organizing round finds a new failure mode, add the rule here with its incident.

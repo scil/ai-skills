@@ -1,6 +1,6 @@
 ---
 name: ai-docs-organizing
-description: Organize the documents AI agents consume — instruction files (AGENTS.md / CLAUDE.md), skills, hooks, and per-agent memory — so that every agent working in a repository actually receives the contract, within its harness's budget, with each fact in one owner. Use when auditing or reorganizing a project's AI docs, when a second agent or harness joins a repo (Claude Code beside Codex or the reverse), when an instruction file has grown past ~25 KB, when an agent keeps missing a rule that is "written down", or before adding a skill or an AGENTS.md section. Covers measuring what each harness loads and where it silently stops, the byte budget and its guard, always-loaded versus pointer-reached material, what belongs in memory versus the repo, the diet procedure, and reviewing the plan with the other agent before editing.
+description: Organize the documents AI agents consume — instruction files (AGENTS.md / CLAUDE.md), skills, hooks, and per-agent memory — so that every agent working in a repository actually receives the contract, within its harness's budget, with each fact in one owner. Use when auditing or reorganizing a project's AI docs, when a second agent or harness joins a repo (Claude Code beside Codex or the reverse), when an instruction file has grown past ~25 KB, when an agent keeps missing a rule that is "written down", or before adding a skill or an AGENTS.md section. Covers measuring what each harness loads and where it silently stops, the byte budget and its guard, always-loaded versus pointer-reached material, what belongs in memory versus the repo, the diet procedure, tracing each problem to the rule, tool or habit that produced it so source and symptom are fixed together, and reviewing the plan with the other agent before editing.
 ---
 
 # Organizing the documents agents read
@@ -33,8 +33,21 @@ Never assume either from documentation alone. **Probe**: ask the agent, with fil
 3. **Verify every claim against the tree** and tag its provenance: `[repo]`, `[user-config]`, `[external-local]`, `[runtime]` (with the probe), `[session]` (one observation, dated). A plan built on an unverified number sends the wrong block to the wrong owner.
 4. **Review the plan with the other agent before editing** — a read-only design review (`codex-review` skill: `codex exec -s read-only`, "review as a design and as claims"). The other harness knows its own loading model; it will catch the one you got wrong. Verify each finding yourself; reject with evidence.
 5. **Decide a disposition per block**: stay (compressed) · move to an existing owner · delete because the environment is the truth · delete because stale. Amend the ownership map deliberately if a new owner is needed; never invent one to legalize a move.
+   **For every problem the inventory surfaces, trace its source before disposing of it** (next section): the block you are about to delete was put there by a rule, a tool, or a habit that is still running.
 6. **Execute in order**: the byte-budget guard first, so it goes red on the old contract; specs for rules that lived only in the contract, written from *shipped behaviour and its tests*, never from the prose (the prose is the stale party); the contract rewrite under budget; skills; hooks; memory triage; the user-level preference file.
 7. **Prove**: guard green, probe again (the last heading is the file's last heading, no mid-sentence cut), the project's full gate, and a rule-by-rule checklist showing every original rule's new home.
+
+## Source and symptom — fix both
+
+A stale sentence, a duplicated fact, a section that keeps regrowing: each is a **symptom**, and something produced it — a rule that says "put X here", a tool that generates it, a hook that nudges toward it, a memory that enshrined it, or an event nobody propagated (an app deleted, an environment retired). Deleting the symptom alone means meeting it again in a month; fixing the source alone leaves every instance it already produced. Do both, in the same change ([`references/process.md`](references/process.md) §7):
+
+1. **Name the producer.** For a section: `git log -S'<its heading or key phrase>' -- <file>` finds the commit that introduced it; read that commit's message and diff for the rule that came with it. For a duplicated fact: `git grep` the phrase across the contract, the docs skill, memories, hook scripts and `.gitignore` comments — every copy is a place the rule propagated to.
+2. **Fix the source where it was first written** — delete or invert the meta-rule, change the generator's input, retire the memory — and fix every copy in the same change, or the rule re-propagates from the copy you missed.
+3. **Fix the symptom too**: the existing instances the source already produced.
+4. **Add a guard where one can exist** (a byte budget, a path-exists check, a test that reads the file): a corrected rule regrows without one.
+5. **Record the trace** (commit, rule, every copy touched) in the change, so the next reader can tell a decision from a leftover.
+
+Worked example in [`readme.md`](readme.md): a skills section in the contract, traced to the meta-rule in the contract's first commit and to an ownership row it had spawned in the docs skill; both deleted, the section removed, the rule recorded here.
 
 ## Skills, hooks, memory
 
