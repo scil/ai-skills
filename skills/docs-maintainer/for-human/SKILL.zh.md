@@ -1,5 +1,7 @@
 # AI Agent 项目文档系统
 
+> 2026-09-13 起落后于英文版：英文 `SKILL.md` 已瘦身为路由器（原则 + 四条路径 + 拆分规则），结构树、作图规则、交叉变更规则分别移入 `references/structure.md`、`references/diagramming.md`、`references/cross-cutting.md`，并新增"接管既有系统"与"过期审计"两条路径和 `templates/ownership-map.md`。本文仍按旧结构写，待重译。
+
 ## 目的
 
 使用这个技能来创建和维护以 AI 编程 Agent 为第一读者的项目文档。人类可读性仍然重要，但这套文档系统首先要让项目事实可发现、稳定、可链接，并且让 Agent 可以安全使用。
