@@ -25,6 +25,8 @@ A procedural skill, not one lesson deep: it holds the norms and the process for 
 4. The contract carried recipes, inventories and history beside its rules. → *Information hierarchy; the environment is truth.*
 5. The plan's own numbers were partly wrong. → *Verify claims, tag provenance, review with the other agent before editing.*
 6. Prose had drifted from tests. → *Specs from shipped behaviour, never from the prose.*
+7. The contract carried a "Project Skills" section — one line to a paragraph per skill, ~3 KB — because its first version (2026-05-28) had ruled "routing stays here; skill files must not route to other skills", and the docs skill had turned that into an ownership row. Traced to the source and inverted the same day: descriptions carry trigger and ordering, the ignore manifest carries membership, the contract names no skill. The harness re-read the changed descriptions within the session. → *The contract lists no skills; fix the meta-rule, not the list.*
+   契约里有一节"Project Skills"，每个 skill 一行到一段，约 3 KB——因为第一版契约（2026-05-28）规定"路由只在这里，skill 不得互相引用"，文档 skill 又把它写成了归属规则。当天追到源头并反转：description 承担触发与顺序，忽略清单承担成员关系，契约不点任何 skill 的名。壳在会话内就重新读到了改后的 description。→ *契约不列 skill；改元规则，不改清单。*
 
 ## How to maintain / 怎么维护
 
