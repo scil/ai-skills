@@ -57,6 +57,17 @@ Worked example in [`readme.md`](readme.md): a skills section in the contract, tr
 - **Memory triage, four bins**: already owned in the repo → delete or pointer; a project fact the repo lacks → write it into its owner, then delete; a preference about that agent's own behaviour → keep; stale → delete. Regenerate the index from what survives.
 - **User-level preferences live in one file** — where the harness without an import syntax reads natively — imported by the other harness's file, and sized as part of the shared budget (≤ 4 KiB when the cap is 32 KiB).
 
+## Slimming a skill, and folding a fork back
+
+A skill body is loaded on trigger, not every turn, so its budget is attention, not bytes: the reason to slim is that steps buried under reference get skipped. The ladder is the same as the contract's ([`references/process.md`](references/process.md) §9):
+
+- **Commit the pending state first** when the file carries someone else's uncommitted edits — theirs as their commit, the rewrite as its own — so the diff of the slim is the slim.
+- **Router = principles that change behaviour + paths that end on a done-criterion + the split rule + a references list.** Large blocks (a structure tree, a diagramming rule set, a cross-cutting checklist) move **verbatim** into one-level-deep references — nothing rewritten in transit, so nothing is lost and the move is reviewable.
+- **A word count is a guideline, not the goal.** Stop when every remaining sentence changes what the agent does; cutting a rule to hit a number is the failure. Report the number you landed on, not the one you aimed at.
+- **Check every pointer after the split** — a moved section breaks the links that named it — and put the old-section → new-home map in the commit message when the change has no design doc.
+- **A human-language mirror lags after a restructure**: mark it in its header with *how* it lags; retranslating is its own task, never a side effect.
+- **A project-local fork of a shared skill drifts.** Fold the generic value back into the shared skill (its Adopting path, its templates), move the project-specific owners into a project doc the agents read (an ownership map), delete the fork, and link the shared skill in; the harness lists it the moment the junction exists.
+
 ## Anti-patterns
 
 Raising the byte limit instead of dieting (restores text, not attention). A brake written in prose. A spec written from the contract's prose instead of the tests. Two copies of a generated skill. Junction creation wired into `prepare`. A code-locator entry that has grown into an essay — the invariant stays, the rationale goes to the spec it cites. A plan whose numbers nobody re-counted.

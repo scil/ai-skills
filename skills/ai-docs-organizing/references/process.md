@@ -98,3 +98,17 @@ codex exec -s read-only -c approval_policy="never" -c model_reasoning_effort="me
 ```
 
 Round 2 asks it to mark each round-1 finding ADDRESSED / PARTLY / NOT and hunt new problems. Verify every finding yourself; a finding that checked the wrong path is rejected with the right path. Two rounds usually converge for a plan; a loop that does not is telling you the design is wrong (`codex-review`).
+
+## 9. Slimming a skill into a router plus references
+
+1. **Land pending edits first.** `git status` the skill's directory; if someone else's uncommitted changes sit in the file, commit them as their own change before rewriting — the slim's diff must contain only the slim.
+2. **Classify every section** as *step* (what the agent does, in order), *in-file reference* (rules consulted on demand by every path), or *disclosed reference* (needed by some paths only, or large). Only the first two stay in `SKILL.md`.
+3. **Move disclosed blocks verbatim** into `references/<topic>.md`, one level deep, one topic per file (a structure tree; a diagramming rule set; a cross-cutting checklist plus the small rules that only apply on that path). Fold tiny standalone sections (a "framework rule", a "location rule") into the path that uses them as one sentence plus a pointer.
+4. **Write the router**: a two-line purpose; principles — only the ones that change behaviour, each one paragraph; the split rule; the paths, each a numbered list of steps ending on a *done when …* line, the most common path first; a references-and-templates list. The description stays the trigger list; the body stops restating triggers.
+5. **Apply the no-op test** sentence by sentence: delete what a current model does unprompted ("prefer clear headings"). The test is model-relative — settle a disagreement by running the skill, not by debate.
+6. **Check every pointer** in the router and the references resolves (`Test-Path` each relative link); a moved section breaks the links that named it.
+7. **Record the old-section → new-home map** in the change's design doc or, when there is none, in the commit message body, one line per section, naming any sentence deliberately dropped and why.
+8. **Mark human mirrors** (`for-human/*.zh.md`) as lagging, in their own header, with the shape of the lag; do not retranslate as a side effect.
+9. **Report the landed number honestly.** A 500–700-word target is a guideline; a router of 900 words in which every sentence is a rule, a step, or a done-criterion has met the goal, and a 600-word router that dropped a rule has not.
+
+Folding a drifted project-local fork back into the shared skill is the same move at the skill-set level: generic rules and templates go up into the shared skill; the project's owners by name go into a project doc its agents read (an ownership map, pointed at from the contract); the fork is deleted; the shared skill is linked in through the ignore manifest. Every reference to the fork (hooks' reason text, in-flight change tasks) is updated in the same commit; archived history is left alone.
