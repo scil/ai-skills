@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Docs Organizing"
+  short_description: "Organize the documents agents read, per harness budget"
+  default_prompt: "Use $ai-docs-organizing to inventory, measure, and reorganize this repository's AGENTS.md / CLAUDE.md, skills, hooks and memory for every agent that works here."
