@@ -1,6 +1,6 @@
 ---
 name: docs-maintainer
-description: Create, organize, audit, or maintain an AI-agent-first software project documentation system. Use when an AI agent needs to scaffold a docs/ structure, prepare agent-readable project context, define documentation facts of record, add C4 architecture docs, create ADR/API/runbook documentation, or review code changes for documentation impact.
+description: Create, organize, audit, or maintain an AI-agent-first software project documentation system. Use when an AI agent needs to scaffold a docs/ structure, route facts into a documentation system the project already has (an agent contract, a spec system, a plan doc) instead of building a parallel tree, decide where a durable fact belongs, prepare agent-readable project context, define documentation facts of record, add C4 architecture docs, create ADR/API/runbook documentation, review code changes for documentation impact, or audit docs for staleness.
 ---
 
 # AI Agent Project Documentation System
@@ -18,11 +18,29 @@ Use the path that matches the task.
 ### Creating Documentation
 
 1. Inspect the repository shape, source code, existing docs, API contracts, deployment files, tests, and examples.
-2. Identify facts of record: source code, schemas, tests, ADRs, deployment config, API specs, runbooks, and product glossary.
-3. Choose owning nodes from the Annotated Structure, then apply the File-First Split Rule.
-4. Create the smallest useful documentation structure. Do not scaffold empty folders or many tiny files that the project cannot maintain.
-5. Prefer stable, agent-readable docs with clear headings, short sections, explicit links, and unambiguous ownership.
-6. Validate documentation with available checks such as Markdown lint, link checks, spell checks, OpenAPI/AsyncAPI validation, diagram rendering, or repo-specific CI.
+2. If this is the first time this documentation system is being created in the repository (no existing `docs/` tree), ask the user whether the documentation should live in the in-repo `docs/` tree or in a local Obsidian vault. Keep exactly one location; do not create both. If the user picks a vault, load the `obsidian-vault-ops` skill, create the Annotated Structure inside the vault instead of `docs/`, and leave a single short pointer note in the repository (for example in the repository `README.md` or `docs/ai.md`) recording the vault name and folder so later agents can find it. If the user picks `docs/`, or if a `docs/` tree already exists, proceed with the in-repo `docs/` tree only and do not ask again in this session.
+3. Identify facts of record: source code, schemas, tests, ADRs, deployment config, API specs, runbooks, and product glossary.
+4. Choose owning nodes from the Annotated Structure, then apply the File-First Split Rule.
+5. Create the smallest useful documentation structure. Do not scaffold empty folders or many tiny files that the project cannot maintain.
+6. Prefer stable, agent-readable docs with clear headings, short sections, explicit links, and unambiguous ownership.
+7. Add PlantUML diagrams for architecture, key runtime flows, and hard-to-follow nodes per the Diagramming rules below.
+8. Validate documentation with available checks such as Markdown lint, link checks, spell checks, OpenAPI/AsyncAPI validation, diagram rendering, or repo-specific CI.
+
+### Adopting An Existing System (route, do not scaffold)
+
+Most repositories that already run agents have a documentation system before this skill arrives: an agent contract (`AGENTS.md` / `CLAUDE.md`), a requirements or spec system (OpenSpec or similar), a plan or product doc, package code whose types *are* the API contract. Do not create the Annotated Structure beside them — a parallel tree gives every fact two owners.
+
+1. Build an **Ownership Map** first (`templates/ownership-map.md`): one row per fact type → the owner that already exists → notes. Walk every node of the Annotated Structure and either map it to an existing owner or mark it deliberately skipped, with the reason, so the skip reads as a decision and not an omission.
+2. Typical mappings: `ai` → the agent contract (no `docs/ai.md`; nested contracts are thin pointers upward) · `product/requirements` and `architecture/adr` → the spec system (a change's design doc is the ADR) · `architecture` → one hand-maintained C4 L1/L2 file, no L3/L4 subtree · `api` → the code, when routers, validators and shared types are the contract (no `docs/api/`) · `engineering/setup` and `testing` → the contract's command and testing sections · `engineering/code-locator` → one curated file · `product` → the plan doc · `operations` and `changelog` → skipped until incidents or releases exist.
+3. Add a new file only when no owner fits and the File-First Split Rule justifies it, and follow the repository's existing human-docs convention (its folder naming, numbering, language) rather than this skill's node names.
+4. Mark prose that mirrors code as **code-wins**: when the two disagree, the code is the fact of record and the prose is corrected in the same change.
+
+### Auditing For Staleness
+
+1. Check each owner against current code, schemas, and tests as facts of record; flag prose that contradicts code rather than trusting the prose.
+2. Verify that every path, route, command, and file a doc names still exists (`ls` it); a sentence about something that is gone is the most common stale fact.
+3. Refresh a `<!-- Last reviewed: YYYY-MM-DD -->` marker whenever an owner is revised; a marker older than the code it describes is a queue.
+4. Move any fact duplicated across owners back to its single owner and delete the copies; when a section keeps regrowing or a fact keeps reappearing, trace what produces it (a rule, a tool, a habit) and fix that too — `ai-docs-organizing` → "Source and symptom".
 
 ### Updating Documentation
 
@@ -32,7 +50,8 @@ Use the path that matches the task.
 4. Keep volatile implementation details close to code and schemas; link to them instead of duplicating them across prose docs.
 5. When a change crosses boundaries, update each affected owner in the same change.
 6. Record consequential architecture, technology, or policy decisions as ADRs.
-7. Validate changed docs with the available project checks.
+7. Update or add PlantUML diagrams in the same change when an architecture boundary, key flow, or diagrammed hard-to-follow node changes; treat an outdated diagram as a documentation defect equal to outdated prose.
+8. Validate changed docs with the available project checks.
 
 ## File-First Split Rule
 
@@ -56,9 +75,23 @@ When splitting, do not create a directory `README.md` by default. The directory 
 - Use normal relative Markdown links between project docs, and use same-file `#anchors` for headings.
 - Avoid root-relative links such as `/docs/architecture/config.md` unless the repository already requires them. After moving or renaming docs, validate changed links.
 - When multiple agent instruction files exist, keep one canonical source and link or mirror intentionally.
+- The agent contract is read under a byte budget by at least one harness (Codex cuts its `AGENTS.md` chain at 32 KiB with no notice), so it holds rules, not inventories: an executable recipe, a list of scripts, a retired environment's history, and any per-skill listing leave it. A skill's trigger lives in that skill's own `description`; which shared skills a repo links in lives in the ignore-file manifest its link script reads; a project override of a vendored skill lives in an `OVERLAY.md` inside that skill's directory. Loading model, budgets, and the diet procedure: `ai-docs-organizing`.
+- Repeated AI mistakes belong in the contract's guard register as positive rules, each with its incident and the test or spec that carries the detail — not in helper prose, and not in one agent's private memory, which the other agent never sees.
 - Treat the annotated structure as categories to preserve, not files to blindly create. Prefer fewer, denser, well-indexed files over many thin stubs.
 - Treat split C4 component filenames as project-specific. Avoid placeholder component files that do not match the actual system.
 - Treat code locators as curated maps, not generated inventories. They should help an agent choose where to start, then point back to code as the fact of record.
+
+## Diagramming
+
+Use PlantUML for architecture, key runtime flows, and hard-to-follow nodes. Do not diagram trivial or self-evident structures.
+
+- Add a PlantUML diagram to C4 architecture docs (`c4-system-context`, `c4-container`, `c4-components`) to depict actors, containers, components, and their boundaries, alongside the required prose.
+- Add a PlantUML sequence or activity diagram to important runtime flows such as `dynamic-login-flow` and other cross-boundary flows named in the Annotated Structure.
+- Add a PlantUML diagram to a `code-locator` or `repo-map` entry only when the structure is a genuine trap: nontrivial state machines, retry/rollback paths, concurrency, or multi-service handoffs that are hard to reconstruct from code alone. Do not diagram straightforward call chains.
+- Write diagrams as fenced ` ```plantuml ` code blocks directly in the owning node, next to the prose they illustrate. Use a linked `.puml` file only when the project's documentation tooling requires external diagram files.
+- Keep each diagram small and focused on one boundary, flow, or component group. Split into multiple diagrams instead of building one dense diagram.
+- Validate diagrams the project's checks can render, such as a PlantUML CLI, editor preview, or CI rendering step, before treating a diagramming task as complete.
+- Update the diagram in the same change as the code, boundary, or flow it depicts.
 
 ## Annotated Structure
 
@@ -72,13 +105,13 @@ docs/                                      # Long-lived project documentation ro
 
   architecture                            # Owns architecture overview, C4 L1/L2, data model, config summary, security summary, deployment summary, and quality attributes; update when boundaries, responsibilities, state model, topology, major flows, or quality constraints change.
     overview                              # Owns major modules, dependencies, boundaries, responsibility splits, and design principles; update when architecture boundaries or responsibilities change.
-    c4-system-context                     # Owns C4 L1 users, external systems, system boundary, and trust boundary; update when actors, external systems, or trust boundaries change.
-    c4-container                          # Owns C4 L2 apps, services, databases, queues, workers, and third-party containers; update when containers or runtime topology change.
-    c4-components                         # Owns C4 L3 component views for real containers or component groups; update when component boundaries, ownership, or important interactions change.
+    c4-system-context                     # Owns C4 L1 users, external systems, system boundary, and trust boundary, with a PlantUML diagram; update when actors, external systems, or trust boundaries change.
+    c4-container                          # Owns C4 L2 apps, services, databases, queues, workers, and third-party containers, with a PlantUML diagram; update when containers or runtime topology change.
+    c4-components                         # Owns C4 L3 component views for real containers or component groups, with a PlantUML diagram; update when component boundaries, ownership, or important interactions change.
     data-model                            # Owns entities, relationships, constraints, migrations, status definitions, enum semantics, and data ownership; update when schema, states, lifecycle semantics, or data dictionary entries change.
     config                                # Owns config roots, profiles, schema, path rules, examples, environment expansion, removed names, and migrations; update when config fields, profile behavior, paths, defaults, or migrations change.
     security                              # Owns authentication, authorization, secrets, data protection, destructive-operation safety, permissions, and threat model; update when safety, preview/confirmation, permissions, or trust behavior changes.
-    dynamic-login-flow                    # Owns one important runtime sequence, state transition, or cross-boundary flow; update when that flow changes.
+    dynamic-login-flow                    # Owns one important runtime sequence, state transition, or cross-boundary flow, with a PlantUML sequence or activity diagram; update when that flow changes.
     deployment                            # Owns hosted environments, networks, runtime topology, deployment trust boundaries, and production layout; update when deployment topology or runtime architecture changes.
     adr                                   # Owns Architecture Decision Records; add an ADR when a consequential architecture, technology, or policy decision is made.
       0001-record-architecture-decisions
@@ -89,7 +122,7 @@ docs/                                      # Long-lived project documentation ro
     release                               # Owns versioning, build/package steps, release defaults, approval, deployment handoff, and verification; update when packaging, release config, or release verification changes.
     migrations                            # Owns database, config, data repair, and rollback migration guidance; update when schema, config, or data migration behavior changes.
     repo-map                              # Owns system map: directory/module responsibilities, major feature distribution, entry points, and ownership; update when repo structure, module boundaries, feature locations, or entry points move.
-    code-locator                          # Owns problem-to-file entry index and change recipes; update after solving recurring or subtle problems with files involved, invariants/traps, and focused verification.
+    code-locator                          # Owns problem-to-file entry index and change recipes, with a PlantUML diagram for genuinely hard-to-follow nodes; update after solving recurring or subtle problems with files involved, invariants/traps, and focused verification.
 
   api                                     # Owns API contracts and direction rules; keep direction-specific auth, errors, examples, quotas, and adapters under the relevant direction; update when signatures, payloads, return types, errors, examples, events, webhooks, or upstream contracts change.
     command-api                           # Owns optional local app command bridge; load framework-specific rules when applicable and update when command signatures, payloads, side effects, or safety behavior change.
@@ -125,6 +158,8 @@ Start from the owning node named in the Annotated Structure. When a change cross
 - Architecture boundary, runtime topology, or responsibility changes may affect architecture overview, C4 views, deployment or operations docs, and ADRs when the decision is consequential.
 - Local setup, build, packaging, release, or test workflow changes may affect engineering docs and the repository README when the project entry point changes.
 - New concepts or terms may cross documentation boundaries; route them through the owning glossary, data model, API/config docs, or AI gotchas as appropriate.
+- Command, build, environment, or workflow changes belong in the agent contract's command section and the environment example file; do not duplicate them into other prose.
+- Schema, enum, or contract changes update the owner in code (schema, validators, routers), the spec scenarios that describe the behaviour, the validators derived from the schema, and the tests, in the same change; a new domain term or status goes to the owning spec requirement and the plan's terminology, never scattered across helper prose.
 - Framework-specific command or API bridge changes must load the relevant rule file, such as `rules/tauri-command-api.md`, before updating API docs and wrappers.
 - Future-work suggestions belong in product requirements or roadmap docs with decision status until accepted or implemented; promote only stable resulting facts into current-fact docs.
 - Repeated AI mistakes or retrieval failures belong in `docs/ai.md`; duplicated cross-topic facts should be moved to their owning docs and removed from helper prose.
@@ -137,9 +172,13 @@ Keep structural navigation and problem-first navigation separate when both are u
 
 `code-locator` is the problem entry index. It answers: for this issue or workflow, where should I look first, what invariant must not break, and what focused check should I run?
 
+Entry discipline: add an entry after solving a recurring or subtle problem — the trigger, the start files, the invariant or trap, the smallest verifying check; refresh an entry in the same change as a fix that touches a path it names; delete entries that go stale. Keep an entry an entry: when one has grown into an essay, its invariant stays and its rationale moves to the spec, ADR, or code comment it cites.
+
 ## Templates
 
 Use `templates/docs-ai.md` as the starter template for project `docs/ai.md` files. Keep the generated file short, project-specific, and navigational: it should point to the owning documentation system rather than duplicate product, architecture, API, config, safety, testing, repo-map, or code-locator facts.
+
+Use `templates/ownership-map.md` when adopting an existing system: it is the table a project-local docs skill is built around, one row per fact type, and the deliverable of the Adopting path.
 
 ## Future Work Promotion Rule
 
@@ -150,3 +189,9 @@ When a candidate becomes accepted or implemented, promote only the stable result
 ## Framework-Specific Rules
 
 For Tauri desktop apps, load `rules/tauri-command-api.md` before creating or updating Tauri command API documentation.
+
+## Obsidian Location Rule
+
+Ask about the storage location only once per project, at first-time creation of the documentation system; do not ask again on later updates.
+
+Store the Annotated Structure in exactly one location: the in-repo `docs/` tree, or a local Obsidian vault chosen via the `obsidian-vault-ops` skill. Do not create both and do not mirror content between them; a single location is the only source of record. When the vault is chosen, apply every rule in this skill (Annotated Structure, File-First Split Rule, Cross-Cutting Change Rule, Diagramming) inside the vault folder in place of `docs/`, and keep the repository pointer note current if the vault name or folder moves.

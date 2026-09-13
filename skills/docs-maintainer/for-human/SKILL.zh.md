@@ -13,11 +13,13 @@
 ### 新建文档
 
 1. 检查仓库结构、源码、现有文档、API 契约、部署文件、测试和示例。
-2. 识别事实源：源码、schema、测试、ADR、部署配置、API 规范、runbook 和产品词汇表。
-3. 先用带注释的结构选择 owning node，再应用 File-First Split Rule。
-4. 创建最小有用的文档结构。不要生成项目维护不起的空目录或大量薄文件。
-5. 文档应稳定、便于 Agent 读取：标题清楚、段落短、链接明确、owner 明确。
-6. 用可用检查验证文档，例如 Markdown lint、链接检查、拼写检查、OpenAPI/AsyncAPI 校验、图表渲染或项目 CI。
+2. 如果这是本仓库第一次创建这套文档系统（还没有 `docs/` 目录），询问用户文档应该放在 in-repo `docs/` 目录，还是本机 Obsidian vault——只选一处存放，不要两边都建。如果用户选 vault，加载 `obsidian-vault-ops` 技能，把带注释的结构建在 vault 里而不是 `docs/`，并在仓库里留一条简短指针（例如写进仓库 `README.md` 或 `docs/ai.md`），记录 vault 名称和文件夹，方便之后的 Agent 找到它。如果用户选 `docs/`，或者 `docs/` 已存在，直接用 in-repo `docs/`，本次 session 内不再重复询问。
+3. 识别事实源：源码、schema、测试、ADR、部署配置、API 规范、runbook 和产品词汇表。
+4. 先用带注释的结构选择 owning node，再应用 File-First Split Rule。
+5. 创建最小有用的文档结构。不要生成项目维护不起的空目录或大量薄文件。
+6. 文档应稳定、便于 Agent 读取：标题清楚、段落短、链接明确、owner 明确。
+7. 按下面的 Diagramming 规则，为架构、重点流程和难懂节点补充 PlantUML 图。
+8. 用可用检查验证文档，例如 Markdown lint、链接检查、拼写检查、OpenAPI/AsyncAPI 校验、图表渲染或项目 CI。
 
 ### 更新文档
 
@@ -26,7 +28,8 @@
 3. 易变实现细节应靠近代码和 schema；文档用链接指向它们，不要在 prose docs 里复制。
 4. 如果变更跨边界，同一次变更中更新所有受影响 owner。
 5. 对重要架构、技术或策略决策写 ADR。
-6. 用项目可用检查验证变更过的文档。
+6. 如果架构边界、重点流程，或某个已画图的难懂节点发生变化，在同一次变更里更新对应 PlantUML 图；图过期和文字过期一样都算文档缺陷。
+7. 用项目可用检查验证变更过的文档。
 
 ## File-First Split Rule
 
@@ -54,6 +57,18 @@
 - 拆分后的 C4 component 文件名应是项目特定的。不要保留与真实系统不匹配的占位 component 文件。
 - code locator 是人工维护的地图，不是生成式 inventory。它应帮助 Agent 选择从哪里开始，然后指回代码这个事实源。
 
+## Diagramming（图表规则）
+
+用 PlantUML 表达架构、重点流程和难懂节点。不要给简单直白的结构画图。
+
+- 给 C4 架构文档（`c4-system-context`、`c4-container`、`c4-components`）配一张 PlantUML 图，展示 actor、container、component 及其边界，作为文字说明的补充，而不是替代。
+- 给重要运行时流程（例如 `dynamic-login-flow` 及带注释结构里其它跨边界流程）配一张 PlantUML 时序图或活动图。
+- 只有当结构确实是坑——复杂状态机、retry/rollback 路径、并发、跨多个服务的交接——才给 `code-locator` 或 `repo-map` 条目配图；不要给直白的调用链画图。
+- 直接在 owning node 里用 ` ```plantuml ` 代码块写图，紧挨着它说明的文字；只有项目文档工具链要求外部图片文件时，才用链接的 `.puml` 文件。
+- 每张图只聚焦一个边界、流程或 component group，保持小而集中；宁可拆成多张图，也不要画一张过密的图。
+- 在把画图任务标记完成前，用项目可用的方式（PlantUML CLI、编辑器预览、CI 渲染步骤）验证图能正常渲染。
+- 图要和它描绘的代码、边界或流程在同一次变更里一起更新。
+
 ## 带注释的结构
 
 这是信息架构，不是必建文件树。把稳定项目事实路由到下面的 owning node；不要在 AI helper docs 中复制 product、architecture、API、testing、operations、repo-map 或 code-locator 事实。节点名故意省略 `.md`：每个节点可以是 section、独立文件，或按 File-First Split Rule 拆出的目录。注释说明 ownership 和更新触发条件；不要把注释写进实际名称。
@@ -66,13 +81,13 @@ docs/                                      # 长期项目文档根
 
   architecture                            # Owns 架构总览、C4 L1/L2、数据模型、配置摘要、安全摘要、部署摘要和质量属性；当边界、职责、状态模型、拓扑、主要流程或质量约束变化时更新。
     overview                              # Owns 主要模块、依赖、边界、职责拆分和设计原则；当架构边界或职责变化时更新。
-    c4-system-context                     # Owns C4 L1 用户、外部系统、系统边界和信任边界；当 actor、外部系统或信任边界变化时更新。
-    c4-container                          # Owns C4 L2 应用、服务、数据库、队列、worker 和第三方 container；当 container 或运行时拓扑变化时更新。
-    c4-components                         # Owns 真实 container 或 component group 的 C4 L3 component view；当 component 边界、ownership 或重要交互变化时更新。
+    c4-system-context                     # Owns C4 L1 用户、外部系统、系统边界和信任边界，配一张 PlantUML 图；当 actor、外部系统或信任边界变化时更新。
+    c4-container                          # Owns C4 L2 应用、服务、数据库、队列、worker 和第三方 container，配一张 PlantUML 图；当 container 或运行时拓扑变化时更新。
+    c4-components                         # Owns 真实 container 或 component group 的 C4 L3 component view，配一张 PlantUML 图；当 component 边界、ownership 或重要交互变化时更新。
     data-model                            # Owns 实体、关系、约束、迁移、状态定义、enum 语义和数据 ownership；当 schema、状态、生命周期语义或数据字典条目变化时更新。
     config                                # Owns config roots、profiles、schema、path rules、examples、environment expansion、removed names 和 migrations；当 config 字段、profile 行为、路径、默认值或迁移变化时更新。
     security                              # Owns 认证、授权、密钥、数据保护、破坏性操作安全、权限和 threat model；当 safety、preview/confirmation、权限或 trust behavior 变化时更新。
-    dynamic-login-flow                    # Owns 一个重要运行时序列、状态转换或跨边界流程；当该流程变化时更新。
+    dynamic-login-flow                    # Owns 一个重要运行时序列、状态转换或跨边界流程，配一张 PlantUML 时序图或活动图；当该流程变化时更新。
     deployment                            # Owns 托管环境、网络、运行时拓扑、部署信任边界和生产布局；当部署拓扑或运行时架构变化时更新。
     adr                                   # Owns Architecture Decision Records；当出现重要架构、技术或策略决策时新增 ADR。
       0001-record-architecture-decisions
@@ -83,7 +98,7 @@ docs/                                      # 长期项目文档根
     release                               # Owns 版本、build/package 步骤、release 默认值、审批、部署交接和验证；当 packaging、release config 或 release verification 变化时更新。
     migrations                            # Owns 数据库、config、数据修复和 rollback migration guidance；当 schema、config 或数据迁移行为变化时更新。
     repo-map                              # Owns 系统地图：目录/模块职责、主要功能分布、入口点和 ownership；当 repo structure、module boundaries、feature locations 或 entry points 移动时更新。
-    code-locator                          # Owns problem-to-file 入口索引和 change recipes；解决 recurring 或 subtle problems 后，用涉及文件、invariants/traps 和 focused verification 更新。
+    code-locator                          # Owns problem-to-file 入口索引和 change recipes，对真正难懂的节点配一张 PlantUML 图；解决 recurring 或 subtle problems 后，用涉及文件、invariants/traps 和 focused verification 更新。
 
   api                                     # Owns API contracts 和 direction rules；把方向相关的 auth、errors、examples、quotas 和 adapters 放在对应方向下；当 signatures、payloads、return types、errors、examples、events、webhooks 或 upstream contracts 变化时更新。
     command-api                           # Owns 可选本地 app command bridge；适用时加载 framework-specific rules，并当 command signatures、payloads、side effects 或 safety behavior 变化时更新。
@@ -139,3 +154,9 @@ Future work、backlog、optional providers、rollout advice 和 candidate ideas 
 ## Framework-Specific Rules
 
 对于 Tauri desktop apps，在创建或更新 Tauri command API documentation 前，加载 `rules/tauri-command-api.md`。
+
+## Obsidian Location Rule（存放位置规则）
+
+只在第一次创建这套文档系统时问一次存放位置；之后的更新不要再问。
+
+带注释的结构只存在一个地方：in-repo `docs/` 目录，或者通过 `obsidian-vault-ops` 技能选定的本机 Obsidian vault。不要两边都建，也不要在两边之间互相镜像——单一位置就是唯一事实源。选了 vault 时，把本技能的所有规则（带注释的结构、File-First Split Rule、Cross-Cutting Change Rule、Diagramming）都应用在 vault 文件夹里，取代 `docs/`；如果 vault 名称或文件夹之后移动了，记得同步更新仓库里的那条指针笔记。
