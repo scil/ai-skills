@@ -34,10 +34,42 @@ both are invisible until they bite.
 
 ### 1. Survey
 
-```powershell
-# Find the vault (a folder containing .obsidian)
-Get-ChildItem <likely-root> -Recurse -Depth 3 -Filter ".obsidian" -Directory -Force
+**Ask Obsidian where its vaults are — do not sweep the filesystem.** The app keeps a registry of
+every vault it has ever opened, including which one is open right now. It is instant, it is
+authoritative, and it cannot be fooled by a look-alike folder:
 
+| OS | Registry file |
+|---|---|
+| Windows | `%APPDATA%\obsidian\obsidian.json` |
+| macOS | `~/Library/Application Support/obsidian/obsidian.json` |
+| Linux | `~/.config/obsidian/obsidian.json` |
+
+```powershell
+# Registered vaults, newest-opened first; `open: true` marks the active one
+(Get-Content "$env:APPDATA\obsidian\obsidian.json" -Raw | ConvertFrom-Json).vaults.PSObject.Properties |
+    ForEach-Object { [pscustomobject]@{ path = $_.Value.path; open = [bool]$_.Value.open } }
+```
+
+Fall back to a filesystem sweep only when that file is missing (Obsidian never installed here, a
+portable install, or a vault folder that was copied in but never opened):
+
+```powershell
+Get-ChildItem <likely-root> -Recurse -Depth 3 -Filter ".obsidian" -Directory -Force |
+    ForEach-Object { $_.Parent.FullName }
+```
+
+The sweep is minutes rather than milliseconds across whole drives, and it returns things that are not
+Obsidian vaults — other note apps (Notable, Logseq exports) leave folders that match the shape, and
+an abandoned copy of a vault looks exactly like the live one. If you must use it, confirm the hit
+against the registry or with the user before writing anything.
+
+**When one vault holds several projects**, do not assume the top hit. Pick by evidence, in order:
+a folder already named after the project, then the `open: true` vault, then ask. And check what the
+*other* projects in that vault already do — `.obsidian/plugins/*/data.json` is shared, so a global
+setting like Shell commands' `working_directory` is probably already pointing at someone else's
+repo. Have your commands `cd` themselves rather than retargeting it.
+
+```powershell
 # What is enabled
 Get-Content "<vault>\.obsidian\community-plugins.json"
 Get-ChildItem "<vault>\.obsidian\plugins"
@@ -109,6 +141,12 @@ The usual shape of this work is a **project console** — one note grouping ever
 `references/project-console.md` is the end-to-end recipe: deriving the button set from the project's
 own docs, grouping by intent, the per-button checklist, a note skeleton, the "scratch note as input"
 pattern, and what to re-verify when adding a button later.
+
+Its layout rule, in one line: **buttons out, everything else folded.** Only three things stay
+unfolded — the button block, one grey line under it saying what it really runs, and the plain-prose
+scratch section a `{{selection}}` button reads from. Every paragraph, table, warning and link list
+goes into a `-` callout whose title carries the headline. Headings stay verbatim (other notes link
+to them). Verify with the alias check plus "zero open callouts".
 
 Exact schemas and the data.json protocol: `references/plugin-config.md`.
 Windows script pitfalls (`pause` hanging, `.ps1` encoding): `references/windows-scripts.md`.
