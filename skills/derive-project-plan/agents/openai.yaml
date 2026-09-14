@@ -1,0 +1,4 @@
+interface:
+  display_name: "Derive Project Plan"
+  short_description: "Turn references into project plans and rules"
+  default_prompt: "Use $derive-project-plan to turn a reference collection into a project-specific development plan and rules."

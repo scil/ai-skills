@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Scoop Manifest"
+  short_description: "Create and validate Scoop app manifests"
+  default_prompt: "Use $create-scoop-manifest to create and validate a Scoop manifest for this Windows application."

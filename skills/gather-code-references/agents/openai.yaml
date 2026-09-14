@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gather Code References"
+  short_description: "Build open-ended coding reference collections"
+  default_prompt: "Use $gather-code-references to research third-party resources and produce an open Markdown reference collection."
