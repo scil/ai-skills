@@ -1,6 +1,6 @@
 ---
 name: ai-docs-organizing
-description: Organize the documents AI agents consume — instruction files (AGENTS.md / CLAUDE.md), skills, hooks, and per-agent memory — so that every agent working in a repository actually receives the contract, within its harness's budget, with each fact in one owner. Use when auditing or reorganizing a project's AI docs, when a second agent or harness joins a repo (Claude Code beside Codex or the reverse), when an instruction file has grown past ~25 KB, when an agent keeps missing a rule that is "written down", or before adding a skill or an AGENTS.md section. Covers measuring what each harness loads and where it silently stops, the byte budget and its guard, always-loaded versus pointer-reached material, what belongs in memory versus the repo, the diet procedure, tracing each problem to the rule, tool or habit that produced it so source and symptom are fixed together, and reviewing the plan with the other agent before editing. Owns only the docs a harness loads; where any other project fact belongs is docs-maintainer's (or the project's local docs skill's) question.
+description: Organize the documents AI agents consume — instruction files (AGENTS.md / CLAUDE.md), skills, hooks, and per-agent memory — so that every agent working in a repository actually receives the contract, within its harness's budget, with each fact in one owner. Use when auditing or reorganizing a project's AI docs, when a second agent or harness joins a repo (Claude Code beside Codex or the reverse), when an instruction file has grown past ~25 KB, when an agent keeps missing a rule that is "written down", when a pointer-reached doc that the contract or several skills send every task of a kind to (a plan, a domain model, a locator) has grown past ~40 KB, or before adding a skill or an AGENTS.md section. Covers measuring what each harness loads and where it silently stops, the byte budget and its guard, always-loaded versus pointer-reached versus hot pointer-reached material, what belongs in memory versus the repo, the diet procedure for the contract and for a hot doc, tracing each problem to the rule, tool or habit that produced it so source and symptom are fixed together, and reviewing the plan with the other agent before editing. Owns only the docs a harness loads; where any other project fact belongs is docs-maintainer's (or the project's local docs skill's) question.
 ---
 
 # Organizing the documents agents read
@@ -18,7 +18,7 @@ Never assume either from documentation alone. **Probe**: ask the agent, with fil
 
 ## Principles
 
-1. **The loading layer sets the budget.** Always-loaded material (an instruction file, a skill description, a memory index) is paid by every model on every turn whether or not it fires; pointer-reached material costs only its pointer. For some harnesses the budget is a hard byte cap, not a soft attention cost. Push anything not every task needs behind a pointer.
+1. **The loading layer sets the budget.** Always-loaded material (an instruction file, a skill description, a memory index) is paid by every model on every turn whether or not it fires; pointer-reached material costs only its pointer. For some harnesses the budget is a hard byte cap, not a soft attention cost. Push anything not every task needs behind a pointer. **A pointer is cheap only until something routes every task of a kind through it**: a plan that four skills name as "the domain model" is a *hot* doc, paid whole on each read — a Read tool reads the file, not the section — so it gets its own diet (below).
 2. **The repository is the only memory all agents share.** A project fact living only in one agent's memory is a fact the other engineer cannot see. Memory is for how the user wants *that* agent to behave, and for tool quirks of *that* harness.
 3. **One meaning, one owner.** Route each fact to its existing owner (the project's ownership map; `docs-maintainer` for the generic system). The same meaning in the contract, the code locator and a memory file is three edits and one drift.
 4. **Respect the information hierarchy.** Steps the agent performs, reference it consults, and disclosed reference reached by pointer are three tiers. Executable recipes, retired-environment history and inventories of the environment leave the contract; rules stay, compressed to invariant + `Instance:` + the test or spec that enforces them.
@@ -57,6 +57,19 @@ Worked example in [`readme.md`](readme.md): a skills section in the contract, tr
 - **Memory triage, four bins**: already owned in the repo → delete or pointer; a project fact the repo lacks → write it into its owner, then delete; a preference about that agent's own behaviour → keep; stale → delete. Regenerate the index from what survives.
 - **User-level preferences live in one file** — where the harness without an import syntax reads natively — imported by the other harness's file, and sized as part of the shared budget (≤ 4 KiB when the cap is 32 KiB).
 
+## Hot pointer docs — the diet in a different form
+
+Find them in the inventory's layer D: any doc that the contract or two or more skills name as *the* place to read for a kind of question. Its cost is bytes × reads, and the reads are whole-file. Then ([`references/process.md`](references/process.md) §10):
+
+1. **Measure per section in bytes**, not lines — a padded Markdown table is half whitespace; the two heaviest sections usually carry the fat.
+2. **Hand the shipped behaviour to its owner.** A section describing what already ships, with a spec or test elsewhere, is a copy that only drifts. It shrinks to the concept, the *reasoning* that produced it (the why is the plan's real value and has no other owner), and the owner's name. Target state that ships nowhere stays whole.
+3. **History out.** Changelog comments, "revised by" narratives, old review notes → an archive file beside it; git holds the same story.
+4. **A question-first map at the top**: section → the question it answers → the owner of its shipped behaviour. That, plus a one-line reading rule ("read the map, then the section, then the spec it names"), is what turns whole-file reads into range reads — and **put the reading rule in the skill that routes there**; a reader who was told "read the plan" reads the plan.
+5. **Split last, by purpose, not by section**: only a section still heavy after the diet and read for a different reason than the rest moves to a sibling file with a two-line stub. Sixteen one-section files lose the narrative that made the doc worth reading and break every `§n` pointer.
+6. **Prune the pointers that named it** the same way as any move: a sentence that stands without the pointer drops it (a stale pointer misleads; it never saved a token).
+
+Instance: a 71 KB domain plan four skills routed to, ≈18k tokens per read; changelog out, table padding out, shipped blocks to their 49 specs, map in → 53 KB, and the routing skill told to range-read.
+
 ## Slimming a skill, and folding a fork back
 
 A skill body is loaded on trigger, not every turn, so its budget is attention, not bytes: the reason to slim is that steps buried under reference get skipped. The ladder is the same as the contract's ([`references/process.md`](references/process.md) §9):
@@ -70,4 +83,4 @@ A skill body is loaded on trigger, not every turn, so its budget is attention, n
 
 ## Anti-patterns
 
-Raising the byte limit instead of dieting (restores text, not attention). A brake written in prose. A spec written from the contract's prose instead of the tests. Two copies of a generated skill. Junction creation wired into `prepare`. A code-locator entry that has grown into an essay — the invariant stays, the rationale goes to the spec it cites. A plan whose numbers nobody re-counted.
+Raising the byte limit instead of dieting (restores text, not attention). A brake written in prose. A spec written from the contract's prose instead of the tests. Two copies of a generated skill. Junction creation wired into `prepare`. A code-locator entry that has grown into an essay — the invariant stays, the rationale goes to the spec it cites. A plan whose numbers nobody re-counted. Calling a doc "free" because it is pointer-reached, while every domain task reads all of it. Splitting a hot doc by section before dieting it.

@@ -7,7 +7,7 @@
 | A. Always-loaded contract | instruction files and their chain, the memory index, config the tooling injects into generation (e.g. an openspec `config.yaml`) | bytes, who loads it, where it stops |
 | B. Skills | grouped by provenance: project-owned · shared via junction · vendored (lock file) · tool-generated; plus user-level rosters loaded into every session here | SKILL.md words, package bytes, whether a duplicate exists at another level |
 | C. Harness wiring | hooks and the scripts they run, settings, launch configs, lock files, `.gitignore` comments that encode policy | what it actually detects (read the regex) |
-| D. Pointer-reached docs | plan, specs, code locator, design docs, prompts, READMEs the contract names | entry sizes, cited paths exist |
+| D. Pointer-reached docs | plan, specs, code locator, design docs, prompts, READMEs the contract names | entry sizes, cited paths exist; **how many skills / contract lines route to it** — two or more makes it *hot* (§10) |
 | E. Human mirrors | translations, "for-human" folders inside skill directories, the vault | does any agent load it; does it carry a project decision |
 | F. Residue | stale worktrees, deleted apps still described, skills for things that no longer exist | verify with `ls` before calling it stale |
 
@@ -112,3 +112,40 @@ Round 2 asks it to mark each round-1 finding ADDRESSED / PARTLY / NOT and hunt n
 9. **Report the landed number honestly.** A 500–700-word target is a guideline; a router of 900 words in which every sentence is a rule, a step, or a done-criterion has met the goal, and a 600-word router that dropped a rule has not.
 
 Folding a drifted project-local fork back into the shared skill is the same move at the skill-set level: generic rules and templates go up into the shared skill; the project's owners by name go into a project doc its agents read (an ownership map, pointed at from the contract); the fork is deleted; the shared skill is linked in through the ignore manifest. Every reference to the fork (hooks' reason text, in-flight change tasks) is updated in the same commit; archived history is left alone.
+
+## 10. Dieting a hot pointer doc
+
+**Find the hot docs**: `git grep -n -l '<doc path>' -- <contract> .agents/skills/*/SKILL.md` — a doc named by the contract or by two or more skills as *the* place for a kind of question is read whole by every task of that kind.
+
+**Measure per `## ` section, in bytes** (PowerShell; the same idea in any shell):
+
+```powershell
+$lines = Get-Content $f -Encoding utf8
+$h = @(); for ($i=0; $i -lt $lines.Count; $i++) { if ($lines[$i] -match '^## ') { $h += [pscustomobject]@{ line=$i; title=$lines[$i] } } }
+for ($j=0; $j -lt $h.Count; $j++) { $end = if ($j+1 -lt $h.Count) { $h[$j+1].line } else { $lines.Count }
+  "{0,6} B  {1}" -f [Text.Encoding]::UTF8.GetByteCount(($lines[$h[$j].line..($end-1)] -join "`n")), $h[$j].title }
+```
+
+**Disposition, one row per block** (the same table as §2, with the hot-doc dispositions):
+
+| Block | Disposition | Owner afterwards |
+|---|---|---|
+| shipped behaviour that a spec / test owns | concept + the reasoning that produced it + owner name; the mechanics go | the spec |
+| target state that ships nowhere | stays whole | this doc |
+| the "why" behind a decision (why either party may complete; why not a seventh mode) | stays — it has no other owner | this doc |
+| changelog comments, "revised by" narratives | archive file beside the doc | `archive/` |
+| padded tables | rewrite with trimmed cells (often 40–60% of a table's bytes) | — |
+| a superseded MVP variant kept beside the target type | delete; one sentence says what shipped instead | — |
+
+**The map at the top** — one row per section:
+
+```
+| § | Answers | Shipped contract lives in |
+| 6 | What can be shared; placement, the three axes, pinning, editing, removal | `resource-sharing`, `resource-placement`, `offering-*` |
+```
+
+plus the reading rule, in the doc *and* in every skill that routes to it: *read the map, then the section that answers your question, then the spec it names; do not read the whole file for one question.*
+
+**Split test, after the diet**: a section still > ~10 KB **and** read for a different purpose than its neighbours → its own file with a two-line stub; otherwise leave it. Then check every `§n` pointer and every path that named the moved section.
+
+**Report**: bytes before → after per section, what was handed to which owner, and the reading rule's new location.
