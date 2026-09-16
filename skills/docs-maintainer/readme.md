@@ -25,8 +25,11 @@ The old Annotated Structure was a `docs/` tree by topic (product, architecture, 
 
 ## What was kept / 保留了什么
 
-Code-wins; one owner per fact; the File-First Split Rule; the Adopting path (route, do not scaffold) and its "skipped — reason" convention; the locator entry discipline; C4 L1/L2 by hand with PlantUML; the cross-cutting checklist; the Tauri command rule (aligned to "code is the contract").
-保留：代码优先、一个事实一个主人、先文件后拆分、"接管而非搭建"及其"跳过—原因"约定、定位器条目纪律、手绘 C4 一二层、交叉变更清单、Tauri 命令规则（已对齐"代码即契约"）。
+Code-wins; one owner per fact; the File-First Split Rule; the Adopting path (route, do not scaffold) and its "skipped — reason" convention; the locator entry discipline; C4 L1/L2 by hand with PlantUML; the cross-cutting checklist.
+保留：代码优先、一个事实一个主人、先文件后拆分、"接管而非搭建"及其"跳过—原因"约定、定位器条目纪律、手绘 C4 一二层、交叉变更清单。
+
+**Removed the same day: `rules/tauri-command-api.md`.** A shared, project-agnostic skill carried a rule for one framework; by this skill's own routing principle its owner is the Tauri project. What it said, for that project to re-home as one ownership-map row: Tauri commands are a provided API whose facts of record are the handlers, the frontend wrapper and the shared types; a generated command index (layer 3) owns the surface; hand-written text covers only admin, permission, preview and destructive-guard behaviour, in the security quality-attribute doc.
+**当天删除 `rules/tauri-command-api.md`。** 共享 skill 不该带单一框架的规则；按本 skill 自己的路由原则，它的主人是那个 Tauri 项目。该项目可把它收为归属表一行：命令处理器、前端封装与共享类型是事实来源；生成的命令索引拥有接口面；手写只保留权限、预览与破坏性操作的守护说明，放在安全文档。
 
 ## Sources, tiers and the 30-day gate / 来源分层与 30 天门控
 

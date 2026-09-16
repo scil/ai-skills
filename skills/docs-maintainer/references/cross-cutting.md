@@ -14,7 +14,7 @@ Start from the owning node named in the Annotated Structure (or the project's ow
 - Every decision taken during a change goes in the active plan's decision log with its rationale and date; a consequential one becomes an ADR (MADR; proposed → accepted; supersede rather than edit). On completion the plan's stable facts are promoted to layer 2 and the plan moves to `completed/` with its retrospective.
 - A changed dependency version updates the vendored reference in `docs/references/` (or deletes it) and the skill bindings that name the version.
 - Repeated AI mistakes or retrieval failures belong in the contract's guard register as positive rules with their incident and enforcing test or hook (content rules: `ai-agents-md`); duplicated cross-topic facts move back to their owning docs and are removed from helper prose.
-- Framework-specific command or API bridge changes must load the relevant rule file before updating wrappers, generated contracts and safety notes — for Tauri desktop apps, `rules/tauri-command-api.md`.
+- Framework-specific bridge or command-API changes (a desktop app's frontend↔backend commands, a plugin's hook surface) follow the same shape — code is the contract, a generated index owns the surface, hand-written text covers only the safety and permission behaviour a generator cannot know — and the project-specific rule for them lives in that project's ownership map or local docs skill, never in this shared skill.
 
 ## Future Work Promotion Rule
 
