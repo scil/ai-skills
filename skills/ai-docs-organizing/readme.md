@@ -50,3 +50,6 @@ A procedural skill, not one lesson deep: it holds the norms and the process for 
 
 Keep `SKILL.md` a router with the principles and the process; put per-harness facts in `references/harness-loading.md` with the date they were verified, and templates in `references/process.md`. When a harness changes its loading rules, update the table and re-run the probe; when a new organizing round finds a new failure mode, add the rule here with its incident.
 `SKILL.md` 只放原则与流程；各壳的事实放 `references/harness-loading.md` 并标核实日期；模板放 `references/process.md`。壳的加载规则变了就更新表格并重跑探针；新一轮整理发现新失败模式，就把规则连同事故加进来。
+
+Since 2026-09-15 the *content* of one instruction file — which rules earn a line, wording, enforcement layer, templates, and the vendor and research sources behind them — is owned by the sibling skill `ai-agents-md`, which links to `references/harness-loading.md` here rather than restating it. This skill keeps the system: which files load, chain budgets, layers, the diet, memory triage.
+自 2026-09-15 起，单份指令文件的*内容*（哪行有资格、措辞、执行层、模板、背后的厂商与研究来源）归相邻 skill `ai-agents-md`，它引用这里的 `harness-loading.md` 而不重述。本 skill 保留系统层：加载哪些文件、链预算、分层、瘦身、记忆分类。
