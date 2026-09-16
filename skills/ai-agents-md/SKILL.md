@@ -45,7 +45,7 @@ Read the `last-refresh` line at the top of [`references/sources.md`](references/
 
 ### Refresh (sources and research)
 
-Procedure in [`references/refresh.md`](references/refresh.md): run `scripts/check-sources.ps1`, read only the sources whose fingerprint moved, search for research and vendor announcements since the last refresh with the domain allowlist, write the dated entry in [`references/changelog.md`](references/changelog.md), and *propose* edits to this skill for the user to accept. Sources carry an authority tier: vendor documentation decides, research corroborates (two independent studies, or one that explains a vendor rule), exemplars illustrate, reports point. Fingerprints and `last-refresh` update only after the user has seen the report.
+Procedure in [`references/refresh.md`](references/refresh.md): run `scripts/check-sources.ps1`, read only the sources whose fingerprint moved, search for research and vendor announcements since the last refresh with the domain allowlist, write the dated entry in [`references/changelog.md`](references/changelog.md), and *propose* edits to this skill for the user to accept. Sources carry an authority tier: vendor documentation decides, research corroborates (two independent studies, or one that explains a vendor rule), exemplars illustrate, reports point. **Disputes**: when sources conflict (different vendor recommendations, research findings contradict each other, or empirical evidence contradicts vendor guidance), name each disagreement in the report with the sources on each side, the tier of each source, and which recommendation the sources' weight supports. Fingerprints and `last-refresh` update only after the user has seen the report.
 
 ## References and templates
 
