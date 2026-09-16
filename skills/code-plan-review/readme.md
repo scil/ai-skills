@@ -1,4 +1,4 @@
-# plan-and-view — where the rules came from
+# code-plan-review — where the rules came from
 
 One skill, one rule per kind of problem. Each rule in `SKILL.md` has a *write* side, a *prove* side and a *view* side; each incident below is told once, and the numbered "why" list at its end maps to the rule's bullets. This skill replaced three one-lesson skills (`scil-coding`, `scil-testing`, `scil-review`) on 2026-09-16 because every lesson touches all three phases and a rule costs less than a skill description.
 一个 skill，一类问题一条规则。`SKILL.md` 里每条规则有*写*、*证*、*审*三面；每次事故在下面只讲一次，末尾编号的"为什么"对应规则的条目。本 skill 于 2026-09-16 取代了三个单课 skill（`scil-coding`、`scil-testing`、`scil-review`），因为每个教训都横跨三个阶段，而一条规则比一个 skill 的 description 便宜。
