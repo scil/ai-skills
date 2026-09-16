@@ -29,7 +29,7 @@ docs/architecture                     # The overview the contract must not carry
 docs/decisions                        # ADRs in MADR shape: Context · Decision drivers · Considered options · Decision outcome · Consequences · Confirmation. Status: proposed · accepted · deprecated · superseded by N. Add when a decision is architecturally significant; never edit an accepted ADR — supersede it.
 docs/engineering                      # Navigation and conventions. Facts, never steps (steps are layer 5).
   repo-map                            # System map: what each directory or module is and owns, entry points. Update when structure or boundaries move.
-  code-locator                        # Problem → start files → invariant/trap → smallest verifying check. Add after a recurring or subtle problem; refresh with fixes that touch a named path; delete stale entries. Navigation is where measured guidance gains come from.
+  code-locator                        # Problem → start files → invariant/trap → smallest verifying check. Add after a recurring or subtle problem; refresh with fixes that touch a named path; delete stale entries. Read by search (grep the symptom or term), never whole; write entries in the words the user used to report the problem. Navigation is where measured guidance gains come from.
   conventions                         # Only conventions that differ from tool defaults and that no linter encodes; each names its enforcement or `advisory`. Update when a convention or its enforcer changes.
   testing                             # Strategy facts: layers, fixtures, what is never mocked, coverage boundaries, regression themes. Commands live in the manifest; the run recipe is a skill.
   versioning                          # Versioning and compatibility policy, release channels. The release procedure is a skill.
@@ -92,6 +92,11 @@ Ask once per project, at creation: the in-repo `docs/` tree or a local Obsidian 
 ## Repo map and code locator
 
 `repo-map` is the system map (what each directory is); `code-locator` is the problem entry index (for this issue, where to look first, what must not break, what to run). Both are curated, both point back to code. Locator entry discipline: add after a recurring or subtle problem — trigger, start files, invariant or trap, smallest verifying check; refresh in the same change as a fix that touches a named path; delete stale entries; when an entry has grown into an essay, the invariant stays and the rationale moves to the ADR, spec or code comment it cites.
+
+Two rules that follow from the locator being a lookup table, not a narrative:
+
+- **Read it by search, not whole.** The locator is a problem index; the reader arrives with a symptom. Grep the file for the symptom, the error text, the user's term or the path, and read only the matching entries. The skill or contract line that routes to the locator says so ("search `code-locator.md` for the term; do not read it whole"). A locator that has to be read end to end has become a doc and needs the hot-doc diet.
+- **Write entries in the user's words.** The trigger line of an entry uses the vocabulary the user used when reporting the problem — their name for the feature, the error as they saw it, the phrase they typed — with the code's term beside it when the two differ. The next search will be in the user's words, not the code's. Refactoring an entry into "correct" terminology is how entries stop being found.
 
 ## Hot documents: the reading rule
 

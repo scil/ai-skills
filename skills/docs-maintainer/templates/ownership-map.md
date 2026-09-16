@@ -25,7 +25,7 @@ A node of the Annotated Structure that maps to nothing is written down as **skip
 | Performance budgets and their checks | `docs/architecture/quality-attributes/performance.md` | 2 | budget assertions in CI (bundle size, latency test) | |
 | Consequential architecture, technology or policy decision | `docs/decisions/NNNN-<slug>.md` (MADR) or the change's design doc | 2 | ADR lint: status ∈ {proposed, accepted, deprecated, superseded by N}; accepted ADRs are never edited | supersede, do not rewrite |
 | Directory and module responsibilities, entry points | `docs/engineering/repo-map.md` | 2 | path-exists check over every path it names | curated, not `ls` output |
-| Problem → files → invariant → check | `docs/engineering/code-locator.md` | 2 | path-exists check; the named check exists | entry discipline in `structure.md`; navigation is where measured guidance gains come from |
+| Problem → files → invariant → check | `docs/engineering/code-locator.md` | 2 | path-exists check; the named check exists | search for the symptom or the user's term, read only matching entries, never the whole file; trigger lines are written in the user's words, code term beside; entry discipline in `structure.md` |
 | Conventions that differ from defaults and no linter encodes | `docs/engineering/conventions.md` | 2 | each row names its lint or `advisory` | a convention a linter encodes is deleted here |
 | Test strategy facts: layers, fixtures, never-mock list, regression themes | `docs/engineering/testing.md` | 2 | the suite's structure | commands: manifest; run recipe: skill |
 | Versioning, compatibility policy, release channels | `docs/engineering/versioning.md` | 2 | version-bump check in CI | release *procedure* is a skill |
