@@ -1,5 +1,7 @@
 # AI Agent 项目文档系统
 
+> 2026-09-15 起进一步落后：英文版已按"加载层"（0 常驻地图 · 1 工作笔记/计划 · 2 事实来源 · 3 生成 · 4 外部参考 · 5 skills · 6 治理）重构 `references/structure.md` 与 `templates/ownership-map.md`（新增 Layer / Enforced by / Reading rule 三列），删除 `templates/docs-ai.md`（内容归 `ai-agents-md`），新增 `references/sources.md`、`refresh.md`、`changelog.md` 与 30 天刷新门控，以及 `readme.md`。依据见 `readme.md`。
+>
 > 2026-09-13 起落后于英文版：英文 `SKILL.md` 已瘦身为路由器（原则 + 四条路径 + 拆分规则），结构树、作图规则、交叉变更规则分别移入 `references/structure.md`、`references/diagramming.md`、`references/cross-cutting.md`，并新增"接管既有系统"与"过期审计"两条路径和 `templates/ownership-map.md`。本文仍按旧结构写，待重译。
 
 ## 目的

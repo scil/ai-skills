@@ -4,21 +4,23 @@
 
 Start from the owning node named in the Annotated Structure (or the project's ownership map). When a change crosses boundaries, update each affected owner in the same change instead of copying the same facts into multiple places.
 
-- API behavior changes may affect API docs, machine-readable contracts, examples, tests, and changelog entries.
-- Config schema, profile, path, or default changes may affect architecture config docs, engineering setup/migration docs, examples, and tests.
-- Destructive-operation, permission, preview, confirmation, or rollback behavior may affect architecture security docs, operations rollback docs, API safety notes, and tests.
-- Architecture boundary, runtime topology, or responsibility changes may affect architecture overview, C4 views, deployment or operations docs, and ADRs when the decision is consequential.
-- Local setup, build, packaging, release, or test workflow changes may affect engineering docs and the repository README when the project entry point changes; in a project with an agent contract they belong in its command section and the environment example file, never duplicated into other prose.
-- Schema, enum, or contract changes update the owner in code (schema, validators, routers), the spec scenarios that describe the behaviour, the validators derived from the schema, and the tests, in the same change.
-- New concepts, terms, statuses, roles, or groupings go to the owning vocabulary, glossary, data model, API/config docs, or spec requirement and the plan's terminology — never scattered across helper prose.
-- Repeated AI mistakes or retrieval failures belong in the agent context doc's guard register as positive rules with their incident and enforcing test; duplicated cross-topic facts move back to their owning docs and are removed from helper prose.
-- Framework-specific command or API bridge changes must load the relevant rule file before updating API docs and wrappers — for Tauri desktop apps, `rules/tauri-command-api.md`.
+- API behaviour changes update the code that is the contract (routers, handlers, validators, shared types), regenerate the layer-3 API index or machine-readable spec, and update contract tests and the changelog; there is no hand-written API doc to update unless the project recorded one as an exception.
+- Config schema, profile, path, or default changes may affect the architecture config doc, the environment example file, the setup skill's bindings, and tests.
+- Destructive-operation, permission, preview, confirmation, or rollback behaviour may affect the security and reliability quality-attribute docs, the recovery skill, the contract's Boundaries block, and tests; if it is enforceable, the hook changes too.
+- Architecture boundary, runtime topology, or responsibility changes may affect the architecture overview, C4 L1/L2, the deployment doc, the dependency lint that enforces the boundary, and an ADR when the decision is consequential.
+- Local setup, build, packaging, release, or test workflow changes belong in the manifest and the environment example file, and in the skill that owns the procedure; the contract keeps only the non-obvious pick and the scoped verification line; never duplicated into other prose.
+- Schema, enum, or contract changes update the owner in code (schema, validators, routers), regenerate `generated/db-schema`, update the spec scenarios that describe the behaviour, the data-model doc's meaning of any new state, and the tests, in the same change.
+- New concepts, terms, statuses, roles, or groupings go to the owning vocabulary, glossary, data model, config doc, or spec requirement and the plan's terminology — never scattered across helper prose.
+- Every decision taken during a change goes in the active plan's decision log with its rationale and date; a consequential one becomes an ADR (MADR; proposed → accepted; supersede rather than edit). On completion the plan's stable facts are promoted to layer 2 and the plan moves to `completed/` with its retrospective.
+- A changed dependency version updates the vendored reference in `docs/references/` (or deletes it) and the skill bindings that name the version.
+- Repeated AI mistakes or retrieval failures belong in the contract's guard register as positive rules with their incident and enforcing test or hook (content rules: `ai-agents-md`); duplicated cross-topic facts move back to their owning docs and are removed from helper prose.
+- Framework-specific command or API bridge changes must load the relevant rule file before updating wrappers, generated contracts and safety notes — for Tauri desktop apps, `rules/tauri-command-api.md`.
 
 ## Future Work Promotion Rule
 
-Future work, backlog, optional providers, rollout advice, and candidate ideas stay out of current-fact docs until accepted or implemented; store them under product requirements, a roadmap doc, or an ADR with explicit decision status (Candidate, Proposed, Accepted, Rejected, Implemented).
+Future work, backlog, optional providers, rollout advice, and candidate ideas stay out of current-fact docs until accepted or implemented; they live in a plan (layer 1) or a requirement with an explicit decision state (Candidate, Proposed, Accepted, Rejected, Implemented), or in an ADR with a MADR status (proposed, accepted, deprecated, superseded by N).
 
-When a candidate becomes accepted or implemented, promote only the stable resulting facts into the owning current-fact nodes. Leave the historical candidate context where it was.
+When a candidate becomes accepted or implemented, promote only the stable resulting facts into the owning layer-2 nodes. Leave the historical candidate context in the completed plan or the ADR.
 
 ## Links
 

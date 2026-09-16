@@ -1,4 +1,4 @@
 interface:
   display_name: "Docs Maintainer"
-  short_description: "Agent-first project documentation"
-  default_prompt: "Use $docs-maintainer to create or maintain an AI-agent-first project documentation system."
+  short_description: "Agent-first docs by loading layer; ownership map; refresh"
+  default_prompt: "Use $docs-maintainer to route this repository's facts by loading layer: run the refresh gate, build or update the ownership map, and report every fact without an owner or a check."
