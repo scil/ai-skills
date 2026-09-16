@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Skills Manager"
+  short_description: "Review, slim, grow one SKILL.md; fold a fork back; refresh sources"
+  default_prompt: "Use $ai-skills-manager to review this skill's SKILL.md: run the refresh gate, then report every description clause that is not a trigger, every body block that belongs behind a reference or in an owner, and every broken pointer."

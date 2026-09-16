@@ -47,7 +47,7 @@ docs/generated                        # Each artefact records its generator comm
 docs/references/<library>-llms.txt    # A library's llms.txt or a pinned excerpt of its docs, with version, source URL and fetch date. Update when the dependency version changes.
 
 # Layer 5 — procedures: skills, not docs
-.agents/skills/<name>/SKILL.md        # Setup, release, migration, runbook-for-an-alert, doc audit, ADR drafting: multi-step procedures with scripts/ and references/. The description is the trigger. Project bindings (paths, commands, owners) are the part that changes after adoption — keep them in one place inside the skill or read them from the ownership map; never copy layer-2 facts into a skill body.
+.agents/skills/<name>/SKILL.md        # Setup, release, migration, runbook-for-an-alert, doc audit, ADR drafting: multi-step procedures with scripts/ and references/. The description is the trigger. Project bindings (paths, commands, owners) are the part that changes after adoption — keep them in one place inside the skill or read them from the ownership map; never copy layer-2 facts into a skill body. Content rules for one SKILL.md (description, router body, references, slimming): the ai-skills-manager skill. Roster and budget: ai-docs-organizing.
 
 # Layer 6 — governance: how the system knows it is current
 docs/ownership-map                    # This template filled in: fact type → owner → layer → enforcement → reading rule. Update when an owner, enforcer or layer changes.
