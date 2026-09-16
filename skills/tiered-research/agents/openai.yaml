@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tiered Research"
+  short_description: "Verify claims and source a report by authority tier"
+  default_prompt: "Use $tiered-research to verify these claims: name the corpus for each, give a verdict with evidence and source date, and build the tiered source table."
