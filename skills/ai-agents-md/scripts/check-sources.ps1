@@ -11,7 +11,11 @@
   Prints one line per row: UNCHANGED | CHANGED | NEW | ERROR, then a summary.
 
 .PARAMETER GateOnly
-  Print only the number of days since `last-refresh:` and exit 0 (<= 7) or 1 (> 7).
+  Print only the number of days since `last-refresh:` and exit 0 (<= gate) or 1 (> gate).
+
+.PARAMETER GateDays
+  The refresh gate in days. Default 7. A `gate-days: N` line in the sources file overrides the default
+  when the parameter is not given explicitly (docs-maintainer uses 30).
 
 .PARAMETER Update
   Rewrite sources.md with the new fingerprints, today's `checked` dates and today's `last-refresh`.
@@ -24,6 +28,7 @@
 param(
   [switch]$GateOnly,
   [switch]$Update,
+  [int]$GateDays = 0,
   [string]$Path = (Join-Path $PSScriptRoot '..\references\sources.md')
 )
 
@@ -38,9 +43,13 @@ $gateLine = $lines | Where-Object { $_ -match '^last-refresh:\s*(\d{4}-\d{2}-\d{
 if (-not $gateLine) { Write-Error "sources.md has no 'last-refresh: yyyy-mm-dd' line"; exit 2 }
 $lastRefresh = [datetime]::ParseExact($Matches[1], 'yyyy-MM-dd', $null)
 $days = [int]((Get-Date).Date - $lastRefresh.Date).TotalDays
+if ($GateDays -le 0) {
+  $gateLine2 = $lines | Where-Object { $_ -match '^gate-days:\s*(\d+)' } | Select-Object -First 1
+  $GateDays = if ($gateLine2) { [int]$Matches[1] } else { 7 }
+}
 if ($GateOnly) {
-  "last-refresh $($lastRefresh.ToString('yyyy-MM-dd')) — $days day(s) ago — " + ($(if ($days -gt 7) { 'REFRESH DUE' } else { 'fresh' }))
-  exit $(if ($days -gt 7) { 1 } else { 0 })
+  "last-refresh $($lastRefresh.ToString('yyyy-MM-dd')) — $days day(s) ago — gate $GateDays — " + ($(if ($days -gt $GateDays) { 'REFRESH DUE' } else { 'fresh' }))
+  exit $(if ($days -gt $GateDays) { 1 } else { 0 })
 }
 
 # --- parse table -------------------------------------------------------------
@@ -105,7 +114,7 @@ foreach ($row in $rows) {
 }
 
 $counts = $results | Group-Object status | ForEach-Object { "$($_.Name)=$($_.Count)" }
-"`nsummary: " + ($counts -join '  ') + "  (last-refresh $($lastRefresh.ToString('yyyy-MM-dd')), $days day(s) ago)"
+"`nsummary: " + ($counts -join '  ') + "  (last-refresh $($lastRefresh.ToString('yyyy-MM-dd')), $days day(s) ago, gate $GateDays)"
 
 # --- update ---------------------------------------------------------------------
 if ($Update) {

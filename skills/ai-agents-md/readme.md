@@ -26,6 +26,32 @@ A procedural skill for the *content* of one agent instruction file. It was built
 | Persona ("you are a test engineer…") makes files work | GitHub blog, cited by both | **Not transferred.** Measured on Copilot custom agents, where the file *is* the agent definition; a repository instruction file is read by an agent whose role the harness already set. | Persona lines are on the "never enters" list. |
 | Root file 20–30 lines / "shorter is better" | Claude (via blogs) | **Partly.** The study supports "less", not a number. The field study of the 100 biggest repos is bimodal (37% over 1,500 words, 10% under 150). | Template target < 4 KB / < 80 lines, stated as a guideline; bytes are the unit Codex cuts by. |
 
+## Authority tiers, and why one study was not enough / 权威分层，以及为什么一篇研究不够
+
+The user's second review made two demands: the harness vendors' own documentation is the first authority, and a single ETH study is too thin a base for principle 1. Both held up. `sources.md` now carries a tier in every `kind`; the refresh rule admits a Tier 1 statement alone, a Tier 2 finding only when two studies agree or one explains a vendor rule, and never a rule from an exemplar or a blog.
+用户第二轮提出两点：厂商官方文档是第一权威；原则 1 只压在一篇 ETH 论文上太薄。两点都成立。`sources.md` 的 `kind` 现在带层级；刷新规则是：一层可单独入规则，二层要两篇研究一致或能解释一层的规则，三四层不能成为规则来源。
+
+What the vendors say, and where they differ / 厂商怎么说、哪里不同：
+
+- **Anthropic** (Claude Code best practices, memory docs): an Include/Exclude table; "would removing this cause Claude to make mistakes? If not, cut it"; `/doctor` trims directory layouts, dependency lists and architecture overviews; hooks are deterministic, the file is advisory; one emphasized line is allowed, many are not. / Anthropic：有明确的收录/排除表；`/doctor` 会删目录布局、依赖清单、架构概览；hook 是确定性的，文件是建议性的；允许强调一行，不允许强调多行。
+- **OpenAI** (Codex best practices): a good file covers "repo layout and important directories", how to run, build/test/lint, conventions and PR expectations, do-not rules, what done means; "short, accurate… add new rules only after you notice repeated mistakes"; split into referenced task files when it grows. / OpenAI：好文件覆盖"仓库布局与重要目录"、运行方式、命令、约定、禁令、完成标准；"短而准确……只在发现重复错误后加规则"；变大就拆成被引用的任务文件。
+- **The one divergence** is the repository map: OpenAI lists it, Anthropic trims it. The skill admits it as a Pointers line when the tree does not make it obvious, and rejects a listing `ls` reproduces. / 唯一分歧是仓库地图：OpenAI 列入，Anthropic 删除。skill 的处理：树结构不明显时作为 Pointers 一行收录，`ls` 能复现的清单不收。
+
+What seven studies say / 七篇研究怎么说：
+
+| Study | Scope | Finding | Weight here |
+|---|---|---|---|
+| Gloaguen et al. 2026-02 (ETH) | 3 agents, Python, generated + developer files, success + cost | generated: no gain, +20–23% cost; developer: +2.4% n.s.; overview ablation: nothing; docs removed: +2.7% | the cost mechanism; generated < developer |
+| Lulla et al. 2026-01 | gpt-5.2-codex, 124 small PRs, developer files, efficiency only | −28.6% runtime, −16.6% output tokens | developer files cut exploration |
+| Shepard & Albrecht 2026-06 | refined guidance via probes | 25.5% → 33.0% resolution, all from reaching the right file; patch quality flat | a map can help; quality rules do not |
+| Arabat & Sayagh, MSR 2026 | 15,549 agentic PRs, 148 projects, before/after | 27.7% of projects up ≥ 20% merge rate, 26.35% down; improvers had longer, more structured files | against "shorter is always better" |
+| Chatlatanagulchai et al. 2025-11 | 2,303 files, 1,925 repos | tests 75.9%, implementation 70.8%, architecture 68.1%; security 14.8%; files evolve like config code | what people write; treat as code |
+| Galster et al., AIware 2026 | 2,853 repos | context files dominate; often the only mechanism; AGENTS.md as standard | why the file matters |
+| Voria et al. 2026-06 | mining study of file maintenance | taxonomy of changes; links to code quality | treat as code |
+
+Where they agree: developer-written beats generated; the file is followed, so what it asks for is what it costs; it should be maintained like code. Where they disagree: whether a map helps (Gloaguen no, Shepard yes) and whether shorter is better (Arabat: the improvers were longer). Principle 1 was rewritten to lead with the vendors and to state the disagreement instead of picking a side.
+一致处：手写优于生成；文件会被执行，写了什么就付什么成本；要像代码一样维护。分歧处：地图是否有用、是否越短越好。原则 1 已改为以厂商为先，并陈述分歧而不是选边。
+
 ## What the harness probe added / 实测补充
 
 - `vercel/next.js/AGENTS.md` is 30 KB — 2 KB under the Codex cap before any global or nested file. A popular exemplar can itself be over budget; watching exemplars is partly watching for that.

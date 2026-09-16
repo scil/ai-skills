@@ -12,6 +12,14 @@ Verified 2026-09-15 against [learn.chatgpt.com/docs/agent-configuration/agents-m
 | Hooks: `.codex/hooks.json`, same event names as Claude Code | a forbidden command or path can be a hook here too |
 | Approval/sandbox is user config (`approval_policy`, `sandbox_mode`); with `never` + `danger-full-access` the instruction file is the only behavioural layer | the Boundaries block at the top matters most for this harness |
 
+## What OpenAI says belongs in the file ([Codex best practices](https://learn.chatgpt.com/guides/best-practices), verified 2026-09-15)
+
+- "A good AGENTS.md covers: repo layout and important directories; how to run the project; build, test, and lint commands; engineering conventions and PR expectations; constraints and do-not rules; what done means and how to verify work."
+- "A short, accurate AGENTS.md is more useful than a long file full of vague rules. Start with the basics, then add new rules only after you notice repeated mistakes."
+- "If AGENTS.md starts getting too large, keep the main file concise and reference task-specific markdown files for things like planning, code review, or architecture."
+- Three levels: `~/.codex/AGENTS.md` for personal defaults, the repo file for shared standards, subdirectory files for local rules; "if there's a more specific file closer to your current directory, that guidance wins."
+- Divergence from Anthropic: OpenAI lists repo layout as content; Anthropic's `/doctor` trims directory layouts. This skill admits a layout as a Pointers line when the tree does not make it obvious (`rules.md` §1).
+
 ## Model behaviour notes (measured or observed, dated)
 
 - **Instructions are followed, and following costs** (controlled study, 2026-02, GPT-5.2 and GPT-5.1 mini): tooling recommendations raised GPT-5.2 reasoning tokens by 22%; testing instructions raised cost significantly; more grep/read/write per task. Scope verification to the kind of change; never "run all checks before every change".

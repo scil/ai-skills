@@ -16,6 +16,24 @@ Verified 2026-09-15 against [code.claude.com/docs/en/memory](https://code.claude
 | `/init` generates or proposes improvements; `CLAUDE_CODE_NEW_INIT=1` makes it read `AGENTS.md`, `.devin/rules/`, `.windsurf/rules/`, `.clinerules` | a generated file still needs the admission pass — the study found generated files cost more and help nothing |
 | `/import` migrates another agent's config (v2.1.213+); `/doctor` proposes trims of inferable content (v2.1.206+); `/context` lists loaded memory files | verification of "is it loaded" is `/context`, not belief |
 
+## What Anthropic says belongs in the file ([Best practices](https://code.claude.com/docs/en/best-practices) and [memory](https://code.claude.com/docs/en/memory), verified 2026-09-15)
+
+| Include | Exclude |
+|---|---|
+| Bash commands Claude can't guess | Anything Claude can figure out by reading code |
+| Code style rules that differ from defaults | Standard language conventions Claude already knows |
+| Testing instructions and preferred test runners | Detailed API documentation (link to docs instead) |
+| Repository etiquette (branch naming, PR conventions) | Information that changes frequently |
+| Architectural decisions specific to your project | Long explanations or tutorials |
+| Developer environment quirks (required env vars) | File-by-file descriptions of the codebase |
+| Common gotchas or non-obvious behaviors | Self-evident practices like "write clean code" |
+
+- "Keep it concise. For each line, ask: would removing this cause Claude to make mistakes? If not, cut it. Bloated CLAUDE.md files cause Claude to ignore your actual instructions!"
+- "If Claude already does something correctly without the instruction, delete it or convert it to a hook." Hooks are "deterministic"; CLAUDE.md instructions are "advisory".
+- "Keep it to facts Claude should hold in every session… If an entry is a multi-step procedure or only matters for one part of the codebase, move it to a skill or a path-scoped rule."
+- "If Claude keeps skipping one instruction, add emphasis such as IMPORTANT to that line alone. If you emphasize many lines, none of them stands out."
+- "Treat CLAUDE.md like code: review it when things go wrong, prune it regularly, and test changes by observing whether Claude's behavior actually shifts."
+
 ## Model behaviour notes (official, verified 2026-09-15)
 
 - **Verification instructions cause over-verification** — [Prompting Claude Opus 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5): "If your prompt contains explicit verification instructions ('include a final verification step for any non-trivial task', 'use a subagent to verify'), remove them: instructions like these cause over-verification on Claude Opus 5, and removing them reduces wasted tokens with no loss in quality." And under Self-correction: "Avoid instructing re-checks it already performs ('double-check your answer', 're-verify before responding'); … these compound with the model's own behavior and add cost without improving results." Consequence: the Verification section carries scoped done-criteria (which check for which change), never "verify your work".
