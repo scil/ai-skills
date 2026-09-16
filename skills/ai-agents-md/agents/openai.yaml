@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Agents.md"
+  short_description: "Create, review, grow AGENTS.md / CLAUDE.md; refresh sources"
+  default_prompt: "Use $ai-agents-md to review this repository's AGENTS.md and CLAUDE.md: run the refresh gate, then report every line that is inferable, stale, unenforced or over budget."
