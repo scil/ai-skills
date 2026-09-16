@@ -1,5 +1,5 @@
 ---
-name: scil:ai-docs-organizing
+name: ai-docs-organizing
 disable-model-invocation: true
 description: Organize the docs AI agents load — AGENTS.md / CLAUDE.md, skills, hooks, per-agent memory — so every harness receives the contract within its budget, each fact in one owner. Use when auditing or reorganizing a project's AI docs, when a second harness joins a repo (Claude Code beside Codex or the reverse), when an instruction file passes ~25 KB or a hot pointer-reached doc (a plan, a domain model, a locator) passes ~40 KB, when an agent keeps missing a rule that is "written down", or before adding an AGENTS.md section.
 ---

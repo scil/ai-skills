@@ -1,5 +1,5 @@
 ---
-name: scil:docs-maintainer
+name: docs-maintainer
 disable-model-invocation: true
 description: Create, organize, audit or maintain the documentation system of a project whose first reader is an AI coding agent. Use when deciding where a durable fact belongs (contract line, plan, system-of-record doc, generated artefact, vendored reference, skill, governance), routing facts into a system the project already has instead of a parallel tree, scaffolding docs/ from nothing, setting up execution plans, adding C4 architecture docs or ADRs, deciding whether an API needs a document at all, reviewing a code change for documentation impact, auditing docs for staleness (gardening), or checking this skill's sources (30-day refresh gate).
 ---

@@ -1,5 +1,5 @@
 ---
-name: scil:obsidian-vault-ops
+name: obsidian-vault-ops
 disable-model-invocation: true
 description: Use when creating or editing notes in a local Obsidian vault - writing primers, runbooks, decision records or reference docs, restructuring existing notes, and also building dashboard/control-panel notes whose buttons run shell commands, or configuring community plugins by writing their data.json directly. Trigger for requests mentioning Obsidian, vault, notes, callouts, wikilinks, "write this up as a note", "a note with buttons", the Buttons plugin, or the Shell commands plugin.
 ---

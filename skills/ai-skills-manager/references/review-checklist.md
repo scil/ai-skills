@@ -10,6 +10,7 @@ Walk it in order: description, body, references, mirror. Each line is a question
 | Would the skill still fire on its own cases if the harness cut the description in half? | Put the two or three most distinctive triggers first; drop synonyms that only lengthen it. |
 | Does it say what the skill is *not* for, when a sibling skill shares the territory? | Add one "Not for …" clause naming the sibling's case; longer than that is the sibling's description, not this one's. |
 | Is it shorter than, or the same length as, before this review? | A description grows only when a trigger was missing — record the incident. |
+| Is `name` exactly the directory name — lowercase, digits, hyphens, no prefix? | Restore it. A namespace (`plugin:skill`) is the harness's job, set by the plugin manifest; a hand-written prefix breaks the spec's grammar and doubles once packaged. |
 
 ## Body (loaded on trigger; budget is attention)
 

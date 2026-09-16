@@ -1,5 +1,5 @@
 ---
-name: scil:create-scoop-manifest
+name: create-scoop-manifest
 disable-model-invocation: true
 description: Create, update, and validate Scoop package manifests (`.json`) for Windows applications. Use when Codex needs to add an app to a Scoop bucket, package a GitHub release or other Windows download for Scoop, repair a manifest's URL/hash/extraction rules, add `checkver` and `autoupdate`, or locally verify a manifest when explicitly requested.
 ---

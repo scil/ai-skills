@@ -1,0 +1,7 @@
+{
+  "name": "scil",
+  "description": "scil's shared skills: AI-docs organizing, instruction files, skill maintenance, docs systems, code review, research and tooling",
+  "author": { "name": "scil" },
+  "repository": "https://github.com/scil/ai-skills",
+  "keywords": ["skills", "agents-md", "claude-code", "codex", "docs"]
+}

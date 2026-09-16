@@ -1,5 +1,5 @@
 ---
-name: scil:ai-agents-md
+name: ai-agents-md
 disable-model-invocation: true
 description: Create, review, update or grow a repository's agent instruction file — AGENTS.md (Codex, the cross-tool standard) and CLAUDE.md (Claude Code), root or nested. Use when a repo has no instruction file, when /init or a generated file is proposed, when an agent repeats a mistake that "should be in AGENTS.md", when reviewing or slimming an existing AGENTS.md / CLAUDE.md, when deciding whether a rule belongs in the file, a hook, a linter or a skill, or when its reference sources may have changed (every run first checks a 7-day refresh gate).
 ---

@@ -1,5 +1,5 @@
 ---
-name: scil:ai-skills-manager
+name: ai-skills-manager
 disable-model-invocation: true
 description: Review, slim or grow one skill's SKILL.md — a description that is only the trigger, a router body with paths ending on done-criteria, large blocks behind references — and fold a drifted project-local fork back into its shared skill. Use when a skill's steps are being skipped or buried under reference, when a description is over-long or restates work rules, when a copy of a shared skill has drifted, when deciding whether a rule belongs in a skill's description, body, references or the instruction file, or when the vendor skill format may have changed (every run first checks a 7-day refresh gate). Not for creating a skill from nothing or running evals, nor for the skills roster and its budget.
 ---
