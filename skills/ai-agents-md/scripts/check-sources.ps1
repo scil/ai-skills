@@ -3,7 +3,8 @@
   Fingerprint the sources listed in ../references/sources.md and report which moved.
 
 .DESCRIPTION
-  Reads the Markdown table in sources.md. For each row:
+  Reads the Markdown table in sources.md (columns: id | kind | url | fingerprint | checked | purpose | source-date).
+  For each row:
     - a github.com/<owner>/<repo>/blob/<branch>/<path> URL is fingerprinted as gh:<sha12>,
       the latest commit touching that path (GitHub REST API, unauthenticated: 60 req/h).
     - any other URL is fetched and fingerprinted as sha:<hex12>, the SHA-256 of the page text
@@ -73,6 +74,7 @@ function Get-GitHubFingerprint([string]$url) {
   $api = "https://api.github.com/repos/$owner/$repo/commits?path=$([uri]::EscapeDataString($file))&sha=$branch&per_page=1"
   $j = Invoke-RestMethod -Headers $headers -Uri $api -TimeoutSec 30
   if (-not $j -or -not $j[0].sha) { throw "no commits returned for $file" }
+  $script:lastGitHubDate = ([datetime]$j[0].commit.committer.date).ToString('yyyy-MM-dd')
   return 'gh:' + $j[0].sha.Substring(0, 12)
 }
 
@@ -91,7 +93,7 @@ function Get-PageFingerprint([string]$url) {
 
 $results = @()
 foreach ($row in $rows) {
-  $status = ''; $new = ''
+  $status = ''; $new = ''; $script:lastGitHubDate = $null
   if ($row.fp -match '^manual') {
     # The site blocks plain clients (403/429); the Refresh path reads it in a browser and updates the date by hand.
     $results += [pscustomobject]@{ row = $row; status = 'MANUAL'; new = $row.fp; err = $null }
@@ -108,7 +110,7 @@ foreach ($row in $rows) {
     $status = 'ERROR'; $new = $row.fp
     $err = $_.Exception.Message -replace '\s+', ' '
   }
-  $results += [pscustomobject]@{ row = $row; status = $status; new = $new; err = $err }
+  $results += [pscustomobject]@{ row = $row; status = $status; new = $new; err = $err; ghDate = $script:lastGitHubDate }
   $err = $null
   '{0,-9} {1,-24} {2,-18} -> {3,-18} {4}' -f $status, $row.id, $row.fp, $new, ($(if ($status -eq 'ERROR') { $results[-1].err } else { '' }))
 }
@@ -124,6 +126,8 @@ if ($Update) {
     $cells = ($lines[$r.line].Trim() -replace '^\|', '' -replace '\|$', '') -split '\|' | ForEach-Object { $_.Trim() }
     $cells[3] = $res.new
     $cells[4] = $today
+    # 7th column `source-date`: for GitHub rows it is the latest commit date of the file; page rows keep their hand-entered value.
+    if ($cells.Count -ge 7 -and $res.ghDate) { $cells[6] = "commit $($res.ghDate)" }
     $lines[$r.line] = '| ' + ($cells -join ' | ') + ' |'
   }
   $lines = $lines | ForEach-Object { if ($_ -match '^last-refresh:') { "last-refresh: $today" } else { $_ } }
