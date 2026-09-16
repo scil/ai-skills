@@ -1,5 +1,5 @@
 ---
-name: tiered-research
+name: scil:tiered-research
 description: Research a question, verify a set of claims, or build the source base for a report or a skill, with sources ranked by authority tier and every verdict naming the corpus it searched. Use when asked to check whether claims are true, to critically absorb an article or a chat transcript, to find "the latest" on a topic, to compare studies that disagree, to write a report that cites sources, or to give a skill a sources registry with dates and fingerprints. Owns the method of judging and registering sources; collecting coding resources for an implementation is gather-code-references, and turning references into project decisions is derive-project-plan.
 ---
 
@@ -48,3 +48,4 @@ Research whose output is a set of verdicts and a source table, not an impression
 - [`references/source-tiers.md`](references/source-tiers.md) — the tier table, what each tier may do, scope fields for a study.
 - [`references/verdict-protocol.md`](references/verdict-protocol.md) — corpus-first procedure, verdict vocabulary, the report shape.
 - [`templates/sources.md`](templates/sources.md) — registry compatible with `ai-agents-md/scripts/check-sources.ps1`.
+

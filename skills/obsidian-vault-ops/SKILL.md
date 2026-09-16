@@ -1,5 +1,5 @@
 ---
-name: obsidian-vault-ops
+name: scil:obsidian-vault-ops
 description: Use when creating or editing notes in a local Obsidian vault - writing primers, runbooks, decision records or reference docs, restructuring existing notes, and also building dashboard/control-panel notes whose buttons run shell commands, or configuring community plugins by writing their data.json directly. Trigger for requests mentioning Obsidian, vault, notes, callouts, wikilinks, "write this up as a note", "a note with buttons", the Buttons plugin, or the Shell commands plugin.
 ---
 
@@ -20,7 +20,9 @@ both are invisible until they bite.
    Never reuse a path from memory or from earlier in a conversation — search for it.
 2. **Obsidian must be fully quit before writing any `.obsidian/**/data.json`.** A running plugin
    holds settings in memory and rewrites the file on its next save, silently discarding your edits.
-   Check for the process, ask the user to quit, then write.
+   Check for the process **in the same script that writes** (a guard line, not a separate earlier
+   check — the user may open Obsidian between your survey and your write). For a wiring task, ask
+   the user to quit Obsidian at the *start*, so the write step never stalls the task.
 3. **Never interpolate a `{{variable}}` into a command that runs under `cmd.exe`.** Shell commands'
    `Shell_CMD.getEscaper()` returns `null` — there is no escaping. Arbitrary text containing
    `& | > "` becomes executable. Use PowerShell or sh, which have real escapers.
@@ -80,6 +82,23 @@ Get-ChildItem "<vault>" -Recurse -Filter "*.md" | Select-Object -First 20 FullNa
 
 Match the vault's existing structure and naming. If notes live in project folders, put yours there
 too; if an existing note should link to the new one, add the link in both directions.
+
+**When a console already exists for another project, learn its conventions from the config, not by
+reading the whole note** — an established console runs to 800+ lines. One line per registered
+command tells you the alias prefix, shell choice, confirmation and output routing, and the exact
+command-string forms in use:
+
+```powershell
+$cfg = Get-Content "<vault>\.obsidian\plugins\obsidian-shellcommands\data.json" -Raw | ConvertFrom-Json
+"version $($cfg.settings_version) / working_directory '$($cfg.working_directory)' / $($cfg.shell_commands.Count) commands"
+$cfg.shell_commands | ForEach-Object { "{0,-28} shells={1} confirm={2} out={3} | {4}" -f $_.alias,
+    ($_.shells | ConvertTo-Json -Compress), $_.confirm_execution, $_.output_handlers.stdout.handler,
+    $_.platform_specific_commands.default }
+```
+
+Then read only the existing note's frontmatter, its "how the buttons work" card and one group
+(a button block plus its grey line) — that is the whole house style. Reuse the same `scripts\win\`
+layout and script shapes from that project's repo rather than inventing new ones.
 
 ### 2. Author
 
@@ -148,8 +167,14 @@ scratch section a `{{selection}}` button reads from. Every paragraph, table, war
 goes into a `-` callout whose title carries the headline. Headings stay verbatim (other notes link
 to them). Verify with the alias check plus "zero open callouts".
 
-Exact schemas and the data.json protocol: `references/plugin-config.md`.
-Windows script pitfalls (`pause` hanging, `.ps1` encoding): `references/windows-scripts.md`.
+Order the work so nothing waits on the user: **scripts → run each once → register commands →
+note → verify.** Scripts and their test runs need nothing from Obsidian; registration is the one
+step that needs it quit, and by then you know every alias and command string for certain.
+
+Exact schemas, the data.json protocol, the three proven command-string forms and a reusable
+registration script: `references/plugin-config.md`.
+Windows script pitfalls (`pause` hanging, `.ps1` encoding) and a health-check skeleton:
+`references/windows-scripts.md`.
 
 ### 4. Verify
 
@@ -205,3 +230,4 @@ green result proves the whole chain without side effects.
 - `references/plugin-config.md` — the data.json protocol, schema-extraction recipes, and verified
   reference for Shell commands + Buttons.
 - `references/windows-scripts.md` — making scripts safe to call from a plugin on Windows.
+

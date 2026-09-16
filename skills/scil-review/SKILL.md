@@ -1,5 +1,5 @@
 ---
-name: scil-review
+name: scil:scil-review
 description: Review a diff for under-used library APIs and one-sided guards. Use when reviewing a change that uses a library hook, adds a listener or effect beside one, guards a navigation or an unload, copies a pattern across files, or when asked why a library was not used fully. Owns what the reviewer looks for and how to act on it; scil-coding owns the fix and scil-testing owns the proof.
 ---
 
@@ -31,3 +31,4 @@ The lesson of 2026-09-11: five screens used a router's `useBlocker` and, beside 
 - **Compare the two designs in code, side by side.** Own handler + `enableBeforeUnload: false` versus `enableBeforeUnload: () => predicate` — both are correct; the second has one predicate instead of two and no listener to explain. Choose by which one cannot drift, and show the diff, not just the argument.
 - **Ask why, after the fix.** "Why did the code use the library without using its capability?" produced these checks. The fix closes one bug; the why closes the class.
 - **Report coverage honestly.** Fixed on five screens, probed on one: say "verified by test on settings; by identical shape elsewhere".
+

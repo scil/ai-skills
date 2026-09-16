@@ -1,5 +1,5 @@
 ---
-name: warm-product-design
+name: scil:warm-product-design
 description: Found the design language of a product whose value is human warmth and relationships (community, neighbours, family, care, mutual help, gifting, gratitude, faith, newcomer support) — especially one named after a place or object (porch, table, hearth, lantern, letter). Use when a product has no style guide, vocabulary table or design tokens yet and the user asks for a UI style, brand-to-design translation, relational copy, a metaphor-derived design language, switchable tokens, or prompts for v0/Figma AI/Claude. Once a project owns a brand spec and a voice skill, those win — this skill founds, it does not govern.
 ---
 
@@ -138,3 +138,4 @@ Watch for these and reject them when they appear in AI output or in your own dra
 - `for-human/` — Chinese reading copies of the above; agents read the English files only
 
 When applying this skill, **read `metaphor-extraction.md` and `vocabulary-system.md` first** — they're the highest-leverage parts of the methodology. Read the others on demand as the relevant stage comes up.
+

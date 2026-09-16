@@ -1,5 +1,5 @@
 ---
-name: anki-cards
+name: scil:anki-cards
 description: Turn newly-learned concepts/technology from a conversation (or a given term list) into bilingual (English-first) Anki flashcards — atomic Q&A + cloze + linking cards — and push them into Anki via the scripts in scripts/ (AnkiConnect), optionally with EN/ZH TTS audio. Also covers editing, re-voicing, and deleting existing cards. Use when the user wants to "做成 Anki 卡 / 复习卡片 / 把知识存进 Anki / 收录到 anki / 加音频". Personal skill; needs Anki open with the AnkiConnect add-on.
 ---
 
@@ -310,3 +310,4 @@ python $S/anki_audio.py  --ids 1789190587573,1789190587580 --replace
 
 Cloze cards: `model: 填空题` in the card's key lines, sections `## 文字` (with `{{c1::…}}`) and
 optionally `## 背面额外`.
+

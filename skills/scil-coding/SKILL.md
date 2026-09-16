@@ -1,5 +1,5 @@
 ---
-name: scil-coding
+name: scil:scil-coding
 description: Use a library's API fully before writing code beside it. Use when adopting or already using a library hook, component, or config object — especially when about to add a DOM listener, an effect, or a guard next to it, or when copying such a pairing from a sibling file. Owns how the code is written; scil-testing proves it and scil-review reads it.
 ---
 
@@ -34,3 +34,4 @@ The lesson of 2026-09-11: five screens paired a router's `useBlocker` with a han
 
 - **The second copy is the audit.** "The same guard the full editor carries" inherits the first copy's unaudited debt. At the second copy, verify the pattern once against the library — five copies without an audit are five bugs with one cause.
 - **Fix all copies in one change.** A symptom reported on one screen and a pattern present on five is a five-file diff, with the same option shape at every site.
+

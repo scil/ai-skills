@@ -1,5 +1,5 @@
 ---
-name: create-scoop-manifest
+name: scil:create-scoop-manifest
 description: Create, update, and validate Scoop package manifests (`.json`) for Windows applications. Use when Codex needs to add an app to a Scoop bucket, package a GitHub release or other Windows download for Scoop, repair a manifest's URL/hash/extraction rules, add `checkver` and `autoupdate`, or locally verify a manifest when explicitly requested.
 ---
 
@@ -51,4 +51,5 @@ Create a maintainable manifest from verified release facts, then validate the JS
 ## Completion report
 
 Report the manifest path, packaged version and architecture, selected upstream asset, validation performed, and installation state. Call out any upstream limitation, unverified silent installer behavior, external application-data path, or pre-existing dirty bucket state.
+
 

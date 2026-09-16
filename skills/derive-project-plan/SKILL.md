@@ -1,5 +1,5 @@
 ---
-name: derive-project-plan
+name: scil:derive-project-plan
 description: Use when Codex needs to turn a software reference collection, research corpus, architecture notes, or third-party resource reports into a project-specific development plan, implementation rules, architecture decisions, and acceptance criteria. Trigger after reference gathering, when the user asks to make a plan from references, derive project rules, choose between researched options, or adapt external patterns to a specific codebase without coding yet.
 ---
 
@@ -55,3 +55,4 @@ Every important rule or architectural choice should show its basis:
 - Do not leave high-impact tradeoffs unresolved.
 - Do not code or edit project files unless the user asks for implementation after the plan.
 - Do not hide weak evidence. Mark low-confidence recommendations clearly.
+

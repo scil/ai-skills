@@ -1,5 +1,5 @@
 ---
-name: scil-testing
+name: scil:scil-testing
 description: Test a guard in both directions and at the layer where the real library runs. Use when testing anything that prompts, blocks, or warns — a leave guard, a confirm, a validation gate — when a component suite stubs a library hook, when the test harness bypasses the browser behaviour under test, or before claiming a guard is verified. Owns how the proof is built; scil-coding owns the code and scil-review owns reading it.
 ---
 
@@ -36,3 +36,4 @@ The lesson of 2026-09-11: a leave-prompt guard was tested only as "prompts when 
 ## In the manual pass
 
 - **Add a negative-space step.** "Open a clean screen; refresh; nothing should happen." One second, and nothing else in the walkthrough will prompt anyone to do it.
+

@@ -1,5 +1,5 @@
 ---
-name: ai-agents-md
+name: scil:ai-agents-md
 description: Create, review, update or grow a repository's agent instruction file — AGENTS.md (Codex, the cross-tool standard) and CLAUDE.md (Claude Code), root or nested. Use when a repo has no instruction file, when /init or a generated file is proposed, when an agent repeats a mistake that "should be in AGENTS.md", when reviewing or slimming an existing AGENTS.md / CLAUDE.md, when deciding whether a rule belongs in the file, a hook, a linter or a skill, or when the reference sources for these files may have changed (every run first checks a 7-day refresh gate). Owns the content of one instruction file: which rules earn a line, how a rule is worded and enforced, the templates, and the sources it is derived from. Which files each harness loads, byte budgets across the chain, and the diet of an oversized contract belong to ai-docs-organizing; where any other project fact lives belongs to docs-maintainer.
 ---
 
@@ -55,3 +55,4 @@ Procedure in [`references/refresh.md`](references/refresh.md): run `scripts/chec
 - [`references/harness/claude-code.md`](references/harness/claude-code.md), [`references/harness/codex.md`](references/harness/codex.md) — what each harness does with the file's content, verified with dates.
 - [`references/stacks/`](references/stacks/) — candidate non-inferable rules per stack; a menu, never auto-inserted.
 - [`templates/`](templates/) — root, nested, bridge.
+

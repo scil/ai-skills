@@ -1,5 +1,5 @@
 ---
-name: docs-maintainer
+name: scil:docs-maintainer
 description: Create, organize, audit, or maintain the documentation system of a software project whose first reader is an AI coding agent. Use when an agent needs to decide where a durable fact belongs (a contract line, a plan, a system-of-record doc, a generated artefact, a vendored reference, a skill, or governance), route facts into a system the project already has (an agent contract, a spec system, a plan doc) instead of building a parallel tree, scaffold docs/ from nothing, set up execution plans, add C4 architecture docs or ADRs, decide whether an API needs a document at all, review a code change for documentation impact, audit docs for staleness (gardening), or check whether the documentation standards, vendor guidance and research this skill rests on have changed (30-day refresh gate). Owns layers 1–6 of the docs system; the always-loaded instruction file's content is ai-agents-md's, and loading budgets are ai-docs-organizing's.
 ---
 
@@ -70,3 +70,4 @@ Procedure in [`references/refresh.md`](references/refresh.md): run the shared ch
 - [`references/diagramming.md`](references/diagramming.md) — PlantUML rules for C4 L1/L2, flows and trap entries.
 - [`references/sources.md`](references/sources.md), [`references/refresh.md`](references/refresh.md), [`references/changelog.md`](references/changelog.md) — the tiered sources and the refresh machinery.
 - [`templates/ownership-map.md`](templates/ownership-map.md) — the Adopting path's deliverable and the layer-6 owner.
+

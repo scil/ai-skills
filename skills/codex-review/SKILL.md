@@ -1,5 +1,5 @@
 ---
-name: codex-review
+name: scil:codex-review
 description: Review a change with the codex CLI and iterate until it reports nothing. Use whenever a change is ready for an independent review, when the user asks for a codex review, or when a change is substantial enough to warrant a second reader. Covers invoking codex safely (it can commit your tree), scoping and speeding up a round, verifying each finding before acting on it, and the default loop of review → fix → re-review until the change comes back clean.
 ---
 
@@ -117,3 +117,4 @@ Two things make this harder to obey than it reads:
 - **Saying "this is the class fix" is not doing one.** The tell is what the patch touches: a class fix removes the possibility (key the component so stale state cannot survive; move the value out of the shared cache; tag in-flight work with a generation), where an instance fix adds a condition at the site named. If the diff is another `if` next to the last `if`, it is an instance fix wearing the word "structural".
 
 And when the structural move lands, **spend that round on it alone**. Mixing it with two more instance patches makes the next round's findings unattributable — you cannot tell what the structure fixed and what it did not.
+

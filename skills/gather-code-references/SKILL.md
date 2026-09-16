@@ -1,5 +1,5 @@
 ---
-name: gather-code-references
+name: scil:gather-code-references
 description: Use when Codex needs to research, inspect, compare, and organize third-party coding resources before implementation or project planning. Trigger for requests to gather references, build a reference collection/corpus, study official docs, mature open-source projects, templates, package source/types, changelogs, migration guides, security advisories, architecture examples, dependency choices, existing Codex skills, or ecosystem conventions for a software project.
 ---
 
@@ -68,3 +68,4 @@ Do not write an implementation plan as the main output. Stop at researched refer
 - Do not skip version, peer dependency, license, or migration checks.
 - Do not paste large chunks of copyrighted external source or documentation.
 - Do not invent current facts for fast-moving libraries; verify them from local packages or current sources.
+

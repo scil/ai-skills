@@ -1,5 +1,5 @@
 ---
-name: ai-docs-organizing
+name: scil:ai-docs-organizing
 description: Organize the documents AI agents consume — instruction files (AGENTS.md / CLAUDE.md), skills, hooks, and per-agent memory — so that every agent working in a repository actually receives the contract, within its harness's budget, with each fact in one owner. Use when auditing or reorganizing a project's AI docs, when a second agent or harness joins a repo (Claude Code beside Codex or the reverse), when an instruction file has grown past ~25 KB, when an agent keeps missing a rule that is "written down", when a pointer-reached doc that the contract or several skills send every task of a kind to (a plan, a domain model, a locator) has grown past ~40 KB, or before adding a skill or an AGENTS.md section. Covers measuring what each harness loads and where it silently stops, the byte budget and its guard, always-loaded versus pointer-reached versus hot pointer-reached material, what belongs in memory versus the repo, the diet procedure for the contract and for a hot doc, tracing each problem to the rule, tool or habit that produced it so source and symptom are fixed together, and reviewing the plan with the other agent before editing. Owns only the docs a harness loads; where any other project fact belongs is docs-maintainer's (or the project's local docs skill's) question.
 ---
 
@@ -84,3 +84,4 @@ A skill body is loaded on trigger, not every turn, so its budget is attention, n
 ## Anti-patterns
 
 Raising the byte limit instead of dieting (restores text, not attention). A brake written in prose. A spec written from the contract's prose instead of the tests. Two copies of a generated skill. Junction creation wired into `prepare`. A code-locator entry that has grown into an essay — the invariant stays, the rationale goes to the spec it cites. A plan whose numbers nobody re-counted. Calling a doc "free" because it is pointer-reached, while every domain task reads all of it. Splitting a hot doc by section before dieting it.
+
