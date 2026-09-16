@@ -1,9 +1,11 @@
 ---
 name: scil:docs-maintainer
-description: Create, organize, audit, or maintain the documentation system of a software project whose first reader is an AI coding agent. Use when an agent needs to decide where a durable fact belongs (a contract line, a plan, a system-of-record doc, a generated artefact, a vendored reference, a skill, or governance), route facts into a system the project already has (an agent contract, a spec system, a plan doc) instead of building a parallel tree, scaffold docs/ from nothing, set up execution plans, add C4 architecture docs or ADRs, decide whether an API needs a document at all, review a code change for documentation impact, audit docs for staleness (gardening), or check whether the documentation standards, vendor guidance and research this skill rests on have changed (30-day refresh gate). Owns layers 1–6 of the docs system; the always-loaded instruction file's content is ai-agents-md's, and loading budgets are ai-docs-organizing's.
+description: Create, organize, audit or maintain the documentation system of a project whose first reader is an AI coding agent. Use when deciding where a durable fact belongs (contract line, plan, system-of-record doc, generated artefact, vendored reference, skill, governance), routing facts into a system the project already has instead of a parallel tree, scaffolding docs/ from nothing, setting up execution plans, adding C4 architecture docs or ADRs, deciding whether an API needs a document at all, reviewing a code change for documentation impact, auditing docs for staleness (gardening), or checking this skill's sources (30-day refresh gate).
 ---
 
 # Documentation for a repository whose first reader is an agent
+
+**Scope.** This skill owns layers 1–6 of the docs system; the always-loaded instruction file's content is ai-agents-md's, and loading budgets are ai-docs-organizing's.
 
 Facts must be discoverable, stable, linkable, and safe for an agent to act on. Since 2026-09-15 the system is organized by **loading layer** — how a fact reaches the agent and what each read costs — and its rules carry tiered sources. Why, and on what evidence: [`readme.md`](readme.md).
 

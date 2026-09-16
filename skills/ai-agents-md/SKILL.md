@@ -1,9 +1,11 @@
 ---
 name: scil:ai-agents-md
-description: Create, review, update or grow a repository's agent instruction file — AGENTS.md (Codex, the cross-tool standard) and CLAUDE.md (Claude Code), root or nested. Use when a repo has no instruction file, when /init or a generated file is proposed, when an agent repeats a mistake that "should be in AGENTS.md", when reviewing or slimming an existing AGENTS.md / CLAUDE.md, when deciding whether a rule belongs in the file, a hook, a linter or a skill, or when the reference sources for these files may have changed (every run first checks a 7-day refresh gate). Owns the content of one instruction file: which rules earn a line, how a rule is worded and enforced, the templates, and the sources it is derived from. Which files each harness loads, byte budgets across the chain, and the diet of an oversized contract belong to ai-docs-organizing; where any other project fact lives belongs to docs-maintainer.
+description: Create, review, update or grow a repository's agent instruction file — AGENTS.md (Codex, the cross-tool standard) and CLAUDE.md (Claude Code), root or nested. Use when a repo has no instruction file, when /init or a generated file is proposed, when an agent repeats a mistake that "should be in AGENTS.md", when reviewing or slimming an existing AGENTS.md / CLAUDE.md, when deciding whether a rule belongs in the file, a hook, a linter or a skill, or when its reference sources may have changed (every run first checks a 7-day refresh gate).
 ---
 
 # Agent instruction files: AGENTS.md and CLAUDE.md
+
+**Scope.** This skill owns the content of one instruction file: which rules earn a line, how a rule is worded and enforced, the templates, and the sources it is derived from. Which files each harness loads, byte budgets across the chain, and the diet of an oversized contract belong to ai-docs-organizing; where any other project fact lives belongs to docs-maintainer.
 
 An **instruction file** is the Markdown a coding harness injects into every session it starts in a repository: `AGENTS.md` for Codex and most other tools, `CLAUDE.md` for Claude Code. It is a behavioural layer, not a brake, and it is paid for on every turn. This skill decides what earns a line there, writes it, reviews it, and keeps its own sources current. Origin, and what was kept or rejected from the two conversations it grew from: [`readme.md`](readme.md).
 

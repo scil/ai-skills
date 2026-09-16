@@ -149,3 +149,26 @@ plus the reading rule, in the doc *and* in every skill that routes to it: *read 
 **Split test, after the diet**: a section still > ~10 KB **and** read for a different purpose than its neighbours → its own file with a two-line stub; otherwise leave it. Then check every `§n` pointer and every path that named the moved section.
 
 **Report**: bytes before → after per section, what was handed to which owner, and the reading rule's new location.
+
+## 11. Dieting the skill roster
+
+**Trigger**: Codex prints `Skill descriptions were shortened to fit the skills context budget.` at start-up. It shortens *every* description, so the skill written with the longest trigger list is the one most likely to miss its own case; nothing else reports the cut.
+
+**Measure first** — every directory each harness scans, with each `description`'s length and the junction target (a junction with no `SKILL.md` behind it is a dead entry the scan still counts):
+
+```powershell
+foreach ($r in "$repo\.agents\skills", "$HOME\.codex\skills", "$HOME\.agents\skills") {
+  Get-ChildItem $r -Directory | ForEach-Object {
+    $f = Join-Path $_.FullName SKILL.md
+    $d = if (Test-Path $f) { ([regex]::Match((Get-Content $f -Raw), '(?m)^description:\s*(.*)$')).Groups[1].Value.Trim().Length } else { 'n/a' }
+    "{0,5}  {1} {2} {3}" -f $d, $_.Name, $_.LinkType, ($_.Target -join ',') } }
+```
+
+**Then, in cost order — stop when the warning is gone:**
+
+1. **The user level.** `~/.codex/skills/` and `~/.agents/skills/` load into every repo on the machine, and Codex scans both, so a junction from one to the other is counted twice. Remove dead junctions (delete the link only, never its target) and duplicates; keep one user-level home.
+2. **Shorten the shared and project-owned descriptions you own.** Keep every trigger phrase; move ownership prose ("Owns X; Y belongs to Z") and "covers …" lists into a **Scope.** paragraph under the body's H1, so nothing is lost. Vendored descriptions stay as they are.
+3. **Retire what restates an owner.** A skill whose body is the contract's Architecture Rules, a spec's requirements, or conventions readable from the code is a second copy that drifts (the tell: a "recommended MVP shape" section that shipped months ago). Merge sibling skills that answer one question and hand off to each other into one; move the market reasoning to the marketing-context doc, the two or three facts that had no other owner into the locator's entry, and repoint every live reference (ownership map, plan, open change tasks, test comments) in the same commit — archived changes keep the old names.
+4. **Park the rest** in a sibling folder no harness scans (`.agents/skills-reserve/`): vendored skills as plain `git mv`, junctions recreated there, and the ignore manifest line moved with them — otherwise the parked junction comes back untracked and the next `git add -A` commits a copy of the shared collection. The link script reads the folder from the manifest line, so parking or promoting is one line.
+
+**Instance**: 28 repo + 17 user-level entries (9 dead junctions, 3 double-counted) → user level 4; three shared descriptions 1286/937/904 → 534/639/541 chars; `thanksporch-*` 5 → 2 (two merged, two retired into the contract and the locator); 6 parked. Repo roster 28 → 19, description bytes 10.8 KB → 5.8 KB.
