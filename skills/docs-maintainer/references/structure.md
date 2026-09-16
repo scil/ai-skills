@@ -75,7 +75,7 @@ When adopting, each node maps to an existing owner or is skipped with a reason. 
 | Node | Existing owner | Note |
 | --- | --- | --- |
 | Layer 0 | the agent contract (`AGENTS.md`, `CLAUDE.md` bridge) | content per `ai-agents-md`; nested contracts point upward only |
-| `plans/` | a spec system's change folders (proposal → design → tasks), or a plan doc | the change's design doc doubles as the ADR when it records a consequential decision |
+| `plans/` | a spec system's change folders (proposal → design → tasks), or a plan doc | the change's design doc doubles as the ADR when it records a consequential decision; OpenSpec projects: [`adopting-openspec.md`](adopting-openspec.md) |
 | `product`, `decisions` | the spec system | no separate `adr/` when the spec system carries decisions |
 | `architecture` | one hand-maintained C4 L1/L2 file | no L3/L4 subtree; architecture *rules* stay in the contract |
 | `generated/api` | the code, when routers, validators and shared types are the contract | no `docs/api/` |

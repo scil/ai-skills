@@ -9,4 +9,5 @@ Newest first. Written by the Refresh path (`refresh.md` §4); proposals apply on
 - Removed `templates/docs-ai.md`: its content is the instruction file's content, owned by `ai-agents-md` since 2026-09-15.
 - Ownership map gains three columns: Layer, Enforced by, Reading rule.
 - Removed `rules/tauri-command-api.md`: a framework-specific rule in a project-agnostic skill; its content is recorded in `readme.md` for the Tauri project to re-home.
+- Added `references/adopting-openspec.md` and the `openspec-readme` source: change folders as layer-1 plans, `design.md` as ADR, the gaps `docs/` fills, and the rule that OpenSpec's managed block is written into one file only.
 - Proposals: none (initial build).

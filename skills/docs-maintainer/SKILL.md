@@ -65,6 +65,7 @@ Procedure in [`references/refresh.md`](references/refresh.md): run the shared ch
 ## References and templates
 
 - [`references/structure.md`](references/structure.md) — the seven layers, what moved and why, adoption mappings, where the structure lives, repo map vs code locator, hot-doc reading rule.
+- [`references/adopting-openspec.md`](references/adopting-openspec.md) — the mapping for a project that runs OpenSpec: change folders as plans, `design.md` as ADR, the gaps `docs/` fills, six rules, a starter ownership-map excerpt.
 - [`references/cross-cutting.md`](references/cross-cutting.md) — cross-cutting checklist, decision states and promotion, link rules, where framework-specific rules live.
 - [`references/diagramming.md`](references/diagramming.md) — PlantUML rules for C4 L1/L2, flows and trap entries.
 - [`references/sources.md`](references/sources.md), [`references/refresh.md`](references/refresh.md), [`references/changelog.md`](references/changelog.md) — the tiered sources and the refresh machinery.
