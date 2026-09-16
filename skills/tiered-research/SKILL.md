@@ -1,5 +1,6 @@
 ---
 name: scil:tiered-research
+disable-model-invocation: true
 description: Research a question, verify a set of claims, or build the source base for a report or a skill, with sources ranked by authority tier and every verdict naming the corpus it searched. Use when asked to check whether claims are true, to critically absorb an article or a chat transcript, to find "the latest" on a topic, to compare studies that disagree, to write a report that cites sources, or to give a skill a sources registry with dates and fingerprints. Owns the method of judging and registering sources; collecting coding resources for an implementation is gather-code-references, and turning references into project decisions is derive-project-plan.
 ---
 

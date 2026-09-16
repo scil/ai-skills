@@ -1,5 +1,6 @@
 ---
 name: scil:warm-product-design
+disable-model-invocation: true
 description: Found the design language of a product whose value is human warmth and relationships (community, neighbours, family, care, mutual help, gifting, gratitude, faith, newcomer support) — especially one named after a place or object (porch, table, hearth, lantern, letter). Use when a product has no style guide, vocabulary table or design tokens yet and the user asks for a UI style, brand-to-design translation, relational copy, a metaphor-derived design language, switchable tokens, or prompts for v0/Figma AI/Claude. Once a project owns a brand spec and a voice skill, those win — this skill founds, it does not govern.
 ---
 

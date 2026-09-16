@@ -1,5 +1,6 @@
 ---
 name: scil:code-plan-review
+disable-model-invocation: true
 description: One rule per kind of problem, each with a writing side, a proving side and a reviewing side. Use when adopting or already using a library hook, component or option object; when about to add a DOM listener, effect or guard beside one, or copy such a pairing from a sibling file; when testing anything that prompts, blocks or warns; when a suite stubs a library hook or the harness bypasses the browser behaviour under test; when reviewing a diff that does any of these; and when harvesting a lesson from an incident — the lesson becomes a rule here, never a new skill.
 ---
 

@@ -1,5 +1,6 @@
 ---
 name: scil:codex-review
+disable-model-invocation: true
 description: Review a change with the codex CLI and iterate until it reports nothing. Use whenever a change is ready for an independent review, when the user asks for a codex review, or when a change is substantial enough to warrant a second reader. Covers invoking codex safely (it can commit your tree), scoping and speeding up a round, verifying each finding before acting on it, and the default loop of review → fix → re-review until the change comes back clean.
 ---
 

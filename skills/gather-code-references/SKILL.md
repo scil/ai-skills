@@ -1,5 +1,6 @@
 ---
 name: scil:gather-code-references
+disable-model-invocation: true
 description: Use when Codex needs to research, inspect, compare, and organize third-party coding resources before implementation or project planning. Trigger for requests to gather references, build a reference collection/corpus, study official docs, mature open-source projects, templates, package source/types, changelogs, migration guides, security advisories, architecture examples, dependency choices, existing Codex skills, or ecosystem conventions for a software project.
 ---
 

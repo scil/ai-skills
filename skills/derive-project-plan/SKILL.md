@@ -1,5 +1,6 @@
 ---
 name: scil:derive-project-plan
+disable-model-invocation: true
 description: Use when Codex needs to turn a software reference collection, research corpus, architecture notes, or third-party resource reports into a project-specific development plan, implementation rules, architecture decisions, and acceptance criteria. Trigger after reference gathering, when the user asks to make a plan from references, derive project rules, choose between researched options, or adapt external patterns to a specific codebase without coding yet.
 ---
 
