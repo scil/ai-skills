@@ -12,6 +12,7 @@ Not "make the symptom go away" — **make it impossible, and leave evidence that
 
 - Before editing a surface, read the rule that governs it: the design spec for UI, the behaviour spec for logic — including specs still sitting in proposed or unmerged changes, which bind but are not where the accepted ones live.
 - A fix that contradicts an accepted requirement is a spec change: made in the spec first, not a quiet edit.
+- A fix that touches a conditional database write, two paths over the same tables, a cache after a mutation, auth or visibility, a library hook beside a hand-written listener, or state seeded from a prop writes its pseudocode paragraph first and runs `code-plan-review`'s plan pass on it before the first edit; the incident that named the fix is usually an instance of a rule there.
 
 ## 2. Fix the class, not the instance
 
