@@ -6,7 +6,7 @@ description: Use when Codex needs to research, inspect, compare, and organize th
 
 # Gather Code References
 
-Use this skill to turn external software resources into an open Markdown reference collection. The goal is greedy understanding: extract every useful reference point from good resources without forcing them into a narrow matrix.
+Turn external software resources into an open Markdown reference collection. The goal is greedy understanding: extract every useful reference point from good resources without forcing them into a narrow matrix.
 
 ## Workflow
 

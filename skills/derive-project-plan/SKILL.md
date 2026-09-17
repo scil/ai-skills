@@ -6,7 +6,7 @@ description: Use when Codex needs to turn a software reference collection, resea
 
 # Derive Project Plan
 
-Use this skill to convert a gathered reference collection into project-specific choices. The goal is not to apply every good idea; it is to interrogate the reference material and the user until the plan and rules fit the actual project.
+Convert a gathered reference collection into project-specific choices. The goal is not to apply every good idea; it is to interrogate the reference material and the user until the plan and rules fit the actual project.
 
 ## Workflow
 

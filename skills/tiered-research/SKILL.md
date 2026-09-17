@@ -40,7 +40,3 @@ Research whose output is a set of verdicts and a source table, not an impression
 3. Run the shared checker to fill fingerprints and GitHub commit dates: `ai-agents-md/scripts/check-sources.ps1 -Path <registry> -Update`. Mark sites that answer 403/429 as `manual:<date>`.
 4. Done when the checker reports no `-` fingerprints and every row has a `purpose` and a `source-date`.
 
-## Anti-patterns
-
-"The research shows" from one paper. A verdict without the corpus it searched. Trusting a blog's description of a repository file. A guessed publication date. Resolving a vendor disagreement by taste. Registering a source without saying what is *not* taken from it.
-

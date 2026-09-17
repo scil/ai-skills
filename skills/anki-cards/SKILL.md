@@ -193,7 +193,7 @@ Confirm with `anki_config_HyperTTS_realtime.py --show` (keys are redacted; never
 
 1. Decide per side: field, type (`Regular` / `Cloze` = sentence with "blank" on front, revealed on back /
    `ClozeOnly` = answer only), voice, and whether to `--strip-cjk` (English-only reading; the regex drops
-   CJK after HTML stripping). **Voice rule (user, 2026-09-12): always an English voice — never a
+   CJK after HTML stripping). **Voice rule (user): always an English voice — never a
    Chinese one — because any field may contain English and the user is learning English.** English
    content → `en-US-JennyNeural` + `--strip-cjk`; a field that may be *entirely* Chinese (e.g. a
    Chinese prompt) → `en-US-JennyMultilingualNeural` **without** stripping (English voice that reads
