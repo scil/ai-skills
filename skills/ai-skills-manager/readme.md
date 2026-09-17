@@ -20,6 +20,11 @@ The skills material in `ai-docs-organizing` had two natures. The roster — whic
 
 Nothing was deliberately dropped. The instance the slimming ladder was harvested from (docs-maintainer 3,529 words → 990-word router with three references, 2026-09-13) stays in `ai-docs-organizing/readme.md` item 8.
 
+## The filler pass (2026-09-16) / 废话清理
+
+A review of all fourteen skills in the collection found the same four kinds of non-rule text in thirteen of them: self-description (Scope essays, origin stories, dates), justification beside rules that stood alone (round counts, token figures, incident narratives), the same content twice in one file (closing reference lists, anti-pattern tables, a rule at three steps), and project or machine names in shared skills. Nine skills were slimmed in nine commits (`fix-bugs` 1,249 → ~600 words; `codex-review` 1,900 → ~1,050; the rest 10–30 %); no rule was dropped. The kinds, dispositions and a detector are principle 7 and `references/filler.md`; the checklist rows that had prescribed a **Scope.** paragraph and a closing references list were corrected in the same change.
+对集合里全部十四个 skill 的一次评审，在十三个里发现了同样四类非规则文字：自我描述（Scope 长段、起源故事、日期）、给本已成立的规则附加的理由（轮数、token 数、事故叙事）、同一文件里的重复（结尾引用列表、反模式表、一条规则出现在三步里）、以及共享 skill 里的项目或机器名。九个 skill 在九个提交里瘦身，没有丢任何规则。四类、处置方式和检测脚本成为原则 7 和 `references/filler.md`；此前要求写 **Scope.** 段和结尾引用列表的清单行同步改正。
+
 ## Boundaries / 边界
 
 | Question | Owner |

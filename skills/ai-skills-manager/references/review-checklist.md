@@ -6,7 +6,7 @@ Walk it in order: description, body, references, mirror. Each line is a question
 
 | Question | If no |
 |---|---|
-| Is every clause a trigger — a situation, a phrase the user would say, a symptom? | Move ownership prose ("owns X; Y is Z's") to a **Scope.** paragraph under the H1; move an order of work to the instruction file (ai-agents-md). |
+| Is every clause a trigger — a situation, a phrase the user would say, a symptom? | Move ownership prose ("owns X; Y is Z's") to one **Hand-offs:** line under the H1; move an order of work to the instruction file (ai-agents-md). |
 | Would the skill still fire on its own cases if the harness cut the description in half? | Put the two or three most distinctive triggers first; drop synonyms that only lengthen it. |
 | Does it say what the skill is *not* for, when a sibling skill shares the territory? | Add one "Not for …" clause naming the sibling's case; longer than that is the sibling's description, not this one's. |
 | Is it shorter than, or the same length as, before this review? | A description grows only when a trigger was missing — record the incident. |
@@ -16,7 +16,11 @@ Walk it in order: description, body, references, mirror. Each line is a question
 
 | Question | If no |
 |---|---|
-| Does the body open with a Scope paragraph and a two-line purpose, then principles, then paths? | Reorder; the reader arriving mid-task needs the path, not the essay. |
+| Does the body open with a two-line purpose (plus one Hand-offs line if it hands work off), then principles, then paths? | Reorder; the reader arriving mid-task needs the path, not the essay. |
+| Is every sentence for the reader rather than about the file — no scope essay, origin story, "since <date>", "this skill encodes…"? | Story → `readme.md`; date → deleted; ownership → the Hand-offs line ([`filler.md`](filler.md)). |
+| Does any rule carry a justification it does not need — round counts, token figures, an incident narrative, a "why this matters" paragraph? | One line per incident in `readme.md`; the rule keeps a parenthetical at most. |
+| Is anything stated twice — a closing references list, an anti-pattern table restating rules, a "when this applies" section restating the description, one rule at three steps? | Keep the copy at the step that uses it; delete the rest; add an inline pointer for any reference that would lose its only link. |
+| Does a shared skill name a project, a machine, a user's shorthand or a product's vocabulary? | Mechanics → `references/<stack-or-tool>.md`; project bindings → the project's instruction file; shorthand → the user's file; incidents re-told in neutral terms. |
 | Does each principle change what the agent does? | Apply the no-op test: delete what the current model does unprompted; keep what it gets wrong. |
 | Does each path end on a *done when …* line the agent can check? | Write the criterion from the failure the path prevents. |
 | Is every block that only some paths need, or that exceeds a screen, behind a pointer? | Move it verbatim to `references/<topic>.md`, one level deep. |
@@ -32,6 +36,7 @@ Walk it in order: description, body, references, mirror. Each line is a question
 | Is each reference one topic, one level deep, named for its topic? | Split or merge; a reference named `misc.md` is the body's overflow, not a reference. |
 | Is any reference read whole by every path — a hot reference? | Put a question-first map at its top and the reading rule in the path that routes to it (ai-docs-organizing → Hot pointer docs). |
 | Was a block moved verbatim, or rewritten in transit? | Diff against the previous body; rewrite in a separate change so the move stays reviewable. |
+| Does `readme.md` hold the origin and the incidents behind the rules, so the body can state each rule without its story? | Create it from the sentences the body sheds; one line per incident is enough. |
 
 ## Mirror and history
 
