@@ -29,6 +29,19 @@ Do not invent the button set — derive it. Sources, in order of usefulness:
 - What the user has typed repeatedly this session.
 - Setup/teardown steps buried in prose that nobody remembers.
 
+**Fast path for a pnpm/npm monorepo:** the root `package.json` `scripts` block *is* the inventory.
+Dump it plus each workspace's scripts in one command, and note ports and prerequisites while you
+are there (dev server `--port`, `wrangler dev` defaults to 8787, a static-assets Worker needs the
+web `dist` built first):
+
+```powershell
+foreach ($p in '.', 'apps/web', 'apps/api') { "=== $p"; (Get-Content "$p/package.json" -Raw | ConvertFrom-Json).scripts | ConvertTo-Json }
+```
+
+Every script there maps to one button or is deliberately left out; that decision, made against the
+list, takes minutes. Prerequisites become guards in the wrapper (`if not exist apps\web\dist\index.html`
+→ print what to run first, `exit /b 1`) rather than prose in the note.
+
 Then ask what becomes *newly possible* because output can now render in a modal. The highest-value
 button is usually one that did not exist before: **a health check**. As a flashing console window it
 was worthless; as a modal report it is the first thing anyone clicks. See
@@ -189,7 +202,10 @@ some text first") so a mis-click is not silent.
 
 ## 6. Verify before handing over
 
-- Run each script once from a real shell, in the exact invocation form the plugin will use.
+- Run each script once from a real shell, in the exact invocation form the plugin will use —
+  `cmd /c "cd /d <repo> && scripts\win\x.bat < nul"` for the headless ones, and the `.ps1` that
+  takes `{{selection}}` **twice**: with no argument (must print its hint and exit 1) and with a real
+  keyword. Do this *before* registering — it is the last point where a mistake costs nothing.
 - Cross-check every button `action` against the registered aliases programmatically (recipe in
   `SKILL.md`) — exact-match failures are silent-ish and easy to miss by eye.
 - Confirm no command is a follow/tail form.
@@ -205,6 +221,16 @@ some text first") so a mis-click is not silent.
   not a mismatch.)
 - Then hand over with a **safe first test**: a read-only button with visible output. Green means the
   whole chain works, with no side effects.
+
+## Build order
+
+For a new console: **survey → scripts → run each once → register (Obsidian quit) → note → verify.**
+Registration is the only step that needs Obsidian closed, so ask for that when the task starts and
+do everything else in the meantime; by the time you write `data.json` every alias and command
+string has already been exercised. A second console in the same vault reuses the first project's
+`scripts\win\` shapes verbatim (`health.bat` + `health.ps1`, `gate.bat` with `goto :fail`, a
+`*-one.ps1` for selections, `dev-*.bat` with `title` for long-running windows) — copy and adjust,
+do not redesign.
 
 ## Maintenance
 

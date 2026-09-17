@@ -85,6 +85,47 @@ genuinely useful in a way it never was as a flashing console window. A good one:
 - says what "normal" looks like, so the reader does not need to remember,
 - ends with the last few error lines, trimmed of noisy path prefixes.
 
+Skeleton that has served several projects — sections: repo, toolchain, dependencies and build
+products, ports. Adjust the pins and the artefact/port lists; keep the helpers and the
+`[OK] / [! ] / [X ] / [--] / [ON]` vocabulary so consoles read alike:
+
+```powershell
+# <Project> health check: read-only. Called by scripts\win\health.bat.
+$ErrorActionPreference = 'SilentlyContinue'
+$repo = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+
+function Newest([string]$path, [string]$filter) {
+    if (-not (Test-Path $path)) { return $null }
+    (Get-ChildItem $path -Recurse -File -Filter $filter | Sort-Object LastWriteTime -Descending | Select-Object -First 1).LastWriteTime
+}
+function PortBusy([int]$port) { [bool](Get-NetTCPConnection -State Listen -LocalPort $port -ErrorAction SilentlyContinue) }
+
+Write-Output "===== repo ====="
+Push-Location $repo
+Write-Output "  branch $(git rev-parse --abbrev-ref HEAD), uncommitted $(@(git status --porcelain).Count)"
+Write-Output "  last   $(git log -1 --pretty=format:'%h %s (%cr)')"
+Pop-Location
+
+Write-Output ""; Write-Output "===== toolchain ====="
+$node = node -v; Write-Output "  [$(if ($node -match '^v24\.') {'OK'} else {'! '})] node $node (.nvmrc wants 24)"
+$pnpm = pnpm -v; Write-Output "  [$(if ($pnpm -eq '11.9.0') {'OK'} else {'! '})] pnpm $pnpm (packageManager pins 11.9.0)"
+
+Write-Output ""; Write-Output "===== build products ====="
+$dist = Join-Path $repo 'apps\web\dist'
+if (Test-Path $dist) {
+    if ((Newest (Join-Path $repo 'apps\web\src') '*.ts*') -gt (Get-Item $dist).LastWriteTime) {
+        Write-Output "  [! ] apps/web/dist older than src - build first" } else { Write-Output "  [OK] apps/web/dist fresh" }
+} else { Write-Output "  [--] apps/web/dist absent - only needed by dev:api" }
+
+Write-Output ""; Write-Output "===== ports ====="
+foreach ($p in @(@{ port = 3000; who = 'Vite dev server' }, @{ port = 8787; who = 'wrangler dev' })) {
+    Write-Output ("  [{0}] :{1}  {2}" -f $(if (PortBusy $p.port) {'ON'} else {'--'}), $p.port, $p.who)
+}
+```
+
+Save it with a UTF-8 BOM if it carries any non-ASCII text (previous section), and run it once
+headless: `cmd /c "cd /d <repo> && scripts\win\health.bat < nul"`.
+
 ## Passing arbitrary text
 
 Do not route user-supplied text through a `.bat`. Even under a safe outer shell, the `.bat` layer

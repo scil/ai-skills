@@ -124,6 +124,77 @@ Route by size: one or two lines → `notification`; a report → `modal`.
 Known: `CMD.EXE`, `PowerShell.exe` (5.1), `pwsh.exe` (Core), `bash`, `dash`, `zsh`.
 Empty `{}` uses the platform default.
 
+## The three command-string forms (Windows, verified)
+
+Every console button so far is one of these. Pick by the checklist in `project-console.md` §3;
+do not compose new forms.
+
+| Job | `platform_specific_commands.default` | `shells` | `output` |
+|---|---|---|---|
+| Run a repo `.bat` headless, show its output | `cmd /c "cd /d <repo> && scripts\win\<x>.bat < nul"` | `{}` | `modal` (report) / `notification` (a line) |
+| Long-running process in its own console window | `cmd /c start "<window title>" "<repo>\scripts\win\<x>.bat"` | `{}` | `ignore` |
+| Act on user-selected text | `powershell -NoProfile -ExecutionPolicy Bypass -File "<repo>\scripts\win\<x>.ps1" {{selection}}` | `{"win32":"PowerShell.exe"}` | `modal` |
+
+Absolute repo paths in every string: `working_directory` is global to the vault and already
+points at some other project. The `< nul` is what lets a double-clickable `.bat` ending in `pause`
+return under the plugin (`windows-scripts.md`).
+
+**One `data.json` serves every project's console**, so give each project an alias prefix
+(`门廊 …`, `Composer …`) and an id prefix (`tp-`, `pc-`). The id prefix is what makes
+re-registration idempotent (below).
+
+## Registration script (reusable)
+
+Adapt the table, keep the rest. It refuses while Obsidian runs, replaces only this project's
+entries, validates, backs up, writes, re-reads. ~1 minute instead of hand-authoring 20 fields ×
+N commands.
+
+```powershell
+$path = '<vault>\.obsidian\plugins\obsidian-shellcommands\data.json'
+if (Get-Process Obsidian -ErrorAction SilentlyContinue) { throw 'Obsidian is running - quit it first.' }
+$cfg = Get-Content $path -Raw | ConvertFrom-Json
+$repo = '<repo>'
+
+function Cmd($id, $alias, $icon, $command, $out, [bool]$confirm = $false, $shells = @{}) {
+    [ordered]@{
+        id = $id
+        platform_specific_commands = [ordered]@{ default = $command }
+        shells = $shells; alias = $alias; icon = $icon
+        confirm_execution = $confirm; ignore_error_codes = @()
+        input_contents = [ordered]@{ stdin = $null }
+        output_handlers = [ordered]@{
+            stdout = [ordered]@{ handler = $out; convert_ansi_code = $true }
+            stderr = [ordered]@{ handler = $out; convert_ansi_code = $true } }
+        output_wrappers = [ordered]@{ stdout = $null; stderr = $null }
+        output_channel_order = 'stdout-first'; output_handling_mode = 'buffered'
+        execution_notification_mode = $null; events = @{}; debounce = $null
+        command_palette_availability = 'enabled'; preactions = @(); variable_default_values = @{}
+    }
+}
+function Bat($name) { "cmd /c `"cd /d $repo && scripts\win\$name.bat < nul`"" }
+function Win($title, $name) { "cmd /c start `"$title`" `"$repo\scripts\win\$name.bat`"" }
+function Sel($name) { "powershell -NoProfile -ExecutionPolicy Bypass -File `"$repo\scripts\win\$name.ps1`" {{selection}}" }
+
+$prefix = 'pc-'
+$new = @(
+    (Cmd "${prefix}health"  '<Proj> 项目体检'   'lucide-activity' (Bat 'health')  'modal')
+    (Cmd "${prefix}dev-web" '<Proj> Web 开发服务器' 'lucide-monitor' (Win '<Proj> web dev :3000' 'dev-web') 'ignore')
+    (Cmd "${prefix}test-one" '<Proj> 跑选中的测试' 'lucide-target' (Sel 'test-one') 'modal' $false @{ win32 = 'PowerShell.exe' })
+    (Cmd "${prefix}build"   '<Proj> 打包'       'lucide-disc'     (Bat 'build')   'modal' $true)
+)
+
+$cfg.shell_commands = @($cfg.shell_commands | Where-Object { $_.id -notlike "$prefix*" }) + $new
+$json = $cfg | ConvertTo-Json -Depth 20
+$null = $json | ConvertFrom-Json                       # validate before touching the file
+Copy-Item $path "$path.bak-$(Get-Date -Format yyyyMMdd-HHmmss)"
+Set-Content -Path $path -Value $json -Encoding UTF8 -NoNewline
+$check = Get-Content $path -Raw | ConvertFrom-Json
+"commands: $($check.shell_commands.Count) / version: $($check.settings_version)"
+```
+
+Icons are Lucide names with the `lucide-` prefix (`lucide-activity`, `lucide-monitor`,
+`lucide-shield-check`, `lucide-flask-conical`, `lucide-target`, `lucide-package`, `lucide-drama`).
+
 ## Escaping — the security rule
 
 | Shell | Escaper | Safe to interpolate `{{variables}}`? |
