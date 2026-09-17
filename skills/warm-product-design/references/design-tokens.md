@@ -70,7 +70,7 @@ Import this file once at the app root. Every component uses `var(--color-primary
 styles/
   tokens.css        ← imports the active theme
   themes/
-    warm.css       ← ThanksPorch default warmth
+    warm.css       ← the porch example's default warmth
     minimal.css    ← Alternative cleaner theme
     dark.css       ← Dark mode variant
     organization.css ← For organization Porches

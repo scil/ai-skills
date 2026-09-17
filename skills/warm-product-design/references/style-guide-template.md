@@ -22,7 +22,7 @@ A warm product needs a palette with **three properties**:
 
 ### Required color slots
 
-| Slot | Purpose | ThanksPorch example | Why |
+| Slot | Purpose | porch example | Why |
 |---|---|---|---|
 | Primary | Main interactive color (buttons, links) | Sage `#7A9E82` | Desaturated, natural, "garden plant" feel |
 | Primary light | Hover states, light fills | Sage Light `#C4D9C8` | Soft elaboration of primary |
@@ -58,11 +58,11 @@ A warm product typically needs **three tiers**:
 
 ### Required font slots
 
-| Slot | Purpose | ThanksPorch example | Why |
+| Slot | Purpose | porch example | Why |
 |---|---|---|---|
 | Heading | Page titles, card titles, quoted text | Lora (serif, 400 weight) | Soft serif with calligraphic feel, not severe like Garamond |
 | Body | All UI, forms, body text | DM Sans (humanist sans, 400/500) | More character than Inter, less branded than Söhne |
-| Handwriting | Thank-yous, Thanks Cards, very rare emphasis | Caveat (script, 500/600) | Genuine handwriting feel, not curlicued |
+| Handwriting | Thank-yous, thank-you cards, very rare emphasis | Caveat (script, 500/600) | Genuine handwriting feel, not curlicued |
 
 ### Font sizing rhythm
 
@@ -111,7 +111,7 @@ This is the most-overlooked warmth signal. **Shadows should be tinted with the p
 | Lifted shadow | `0 4px 16px rgba(44,36,22,0.10)` | Hover, focus |
 | Float shadow | `0 12px 40px rgba(44,36,22,0.14)` | Modals, sheets, key dialogs |
 
-The RGB value `44,36,22` is the warm-brown text color of ThanksPorch — for other products, substitute the equivalent warm near-black.
+The RGB value `44,36,22` is the warm-brown text color of the porch example — for other products, substitute the equivalent warm near-black.
 
 ### Why this matters
 
@@ -205,7 +205,7 @@ The single biggest source of warmth (or lack thereof) is **the photography**. A 
 
 Every style guide should end with **three concrete anti-patterns** specific to this product. These are the things that, if they appear, indicate the design has drifted. Listing them explicitly creates a checkpoint for reviews.
 
-For ThanksPorch, the three are:
+For the porch example, the three are:
 
 1. **Pure white or cold gray backgrounds** — instantly converts "porch" into "App"
 2. **Transactional button copy paired with transactional button styling** — "Submit request" in saturated blue rectangle compounds the problem; replace both at once

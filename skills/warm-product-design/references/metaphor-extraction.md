@@ -6,7 +6,7 @@ A method for turning a product name (or core concept) into a complete design lan
 
 A metaphor that's only used in marketing copy is shallow. A metaphor that drives feature naming, copy, visual motifs, and interaction patterns becomes the **unifying logic** of the product. Users sense the coherence without being able to articulate it — every screen reinforces every other screen.
 
-Conversely, a product that has a metaphor in its name but doesn't extend it into the design wastes its strongest asset. ThanksPorch could be a generic resource-sharing app with a cute name, or it could be a product where users genuinely feel they're standing on a porch. The methodology below produces the second outcome.
+Conversely, a product that has a metaphor in its name but doesn't extend it into the design wastes its strongest asset. A product named after a porch could be a generic resource-sharing app with a cute name, or it could be a product where users genuinely feel they're standing on a porch. The methodology below produces the second outcome.
 
 ## The extraction process
 
@@ -14,7 +14,7 @@ Conversely, a product that has a metaphor in its name but doesn't extend it into
 
 List every concrete property of the metaphor — physical objects, sensory qualities, social conventions, temporal patterns. Don't filter; aim for 15+ items. The goal is raw material.
 
-For ThanksPorch, the inventory includes:
+For the porch example, the inventory includes:
 
 - A door (entry to the private space)
 - A threshold (the boundary between public and private)
@@ -41,7 +41,7 @@ For ThanksPorch, the inventory includes:
 
 For each physical property, ask: *what existing or potential product concept does this map to?* Some will map directly, some will spark new feature ideas, some won't map at all (discard those).
 
-Example mapping for ThanksPorch:
+Example mapping for the porch example:
 
 | Physical property | Product concept |
 |---|---|
@@ -78,7 +78,7 @@ See `vocabulary-system.md` for how to structure these into a complete substituti
 
 Pick 3–5 physical elements that can become recurring visual motifs. **Use them sparingly** — overuse kills the meaning. The motifs should appear in specific, semantically-loaded places, not as decoration everywhere.
 
-From ThanksPorch:
+From the porch example:
 
 | Motif | Where it appears | Why there |
 |---|---|---|

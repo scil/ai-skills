@@ -34,7 +34,7 @@ The grammatical structure carries emotional weight. Subject-as-person feels huma
 
 If the metaphor extraction process has been done (see `metaphor-extraction.md`), the metaphor itself provides the vocabulary. Use it directly:
 
-- ThanksPorch: leave a note, porch light on, leave something on the porch, neighbor stopped by
+- Porch: leave a note, porch light on, leave something on the porch, neighbor stopped by
 - Hearth: stoke, glow, gather, ember
 - Lantern: light a lantern, dim, carry, guide
 
@@ -77,7 +77,7 @@ The shift is: from "you should be doing more" to "what's here is fine, and more 
 
 ## The substitution table
 
-For each product, build a comprehensive substitution table during the design phase. Use this as the source of truth for all copy. Below is the ThanksPorch table as a worked example — replicate this structure for any warm product.
+For each product, build a comprehensive substitution table during the design phase. Use this as the source of truth for all copy. Below is the porch example's table as a worked example — replicate this structure for any warm product.
 
 | Transactional (generic SaaS) | Relational (warm product) | Where it appears |
 |---|---|---|

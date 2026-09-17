@@ -19,7 +19,7 @@ Before any visual generation, ask Claude to write the **emotional state script**
 Example prompt:
 
 ```
-For the ThanksPorch project (warm relational product where users share
+For a porch-named gratitude product (warm relational product where users share
 resources with neighbors), write the emotional script for the "Thank-you
 moment" page.
 
@@ -55,7 +55,7 @@ Now ask Claude to translate the emotion script into a specific component spec, u
 Example prompt:
 
 ```
-Using the ThanksPorch design tokens [paste tokens] and vocabulary table
+Using the porch example's design tokens [paste tokens] and vocabulary table
 [paste table], translate this emotion script [paste script from prompt 1]
 into a concrete component spec for v0.
 
