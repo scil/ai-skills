@@ -17,7 +17,7 @@ Walk it in order: description, body, references, mirror. Each line is a question
 | Question | If no |
 |---|---|
 | Does the body open with a two-line purpose (plus one Hand-offs line if it hands work off), then principles, then paths? | Reorder; the reader arriving mid-task needs the path, not the essay. |
-| Is every sentence for the reader rather than about the file — no scope essay, origin story, "since <date>", "this skill encodes…"? | Story → `readme.md`; date → deleted; ownership → the Hand-offs line ([`filler.md`](filler.md)). |
+| Is every sentence for the agent doing the task rather than for the maintainer — no scope essay, origin story, "since <date>", "this skill encodes…"? | Story → `readme.md`; date → deleted; ownership → the Hand-offs line ([`filler.md`](filler.md)). |
 | Does any rule carry a justification it does not need — round counts, token figures, an incident narrative, a "why this matters" paragraph? | One line per incident in `readme.md`; the rule keeps a parenthetical at most. |
 | Is anything stated twice — a closing references list, an anti-pattern table restating rules, a "when this applies" section restating the description, one rule at three steps? | Keep the copy at the step that uses it; delete the rest; add an inline pointer for any reference that would lose its only link. |
 | Does a shared skill name a project, a machine, a user's shorthand or a product's vocabulary? | Mechanics → `references/<stack-or-tool>.md`; project bindings → the project's instruction file; shorthand → the user's file; incidents re-told in neutral terms. |
