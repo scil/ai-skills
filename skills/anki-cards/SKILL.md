@@ -55,11 +55,9 @@ writing. `anki.ps1` (skill root) is the legacy PowerShell helper — do not use 
   - `问答题（同时生成翻转的卡片）` (Basic + reversed) — `正面` / `背面`
   - `填空题` (Cloze) — `文字` / `背面额外`  (cloze text uses `{{c1::…}}`)
 - Card-type mapping: concepts/Q&A → Basic; hard facts → a few Cloze; term↔definition & 对比/关系 → reversed.
-- Audio: realtime via HyperTTS for `问答题` / `填空题` (see below). When files are generated instead:
-  **English clips only by default** (`audio_langs: "en"`); `--lang en,zh` adds Chinese. Voices
+- Generated audio files: **English clips only by default** (`audio_langs: "en"`); `--lang en,zh` adds Chinese. Voices
   `en-US-JennyNeural` / `zh-CN-XiaoxiaoNeural`; override with `--en-voice` / `--zh-voice` / `--rate`.
-  **The user wants English voices everywhere** (learning English) — never a Chinese voice; for text
-  that may be entirely Chinese use `en-US-JennyMultilingualNeural`.
+  **Always an English voice** (the user is learning English); for text that may be entirely Chinese use `en-US-JennyMultilingualNeural`.
 
 ## Workflow
 1. **Pick** genuinely-new, worth-understanding concepts; skip what the user clearly knows / pure project trivia. Merge closely-related (e.g. NFC/NFKC). Order shallow→deep.
@@ -72,9 +70,7 @@ writing. `anki.ps1` (skill root) is the legacy PowerShell helper — do not use 
 6. **Confirm before writing** — this writes to the user's REAL Anki. Run
    `anki_add.py --file cards.md --dry-run` (validates field names against the model and shows each
    card's first line), show the user the candidate cards (front/back or cloze + tags), then write.
-7. **Write** — `anki_add.py --file cards.md`. No `--audio` for `问答题` / `填空题` (realtime audio
-   is in their templates); add `--audio` only for a note type without a realtime tag or on explicit
-   request. Report the new ids and `anki_info.py --stats`.
+7. **Write** — `anki_add.py --file cards.md` (`--audio` only per "Two ways to get audio"). Report the new ids and `anki_info.py --stats`.
 8. **Learning notes** — optionally also save the human-readable cards to a notes file for the user (ask path). Do NOT put these in the agent memory system (that's for the agent's own working context).
 
 ## Style & quality
@@ -111,7 +107,7 @@ months later without the conversation, repository, or project nouns. Use this or
 8. **One-sentence memory hook** — end with the smallest accurate sentence worth recalling, headed
    `Memory line:` (EN) / `记忆句：` (ZH).
 
-### Bilingual layout (必做, since 2026-09-11): English first, Chinese right after
+### Bilingual layout (必做): English first, Chinese right after
 
 The user is learning English alongside the subject. Every section of a card is written **in English
 first, then its Chinese version immediately after**, using this HTML convention (the audio script
@@ -133,41 +129,20 @@ are acceptable; missing context is not. Pure vocabulary, hard-fact Cloze, and li
 broken/fixed code only when code would be artificial, but they still need scope, enough background
 to stand alone, plain-language explanation, and contrasts with commonly confused terms.
 
-- **通俗第一 (plain language first)** — explain it the way you would to a sharp colleague who
-  lacks *this* context. Lead with the conclusion in one plain sentence, then an **analogy**, then
-  the mechanism. Never open with an abstract principle.
-- **写给小白 (必做)** — assume the reader knows the language but not this API, and has **zero**
-  memory of the project the lesson came from. Two failure modes, both observed and both rejected
-  by the user:
-  - **Scenario built from project nouns.** A card opening "资料页的头像在冷启动时…" or using
-    `useSession()` / `updateProfile()` is unreadable later — the reader cannot tell what is the
-    library, what is the app, and what is the point. Rebuild the scenario out of something
-    *anyone* recognises: a todo list, an article editor, a product grid, a shopping cart. The
-    generic example is usually also the **clearer** one (every row spinning at once shows the
-    shared-observer bug better than any real screen did).
-  - **Compressed prose.** "判据是并发不是数量；排队在全局 MutationCache，跨实例仍串行" packs
-    four ideas into one line and is unparseable cold. One idea per sentence, plain words first,
-    the term named after the idea it labels.
-  - Code must be **a small complete component**, readable top to bottom without imagining the
-    rest of the file — not a two-line fragment lifted from real code.
+Two rejected failure modes of the anatomy, both observed: a **scenario built from project nouns**
+("资料页的头像在冷启动时…", `useSession()`) — the reader cannot tell library from app from point;
+and **compressed prose** ("判据是并发不是数量；排队在全局 MutationCache，跨实例仍串行") — four
+ideas in one line, unparseable cold. One idea per sentence, plain words first, the term named after
+the idea it labels.
+
 - **For foundational APIs, go wide, not just deep** — when the subject is something like
-  `useState` / `useQuery` / `useMutation`, the user wants the **core points and the contrasts**
-  covered, not only the one bug that prompted the session: the gotcha that started it, plus the
-  neighbouring traps a beginner hits, plus at least one card that lines the APIs up against each
-  other. "少而精" governs *within* a topic; it is not a reason to leave a foundational API
-  half-covered.
-- **Give the background** — state the concrete situation that produces the problem ("你改了名，
-  保存成功，但右上角菜单还是旧名字") before naming the concept. A card that starts at the
-  abstraction is unanswerable later.
-- **Code example in nearly every technical card.** Show a real snippet, not pseudocode. When the
-  lesson is "the wrong version looks correct", show **before/after** — the value is re-experiencing
-  why the broken one looked fine. Use `<pre><code>…</code></pre>` with `<br>` for newlines.
-- **Bilingual**: English first, Chinese immediately after, per the layout rule above; keep the
-  **English term inline** in the Chinese text too (silent failure / vacuous test / rollback).
-- **Name the stack on every card (必做)** — see below.
+  `useState` / `useQuery` / `useMutation`, cover the core points and the contrasts, not only the one
+  bug that prompted the session: the gotcha that started it, the neighbouring traps a beginner hits,
+  and at least one card that lines the APIs up against each other. "少而精" governs *within* a topic.
 - Cite the **standard / CVE / year** when relevant (NFC is a Unicode standard; Trojan Source =
   CVE-2021-42574, 2021).
-- **少而精** — fewer, sharper cards beat many shallow ones. Long backs are fine; shallow ones are not.
+- Mark **speculation as speculation**; never state guesses as fact. No secrets (passwords/tokens/keys).
+- **少而精** — fewer, sharper cards beat many shallow ones.
 
 ### No redundancy (the #1 reason cards get deleted)
 
@@ -189,7 +164,6 @@ Concrete traps, all observed:
 A genuine linking card asks something **no member card can answer**: a contrast between two
 mechanisms, a decision rule for choosing between them, or a structure that only appears when you
 line them up.
-- Mark **speculation as speculation**; never state guesses as fact. No secrets (passwords/tokens/keys).
 
 ### Stack / library attribution (必做)
 
@@ -294,21 +268,4 @@ Presets: `realtime_0` = 填空题 (both profiles), `realtime_1` = Yuan 问答题
   always **redundancy with another card in the same batch**, not card type. Never silently re-add a
   missing card; if notes disappear, report the exact counts and ask. Do not infer the reason for a
   deletion — ask, then encode the real answer here.
-
-## Usage sketch
-```bash
-S=E:/GitHub/scil/ai-skills/skills/anki-cards/scripts
-python $S/anki.py ping                                   # AnkiConnect up?
-python $S/anki_info.py --tags                            # reuse existing tags
-# … write cards.md (see scripts/templates/card.md) …
-python $S/anki_add.py --file cards.md --dry-run          # validate + preview → show user
-python $S/anki_add.py --file cards.md --audio --out ids.txt
-python $S/anki_info.py --stats
-# later fixes (ids from ids.txt / the add output)
-python $S/anki_update.py --ids 1789190587573,1789190587580 --replace "old" "new"
-python $S/anki_audio.py  --ids 1789190587573,1789190587580 --replace
-```
-
-Cloze cards: `model: 填空题` in the card's key lines, sections `## 文字` (with `{{c1::…}}`) and
-optionally `## 背面额外`.
 
