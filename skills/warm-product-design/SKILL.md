@@ -6,29 +6,11 @@ description: Found the design language of a product whose value is human warmth 
 
 # Warm product design
 
-A methodology for designing products where the core value is **emotional connection between real people**, not transactional efficiency. Built from founding ThanksPorch's design language (a gratitude product centred on a written thank-you card); ThanksPorch appears below only as the worked example. Once a project has its own brand spec, token file and voice rules, those are the facts of record and this skill's job is done.
-
-## Why this skill exists
-
-The default design patterns of modern apps (white backgrounds, Inter font, blue primary buttons, "Submit"/"Cancel" copy, push notifications counting unread items) come from SaaS and e-commerce. They optimize for clarity and conversion. For warm/relational products they actively destroy value — they make the product feel like a platform instead of a place, a transaction instead of a relationship.
-
-Designing well for these products requires a different methodology, not just a different color palette. This skill encodes that methodology.
-
-## When this skill applies
-
-Apply this skill when the product has at least one of these markers:
-
-- **Emotional core**: trust, care, gratitude, belonging, mutual help, family, faith, neighborhood
-- **Real relationships**: users are connected offline already, or the product helps deepen offline connections
-- **Spatial/sensory name**: the product name suggests a physical place or object (Porch, Table, Hearth, Lantern, Garden, Doorstep, Letter, Kitchen, etc.)
-- **Anti-marketplace positioning**: explicitly NOT a marketplace, NOT public, NOT transactional
-- **Low frequency, high meaning**: users don't open the app daily, but when they do, it matters
-
-If the product is a productivity tool, dashboard, e-commerce platform, or general utility, this skill is the wrong fit — use a generic frontend design approach instead.
+A methodology for designing products where the core value is **emotional connection between real people**, not transactional efficiency. Default SaaS patterns (white backgrounds, Inter, blue primary buttons, "Submit"/"Cancel", unread counts) make such a product feel like a platform instead of a place; the fix is a different method, not a different palette. Origin and the worked example: [`readme.md`](readme.md).
 
 ## The methodology — five stages
 
-Do these in order. Each stage builds on the previous one. Skipping ahead (e.g., picking colors before defining the emotional anti-patterns) produces incoherent results.
+In order: each stage builds on the previous one, and picking colours before naming the emotional anti-patterns produces incoherent results.
 
 ### Stage 1: Diagnose the emotional core
 
@@ -37,7 +19,7 @@ Before any visual decisions, answer four questions in writing:
 1. **What should this product FEEL like?** Give 4–6 sensory or situational keywords (e.g., "a Sunday afternoon", "a handwritten letter", "the porch light on a summer evening"). Aim for physical situations, not abstract adjectives like "modern" or "trustworthy".
 2. **What should this product NOT feel like?** Equally specific (e.g., "Amazon", "a hospital intake form", "a Slack notification at 11pm"). Anti-patterns are as important as patterns.
 3. **Who is the user in the emotional moment?** Not their demographic — their state of mind. ("Someone who just received help and wants to say thank you but doesn't know how" is a real answer; "millennials in tier-1 cities" is not.)
-4. **What is the single emotional climax of the product?** The one moment that, if it lands, makes the product worth existing. (For ThanksPorch: somebody who was helped writes a Thanks Card and hands it over.)
+4. **What is the single emotional climax of the product?** The one moment that, if it lands, makes the product worth existing. (For a gratitude product: the moment someone hands over the thank-you they wrote.)
 
 Capture answers in a 1-page "emotional brief" document. Every later decision references this document.
 
@@ -115,7 +97,7 @@ Not all pages carry equal emotional weight. When time is constrained, prioritize
 | Thank-you / gratitude moment | The emotional climax — what makes users come back |
 | Notifications | Tiny but constantly seen — single biggest source of tone drift |
 
-Design these five before designing anything else. A perfect dashboard with a transactional thank-you screen fails. A rough dashboard with a beautiful thank-you screen succeeds.
+Design these five before anything else.
 
 ## Common failure modes
 
@@ -129,14 +111,7 @@ Watch for these and reject them when they appear in AI output or in your own dra
 - **Generic "Sign up to continue"** flows — first action should be motivated by the person who invited the user, not by the product.
 - **Catchall AI fonts** (Inter, Roboto, Space Grotesk) — overused and emotionally flat. Pick characterful pairings (e.g., Lora + DM Sans + Caveat).
 
-## Reference files
+## Reading order
 
-- `references/metaphor-extraction.md` — how to mine a product name for a design language
-- `references/vocabulary-system.md` — transactional → relational copy substitution patterns
-- `references/style-guide-template.md` — complete style guide structure with reasoning
-- `references/design-tokens.md` — CSS variable system for theme-switchable designs
-- `references/ai-prompting-workflow.md` — prompts and workflow for v0, Figma AI, Claude
-- `for-human/` — Chinese reading copies of the above; agents read the English files only
-
-When applying this skill, **read `metaphor-extraction.md` and `vocabulary-system.md` first** — they're the highest-leverage parts of the methodology. Read the others on demand as the relevant stage comes up.
+**Read `references/metaphor-extraction.md` and `references/vocabulary-system.md` first** — the highest-leverage parts; the other references on demand as their stage comes up. `for-human/` holds Chinese reading copies; agents read the English files only.
 
