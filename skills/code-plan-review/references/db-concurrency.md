@@ -12,6 +12,7 @@ Under READ COMMITTED, PostgreSQL's default, every statement sees a fresh snapsho
 - A sequence diagram or two flows in which two participants write the same two tables, with no lock order stated.
 - A helper that takes "the database" and is called from inside a caller's transaction.
 - A test plan that says "call it twice at once" or `Promise.all`.
+- A rule the spec states ("never holds two", "a decline closes the allowance", "only one wins") that no write in the plan enforces in its `WHERE`.
 
 ### Write
 

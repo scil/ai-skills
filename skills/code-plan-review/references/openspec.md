@@ -55,7 +55,8 @@ The structured intermediates — numbered pseudocode at the deciding statements,
        one "## <batch>" heading each, keeping every APPLIES line; merge: verify
        each row at its anchor, drop unanchored rows, resolve blocking rows in
        design.md (recorded under Decisions), re-run only the batches the
-       resolution touched.
+       resolution touched, dedupe OUT-OF-BATCH lines across batches into one
+       list under Accepted with a disposition each.
        Complete when every batch has an APPLIES line and a verdict, every
        blocking row is resolved in design.md or listed under Accepted with a
        reason, and no row is unanchored.

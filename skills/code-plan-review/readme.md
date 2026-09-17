@@ -99,6 +99,11 @@ A settings screen saved text fields and a photo through one mutation observer; t
 A profile update applied the text and could fail to apply the avatar without failing the call; "the call succeeded" was shown as "your change was saved". The response now carries whether the avatar applied, and the client renders that.
 一次资料更新会应用文本，而头像可能应用失败但调用不失败；"调用成功"被显示为"你的更改已保存"。响应现在携带头像是否已应用，客户端据此渲染。
 
+## The acceptance run (2026-09-16) / 验收运行
+
+The batch layout was proven on the card-access-requests design of 2026-08-28 with the reviewable-plan sections added and no lock order stated: the db-concurrency batch returned the `decide`/`ask` lock order as its first blocking row, with the mitigation the shipped fix used. Two things were harvested. Every batch had filled full rows for one spec-versus-plan mismatch outside its rules, so the prompt now routes such findings to one `OUT-OF-BATCH` line and the merge dedupes them. And two of the batch's rows were reached by reading "a rule the spec states that no write enforces", which was not a Tell; it is now.
+批次布局在 2026-08-28 的 card-access-requests 设计上验证：补上可审计划的章节、不写加锁顺序后，db-concurrency 批次的第一条阻塞行就是 `decide`/`ask` 的加锁顺序，缓解措施与已上线修复一致。收割两条：每个批次都为同一个规则外的 spec 与计划不一致填了整行，所以提示词现在把这类发现归为一行 `OUT-OF-BATCH`，由合并去重；该批次有两行是靠"spec 陈述而无写语句强制的规则"这种读法得出的，它当时不是 Tell，现在是了。
+
 ## How to maintain / 怎么维护
 
 A new kind of problem: a new `## Rule N` with four sides in the mechanism's batch file, and a new incident section here. The same kind of problem: one more bullet under the existing rule's side that failed, and the incident appended to its section. A new mechanism: a new batch file and one row in the router's table. Never a new skill. Every batch runs on every plan and states its own applicability first; nothing in the plan selects batches, so a new batch needs no registration beyond its table row.

@@ -41,8 +41,8 @@ A plan that lacks these where a mechanism is plainly in play is returned for com
 1. Check the plan against "What a reviewable plan contains". Where a mechanism is plainly in play and its item is missing, return the plan with the list of missing items and stop.
 2. Dispatch one subagent per batch file — all of them, in one step, in fresh contexts (Claude Code: the Agent tool; Codex: `codex exec -s read-only "<prompt>"`) — with the prompt below, the plan's path, the batch file's path and the spec deltas' paths.
 3. Assemble the outputs verbatim, one `## <batch>` heading each, into the review artifact (`review.md` beside the plan, or the plan's own Traps section). Keep every `APPLIES` line: a "no" with its reason is the record that the batch was considered.
-4. Merge: open each anchor and verify the row; drop rows with no anchor or no rule; resolve every blocking row in the plan; re-run only the batches whose rules the resolution touched.
-5. Done when every batch has an `APPLIES` line and a verdict, every blocking row is resolved in the plan or accepted with a written reason, and no row is unanchored.
+4. Merge: open each anchor and verify the row; drop rows with no anchor or no rule; resolve every blocking row in the plan; re-run only the batches whose rules the resolution touched. Dedupe the `OUT-OF-BATCH` lines across batches into one list under the review's Accepted section, each with a one-line disposition.
+5. Done when every batch has an `APPLIES` line and a verdict, every blocking row is resolved in the plan or accepted with a written reason, no row is unanchored, and every out-of-batch line has a disposition.
 
 ### Diff pass
 
@@ -64,9 +64,10 @@ Send verbatim, with the paths filled in:
 You review one plan against one batch of rules. Inputs: the plan at <plan path>; the batch at <batch path>; the spec deltas at <spec paths>. Read all of them. Read code only where the plan names a file, and only that file.
 First decide whether any Tell in this batch can match this plan, judged from the plan, the spec deltas and the named files — not from what the plan says about itself. Write that decision as the first line.
 Where a Tell matches, write one row anchored to the plan's numbered step, message or transition; fill mitigation from the rule's Write side and proof from its Prove side.
-Report only findings that match a Tell in this batch or would change correctness. Do not rewrite the plan. Do not comment on style, naming or scope.
+Report as rows only findings that match a Tell in this batch. A correctness problem outside this batch's rules is one OUT-OF-BATCH line, never a row. Do not rewrite the plan. Do not comment on style, naming or scope.
 Output exactly this and nothing else:
 APPLIES: yes | no — <one-line reason>
 VERDICT: CLEAN | FINDINGS
 | anchor | rule | effect | why it would be silent | mitigation | proof | blocking or advisory |
+OUT-OF-BATCH: <anchor> — <one sentence>   (zero or more lines)
 ```
