@@ -39,7 +39,7 @@ Read the `last-refresh` line at the top of [`references/sources.md`](references/
 
 ### Slim
 
-Procedure in [`references/slimming.md`](references/slimming.md): land pending edits as their own commit first; classify every section as *step*, *in-file reference* or *disclosed reference*; move disclosed blocks verbatim; write the router; apply the no-op test; check every pointer; record the old-section → new-home map in the commit message; mark human mirrors as lagging; report the landed number.
+Procedure in [`references/slimming.md`](references/slimming.md): classify every section as *step*, *in-file reference* or *disclosed reference*; move disclosed blocks verbatim; write the router; apply the no-op test; check every pointer; record the old-section → new-home map in the commit message; mark human mirrors as lagging; report the landed number.
 
 Done when: every sentence left in `SKILL.md` changes what the agent does, every link resolves, the map is in the change, and the mirror's header says how it lags.
 
