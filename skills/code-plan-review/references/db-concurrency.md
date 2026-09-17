@@ -1,4 +1,6 @@
-# Batch: database concurrency — Rule 2
+# Batch: database concurrency — Rules 2, 11, 12
+
+Three safety cells of interleaving: the bad thing happens at a moment you can point at, so each is testable. They need different tools — a condition in the write (2), a happens-before (11), one snapshot (12) — and landing in the wrong cell reaches for the wrong one: a condition added to a `WHERE` cannot cure "it happened too early". A bug that survives serialization does not belong here at all (domain-model, Rule 10).
 
 ## Rule 2 — The statement that writes must be the statement that decides
 
@@ -59,3 +61,89 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 - **Does any test hold a transaction open on a second connection?** If every concurrency test runs in one process on one connection, the concurrent half is untested.
 - **Which handle does each helper take, and does any call site inside a transaction pass the outer one?**
 - **Did the count of rows affected get read?** A conditional write whose result is discarded decided nothing.
+- **Does the bug this row fixes survive serialization?** If the plan's lock or conditional write answers a bug that also fails single-threaded, the row belongs to domain-model, Rule 10: say so on an OUT-OF-BATCH line instead of a row.
+
+## Rule 11 — A dependent read waits for the commit
+
+Only one writer, and the write does happen; what is wrong is the order of two events. A redirect fires before the transaction that justifies it commits, and the next screen reads a snapshot from before the commit: the flow that just said "welcome in" says "you are not in", and a refresh fixes it. A condition in a `WHERE` cannot help — nothing raced, nothing was stolen.
+
+### Where
+
+Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
+
+- A client navigates, redirects or refetches after a write, and the destination reads what the write produced.
+- A write's result is read in a later request, a later job or a later event rather than in the write's own response.
+- One transaction performs two effects where one records the other ("mark the claim redeemed" and "create the edge").
+- A request is answered before its work is done: a streamed response, a fire-and-forget, a queued job whose result the caller shows.
+
+### Asks for
+
+What the plan must carry for the Tells below to be checked by inspection rather than inferred from prose. A plan where a Where holds and one of these is missing is returned for it, not reviewed.
+
+- **An ordering column on the pseudocode.** For each pair (write → read, redirect or record that depends on it): what establishes the order — the same response carries the result; the navigation awaits the commit; both are in one transaction with the grant before the record. An empty cell is visible as such.
+- **On the sequence diagram**, the commit message numbered before every message that depends on it; a dependent message drawn inside the writer's activation is visible as such.
+
+### Tell
+
+- The redirect or refetch message on the diagram precedes the commit message, or the plan says "navigate on success" where success is the request returning, not the commit.
+- The plan's recovery for a stale next screen is "the user can refresh".
+- Record-then-grant: the row that says what happened is written before the effect that may still be refused.
+- A response returned at the start of a stream, before the procedure that sets a cookie or header has run.
+
+### Write
+
+- **Return the result in the same response**: the write's handler hands back what the next screen needs, and the client renders from it rather than reading again.
+- **Await the commit before navigating**, and write the cache from the response (Rule 3) so the destination does not fetch a stale snapshot.
+- **Grant first, then record**: the effect that can be refused runs before the row that claims it happened, in the same transaction.
+- **Where a response must leave early**, the part that needs the procedure's result (a cookie, a header) is scoped to the requests that need it, not switched off for everyone.
+
+### Prove
+
+- **Hold the commit open on connection A**, trigger the dependent read on B; assert it waits or returns the pre-commit state *and the client does not render the post-commit screen* until A commits — the assertion that goes red when the ordering is removed.
+- **The record-then-grant test**: make the grant refuse; assert no record claims it happened.
+
+### View
+
+- **Does the ordering column match the handler and the client?** Open both; a navigation, refetch or record whose order the column does not state is a finding against the column, before any finding against the design.
+- **What does the destination read, and from which snapshot?** If the answer is "whatever is there when it lands", the order is not established.
+- **Which effect is written first, the one that may be refused or the one that records it?**
+
+## Rule 12 — Reads that must agree share one snapshot
+
+Two reads are each correct, but they read two moments, and the state assembled from them never existed: the list says "this card has reached nobody" while the seat card below says "Sam is holding it". Read skew. The fix is not a lock — the procedure writes nothing — it is one query, or one snapshot for both.
+
+### Where
+
+Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
+
+- A read-only procedure issues two or more statements whose results must agree, over rows another path writes.
+- A screen composes two or more queries about one entity (a list and a detail; a summary and its members) and both can describe the same fact.
+- The plan raises an isolation level, or the reviewer expects one and the plan says nothing.
+
+### Asks for
+
+- **A reads-that-must-agree list**, per procedure and per screen: the reads, the fact they must agree on, and the mechanism — one statement; `REPEATABLE READ` on the read-only transaction; or on the client, one view derived from the other. An empty mechanism cell is visible as such.
+- **The isolation level of every multi-statement read-only transaction**, stated once, with "default" written out where it is the default.
+
+### Tell
+
+- Two statements over rows a concurrent path writes, no isolation stated, and a fact spanning both.
+- Two client queries whose union names one holder, one count or one status, with no derivation between them.
+- A lock proposed for a procedure that writes nothing.
+
+### Write
+
+- **One query where the fact fits in one**; otherwise `REPEATABLE READ` on the read-only transaction — one fixed snapshot, no lock, nobody blocked — and say in the plan why this procedure is the one that needs it.
+- **On the client, derive one view from the other** (the detail from the list's row, or the list's cell from the detail) rather than fetching both and hoping.
+- **Never a lock for tidiness**: a lock to make a list consistent blocks real writers for a read.
+
+### Prove
+
+- **Two connections**: between the procedure's first and second statement on A, commit a write that changes the fact on B; assert the procedure's result does not contradict itself — the assertion that goes red when the isolation level is dropped.
+- **The client test**: resolve the two queries from different moments; assert the screen shows one fact, not both.
+
+### View
+
+- **Does the list match the procedure?** Open it; every statement in a multi-statement read-only transaction is a row, and a fact two of them share needs a mechanism.
+- **Under the default isolation, can a write between statement 1 and 2 make these two rows disagree?**
+- **Fixing the server does not fix the screen**: which client queries can still assemble two moments, and which derives from which?

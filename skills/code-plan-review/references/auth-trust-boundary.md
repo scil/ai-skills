@@ -1,4 +1,4 @@
-# Batch: authorization and trust boundaries — Rules 4, 5, 6
+# Batch: authorization and trust boundaries — Rules 4, 5, 6, 18
 
 ## Rule 4 — The client renders outcomes; the server decides who the caller is
 
@@ -53,10 +53,12 @@ A value inferred "because only X can reach here" is correct on the route that gu
 - A value is derived from a precondition instead of read: "the caller must be the author here", "there is exactly one grant, so it is this one", "this only runs after approval".
 - The code that makes the inference is a helper, or is reachable from more than one route, job or event.
 - The derived value is write-once, authorizing, or names another user.
+- The plan says a state is unreachable, "cannot happen", "can only be constructed by hand", or relies on it not happening. "I checked, it cannot happen" is the sentence that lets it in: if the enumeration cannot be written, it has not been thought of, which is not the same as impossible.
 
 ### Asks for
 
 - **A route × warrant table** for each inference: one row per route, job or event that reaches the inferring code — found by grepping the named file's callers, not from memory; columns: the constraint the inference rests on; where on that route it is checked, as file and line, or "not checked". A "not checked" cell is visible as such.
+- **The same table for each "cannot happen"**: one row per path that could produce the state, found by grepping every writer of the columns involved — the plainest create call with an ordinary parameter included; the cell says what stops it there. "Unreachable" with no rows is visible as such.
 - **The check in the pseudocode at the point of inference**, numbered, not a comment above it.
 
 ### Tell
@@ -65,6 +67,7 @@ A value inferred "because only X can reach here" is correct on the route that gu
 - A route row that says "not checked"; a comment or a sentence states a precondition and no numbered step checks it.
 - A helper written for one route is reused by a second route.
 - A write-once or authorizing value is set from an inference.
+- "Cannot happen" or "unreachable" with no path table, or a table that omits the ordinary create path.
 
 ### Write
 
@@ -82,6 +85,7 @@ A value inferred "because only X can reach here" is correct on the route that gu
 - **Does the route table match the callers?** Grep the tree for the inferring function; every caller, job and event handler is a row. A caller with no row is a finding against the table, before any finding against the design.
 - **List the routes that reach this code. Which carry the warrant?** A comment stating a precondition is a claim: where is the check?
 - **Is any value set here permanent or authorizing?** If so, which route guarantees the inference, and is that the only route?
+- **For each "cannot happen": which paths write these columns, and what stops each?** An answer that starts with "only by hand" is a finding.
 
 ## Rule 6 — Distrust everything crossing a trust boundary
 
@@ -125,3 +129,47 @@ Client to server, one user's request touching another user's data, external to i
 - **For each id from the client: where is the ownership check, or which gate does the read go through?**
 - **Which single function is the visibility gate, and does this path use it or re-implement it?**
 - **Does any crossing in the diagram lack a check?**
+
+## Rule 18 — A withheld outcome is indistinguishable on every channel
+
+When the product decides not to tell the caller something — that they were declined, that a row exists but is not theirs, that an account is registered — the refusal leaks through whichever channel differs: the response shape, a `reason` field, the status code, the timing, the copy, or the ability to ask again. Once a refusal can be recognised it is no longer a refusal. Rule 6 states one case ("not found" and "not yours" are the same answer); this rule is the table.
+
+### Where
+
+Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
+
+- The spec says an outcome is not revealed: "declined looks like waiting", "does not disclose whether the account exists", "the requester cannot tell".
+- Two outcomes of one request are meant to be indistinguishable to one of the parties.
+- A moderation, blocking, declining, rate-limiting or existence decision is returned to the party it was made about.
+
+### Asks for
+
+- **An indistinguishability table** per withheld outcome: one column per outcome the caller must not tell apart; one row per channel — response shape and fields, status code, timing or latency, the UI sentence, the ability to repeat the request and its result, the database constraint that decides the repeat, any email or push. Each cell is "same" or names the difference. A cell that names a difference, or a channel missing from the rows, is visible as such.
+- **Where the reason lives**: the server-side column for support, named, and the statement that it never leaves the server.
+
+### Tell
+
+- A `reason`, `declined`, `blocked` or `exists` field in a response the party it concerns can read.
+- A unique constraint with a status condition that lets one outcome ask again and the other not — being allowed to ask again is itself the answer.
+- Two response shapes, two status codes or two UI sentences for outcomes the spec says look the same; a "still waiting" screen that behaves differently after a decline.
+- A table row that says "same" while the named handler has two return statements for the two outcomes.
+- An extra read (Rule 14) or a retry whose result differs by outcome.
+
+### Write
+
+- **One response for both outcomes on every path**: the same shape, the same fields, the same status; the reason is written to a server-side column for support and never returned.
+- **The database decides the repeat identically**: the constraint carries no status condition, so a declined party cannot ask again any more than a waiting one can — the price (a mistaken decline cannot be undone by asking) is written into the spec.
+- **One UI sentence**, identical for both, and identical on every later visit.
+- **Timing and side channels considered**: no extra round trip, mail or push on one outcome only.
+
+### Prove
+
+- **Deep-equal the two outcomes**: for each channel in the table, capture it under both outcomes and assert equality — the response body, the status, the rendered UI, the result of asking again; this is the assertion that goes red when any channel diverges.
+- **The repeat test**: ask again under both outcomes; assert the same result and the same stored state.
+
+### View
+
+- **Does the table match the handler?** Open it; every return statement, thrown error and side effect is a channel. A channel the table omits is a finding against the table, before any finding against the design.
+- **On which channel could the declined party learn they were declined?** Walk the rows; "none" must be earned per row.
+- **Can one outcome ask again and the other not?**
+- **Where does the reason go, and who can read it?**
