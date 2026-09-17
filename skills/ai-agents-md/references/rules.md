@@ -55,6 +55,8 @@ Persona lines ("You are a senior…") are out: the harness sets the role, and th
 - Content copied from the README — measured to hurt.
 - History and rationale essays — one `Instance:` clause, then a pointer if the story matters.
 - Rules for other agents' quirks that this repo does not run.
+- Machine- or user-specific text — "this machine", a drive path, a shell quirk, one person's shorthand — that belongs in the user-level file (`~/.codex/AGENTS.md`); the repository file is read on every machine.
+- The file describing itself ("this is the operating contract", "rules live here") — a heading says that; a sentence about the file changes nothing the agent does.
 
 ## 5. Sizes
 

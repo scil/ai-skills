@@ -41,6 +41,15 @@ Run top to bottom. Each item names what to check and what a hit becomes in the f
 23. **Maintainer notes** in prose → move to HTML comments (stripped by Claude Code before injection; Codex sends them — keep them short).
 24. **Pointers resolve**: every path named exists; every doc pointed at has a reading rule if it is large.
 
+## F. Every line: filler (the kinds a skill review also hunts — `ai-skills-manager/references/filler.md`; dates and the Pointers section are exempt here)
+
+25. **The file describing itself** in prose — "the operating contract", "rules live here, detail in the owner". → delete; the H1 and section headings carry it. Maintainer notes go to HTML comments (row 23).
+26. **Narrative beyond the rule shape** — a rule is *invariant + `Instance:` (dated) + `Enforced by:`*; the story, the round count, "this cost us a deploy" are not. → compress to the shape; the story to the doc that owns incidents, pointed at from the `Instance:`.
+27. **The same rule twice in the file** — once as a bullet, again inside another section's prose; a command in the Commands block and again under a rule. → keep the copy in the section the order (row 22) assigns it; delete the other.
+28. **Machine- or user-specific text** — "this machine", a drive path, a shell quirk, one person's shorthand. → move to the user-level file; keep the repository-wide invariant if one remains.
+
+Detector: the `self-description` and `machine-or-user` patterns in `filler.md` apply unchanged (`-Skill` pointed at the directory holding `AGENTS.md`, reading that file instead of `SKILL.md`); drop the date pattern, since `Instance:` dates are required here, and ignore the duplicate-section heading list.
+
 ## Report shape
 
 ```

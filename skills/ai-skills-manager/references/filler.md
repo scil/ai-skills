@@ -11,6 +11,10 @@ A sentence in a skill body is paid for on every trigger by the agent doing the t
 | **The same content twice in one file** | A closing "References" / "Reference files" list when every file is already linked at its step; an "Anti-patterns" table whose rows restate the rules above it; "When this skill applies" restating the description; "Why this skill exists" whose one useful sentence is already in the intro; a rule stated at three steps (an audio flag at "Defaults", "Two ways", and step 7); a "Usage sketch" restating the tooling table; a per-section pointer to a reference the intro already lists | Keep the copy at the step that uses it; delete the others. A reference that would lose its only link gets an inline pointer where it is used. |
 | **A project, machine or product name in a shared skill** | A repo's gate command (`pnpm -F @org/pkg …`) and doc names; "this machine's `~/.codex/config.toml`"; a user's shorthand ("sol" = model X); a product's vocabulary inside an incident ("owner shelf row", a named function) | Stack- or tool-generic mechanics → `references/<stack-or-tool>.md`, keyed by the body section they serve (`react-web.md`, `openspec.md`). Project bindings (paths, commands, spec locations) → that project's own instruction file, never the shared skill. User shorthand → the user's own instruction file or memory. Incidents → re-told in neutral terms ("the one function that inserts the record"). |
 
+## In an instruction file (`AGENTS.md`), two exemptions
+
+`ai-agents-md/references/review-checklist.md` §F applies these kinds to an instruction file with two differences: **dates are required** there (`Instance:` lines carry them so a rule can be pruned later), and a **Pointers section is one of the ordered sections**, not a duplicate list. The project-name kind inverts: the file is project-specific by design; what does not belong is machine- or user-specific text.
+
 ## What is not filler
 
 - `Instance:` lines and `(Incident: …)` pointers — they tell the reader where to look when the one-sentence rule does not land.
