@@ -9,6 +9,47 @@ Rules 2 to 9 were harvested on 2026-09-16 from one project's always-loaded contr
 Rules 10 to 21, three new batches and Principles 6 and 7 were harvested later on 2026-09-16 from the same project's classification of its 22 traps by *bug type* (the Obsidian set "Bug Types and Defenses": three families — interleaving, single source of truth, model error — the six safety/liveness cells inside interleaving, and a three-question test that locates any incident). Mapping that classification onto the skill showed 4 types covered, 7 partial and 7 missing, with the missing ones concentrated in the two families the notes call most expensive: model error, which nothing here asked about, and the liveness half, which the four-sided rule shape could not hold because its Prove side assumed a test. The trap numbers below are that project's; the mechanism is general.
 规则 10 到 21、三个新批次和原则 6、7 于 2026-09-16 稍后从同一项目对 22 个坑按*错误类型*的分类中收割（Obsidian 那组"错误类型与应对"：交错、单一真相源、模型错误三族，交错内部的安全性/活性六格，以及一条三问定位判据）。把分类映射到 skill 上，得出 4 类已覆盖、7 类部分、7 类缺失，缺失的集中在笔记称为最贵的两族：模型错误——这里从来没问过；活性那一半——四面规则的形状装不下它，因为"证"一面默认是测试。下面的坑号是该项目的；机制是通用的。
 
+## Vocabulary / 名词
+
+The skill's words, in the order a reader meets them. Each is defined once here; `SKILL.md` and the batch files use them without explanation.
+skill 用到的词，按读者遇到的顺序。每个只在这里定义一次；`SKILL.md` 和批次文件直接使用，不再解释。
+
+**Rule / 规则.** One kind of problem, harvested from at least one incident, written so it can be applied to a plan before code exists. Numbered across the whole skill (Rule 1 … Rule 21); the number never changes once assigned, so a review can cite it.
+一类问题，从至少一次事故中收割，写成在代码存在之前就能用到计划上的形式。全 skill 统一编号，编号一旦分配不再变，评审可以引用。
+
+**Batch / 批次.** One mechanism, one file under `references/`, holding the rules that share that mechanism (database concurrency; UI state ownership; …). A batch is the unit of review: one subagent, one fresh context, one batch file. Every batch runs on every plan.
+一种机制一个文件，放同一机制下的规则。批次是评审的单位：一个子代理、一个新上下文、一个批次文件。每个批次对每份计划都运行。
+
+**The two gates / 两道门 — Where, Asks for.** Every rule opens with them. **Where** lists the situations that make the rule apply, judged from the spec and the code — *not* from whether the plan already guards against it; a well-guarded plan is applicable and clean, not inapplicable. **Asks for** names the structured intermediate the plan must carry so the rule's tells can be checked by inspection rather than inferred from prose: a column on the pseudocode, a table beside the diagram. An empty cell in that table is what makes the trap visible.
+每条规则以这两道门开头。**Where** 列出让规则适用的处境，从 spec 和代码判断——*不*看计划是否已经防了它；防得好的计划是"适用且干净"，不是"不适用"。**Asks for** 点名计划必须携带的结构化中间物，让征兆能靠检查而不是靠从散文推断来核对：伪代码上的一列、图旁边的一张表。表里的空格就是陷阱显形的地方。
+
+**Intermediate / 中间物.** The table or column an Asks for names: the `WHERE` beside each write, the path × table matrix, the state ledger, the lock × arrival table, the promise table. Filled by the author, never by the reviewer — a table the author fills makes absence visible; a table the reviewer infers hides it again.
+Asks for 点名的表或列。由作者填，评审者永远不填——作者填的表让缺失可见，评审者推断出的表把它重新藏起来。
+
+**The four sides / 四面 — Tell, Write, Prove, View.** After the gates, every rule has four sides, one per phase of the work. **Tell** (征兆): what the problem looks like in a plan, before code — the sentence, the diagram shape, the empty cell. **Write** (写): the property the spec needs, then how the code is made to hold it; the incident's fix is one implementation under its conditions, not the property. **Prove** (证): the assertion that goes red when the mitigation is reverted. **View** (审): the questions the reviewer asks; the first is always whether the intermediate matches the named files, and some Views say "grep the tree".
+两道门之后每条规则有四面，对应工作的四个阶段。**Tell**：问题在代码之前、在计划里长什么样——那句话、那个图形、那个空格。**Write**：spec 要求的属性，然后是让代码守住它的写法；事故的修法是该属性在其条件下的一种实现，不是属性本身。**Prove**：回退缓解后会变红的那条断言。**View**：审查者问的问题；第一个永远是中间物与点名文件是否一致，有些 View 会说"grep 全树"。
+
+**Proof / 证明.** Not "a test exists" — the specific assertion that fails when the mitigation is removed. A test that stays green without the mitigation is coverage impersonated, worse than none (Principle 6). Only a rule marked **liveness** may prove by argument and metric instead, because a liveness failure ("it never happens") has no moment at which an assertion turns red.
+不是"有测试"——是去掉缓解后会失败的那条具体断言。没有缓解也绿的测试是冒充的覆盖，比没有更糟（原则 6）。只有标为 **liveness** 的规则可以改用论证和指标，因为活性失败（"它一直没发生"）没有断言会红的那一刻。
+
+**Plan / 计划, diff, spec deltas, scenario.** The plan is what is reviewed before code: a design document with numbered pseudocode at the deciding statements and the mechanism's diagram as fenced text. The diff is the code change reviewed afterwards. The spec deltas are the requirement changes the plan implements; a **scenario** is one `#### Scenario:` block in them — the unit the confirmation round checks.
+计划是代码之前被审的东西：带编号伪代码（只在做决定的语句处）和机制图（fenced 文本）的设计文档。diff 是之后被审的代码改动。spec deltas 是计划实现的需求变更；**scenario** 是其中一个 `#### Scenario:` 块——确认轮检查的单位。
+
+**Plan pass / diff pass / confirmation round.** The three paths in `SKILL.md`. Plan pass: every batch reviews the plan; blocking rows are resolved in the plan before the first edit. Diff pass: every batch reviews the diff, anchored to file and line, and checks each plan-pass row's proof for a fake. Confirmation round: one subagent with the spec deltas and the diff only — the one round that looks from the spec toward the code — answering per scenario `SATISFIED`, `MISSING`, `UNIMPLEMENTABLE` or `UNVERIFIED`.
+`SKILL.md` 里的三条路径。Plan pass：每个批次审计划，阻塞行在第一次编辑之前就在计划里解决。Diff pass：每个批次审 diff，锚到文件和行，并检查 plan pass 每一行的证明是不是假的。确认轮：一个子代理只拿 spec deltas 和 diff——唯一一轮从 spec 朝代码看——按 scenario 回答四种结果之一。
+
+**Row / 行, anchor / 锚点, blocking / advisory.** A finding is one row of the output table: anchor, rule, effect, why it would be silent, mitigation, proof, blocking or advisory. The **anchor** is the numbered step, message or transition (or file and line in the diff pass) the finding points at; the author verifies every row at its anchor before acting on it. **Blocking** rows are resolved before the first edit; **advisory** rows never block.
+一个发现就是输出表的一行。**锚点**是发现指向的编号步骤、消息或转换（diff pass 里是文件和行）；作者在处理任何一行之前先到锚点核实。**Blocking** 行在第一次编辑前解决；**advisory** 行永不阻塞。
+
+**Verdicts and lines / 判定与行.** `APPLIES: yes | no` — the batch's first line, its own decision whether any of its rules' Where holds; a "no" with its reason is the record that the batch was considered. `VERDICT: CLEAN | FINDINGS | INCOMPLETE`. `INCOMPLETE` with `MISSING` lines: a Where holds and an Asks for is absent — the plan is returned, not reviewed from prose. `SEARCHED`: every file read and grep run, the record of what the review actually looked at. `OUT-OF-BATCH`: a correctness problem outside this batch's rules, one line, never a row.
+`APPLIES`——批次的第一行，它自己判断是否有规则的 Where 成立；"no"带理由是"这个批次考虑过"的记录。`INCOMPLETE` 加 `MISSING` 行：Where 成立而 Asks for 缺失——退回计划，不从散文里审。`SEARCHED`：读过的每个文件、跑过的每次 grep。`OUT-OF-BATCH`：本批次规则之外的正确性问题，一行，永远不是一整行发现。
+
+**Merge / 合并, Accepted, Unresolved.** The author's context assembles batch outputs verbatim, verifies each row at its anchor, and resolves blocking rows — one **class fix** per rule (remove the possibility) rather than an **instance fix** per anchor (add a check where the finding pointed; Principle 7). A row missing its anchor or proof is returned to its batch once, never dropped. **Accepted** holds risks somebody chose to carry, each with that person's reason. **Unresolved** holds what nobody has looked at yet: a row still unanchored after its return, an `UNVERIFIED` scenario, an out-of-batch line with no disposition. Done requires Unresolved empty; moving a line to Accepted needs the reason, not the move (Principle 8).
+作者的上下文原样拼接批次输出，逐行到锚点核实，解决阻塞行——每条规则一个**类修复**（消除可能性），而不是每个锚点一个**实例修复**（在发现指到的地方加个检查；原则 7）。缺锚点或证明的行退回批次一次，永不丢弃。**Accepted** 放有人决定承担的风险，附那个人的理由。**Unresolved** 放还没人看过的：退回后仍无锚点的行、`UNVERIFIED` 的 scenario、没有处置的 out-of-batch 行。Done 要求 Unresolved 为空；把一行挪到 Accepted 需要理由，不是挪动本身（原则 8）。
+
+**Harvest / 收割.** Turning an incident into a rule: state what was written, what should have been, what let it pass on all four sides; classify with the three questions (serialize the two activities — does the bug survive? then: concept missing, or a second copy? or: a moment you can point at, or "still nothing"?); add one bullet to an existing rule, or a new rule, or a new batch — never a new skill; tell the story once here.
+把事故变成规则：写下写了什么、本该写什么、四面各是怎么放过的；用三问分类（把两个活动串行化——bug 还在吗？然后：缺概念还是多副本？或者：指得出那一刻还是"一直没有"？）；给现有规则加一条、或加一条新规则、或加一个新批次——永远不新建 skill；事故在这里讲一次。
+
 ## Rule 1 — the `useBlocker` incident (2026-09-11, ThanksPorch) / 事故一
 
 **Symptom.** On `/settings`, changing only the avatar and then refreshing produced the browser's "information you've entered may not be saved" prompt — although the photo was already in the database and R2.
