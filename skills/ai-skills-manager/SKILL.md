@@ -30,18 +30,13 @@ Read the `last-refresh` line at the top of [`references/sources.md`](references/
 
 ## Paths
 
-### Review
+### Review (and apply)
 
 1. Refresh gate. Measure: `description` length in characters; body words; bytes of each file under `references/`; every relative link resolves (`Test-Path`). Run the filler detector ([`filler.md`](references/filler.md) → Detector); its hits are candidates, not findings.
 2. Walk [`references/review-checklist.md`](references/review-checklist.md) against the description, then the body, then the references.
 3. Report one row per finding: location, defect, disposition (trim description → Hand-offs line · move block verbatim to a reference · delete as no-op · delete as second copy, naming the owner · move to `readme.md` as origin or incident · move to `references/<stack-or-tool>.md` · move to the instruction file · keep). Apply only what the user approves.
-4. Done when: the checklist passes, or each rejected row is recorded with its reason.
-
-### Slim
-
-Procedure in [`references/slimming.md`](references/slimming.md): classify every section as *step*, *in-file reference* or *disclosed reference*; move disclosed blocks verbatim; write the router; apply the no-op test; check every pointer; record the old-section → new-home map in the commit message; mark human mirrors as lagging; report the landed number.
-
-Done when: every sentence left in `SKILL.md` changes what the agent does, every link resolves, the map is in the change, and the mirror's header says how it lags.
+4. If the approved rows restructure the file, follow [`references/slimming.md`](references/slimming.md) for the mechanics: classify every section, move disclosed blocks verbatim, write the router, record the old-section → new-home map in the commit message, mark human mirrors as lagging, report the landed number.
+5. Done when: every approved row is applied and every rejected row is recorded with its reason; every link resolves; and, for a restructure, the map is in the change and the mirror's header says how it lags.
 
 ### Grow (from an incident)
 
