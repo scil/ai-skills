@@ -101,5 +101,5 @@ A profile update applied the text and could fail to apply the avatar without fai
 
 ## How to maintain / 怎么维护
 
-A new kind of problem: a new `## Rule N` with four sides in the mechanism's batch file, and a new incident section here. The same kind of problem: one more bullet under the existing rule's side that failed, and the incident appended to its section. A new mechanism: a new batch file, one row in the router's table, a surface name. Never a new skill.
-新的一类问题：在所属机制的批次文件里加一条四面的 `## Rule N`，这里加一节事故。同一类问题：在现有规则失守的那一面下加一条，事故追加到对应小节。新机制：新批次文件、路由表加一行、一个 surface 名。永远不新建 skill。
+A new kind of problem: a new `## Rule N` with four sides in the mechanism's batch file, and a new incident section here. The same kind of problem: one more bullet under the existing rule's side that failed, and the incident appended to its section. A new mechanism: a new batch file and one row in the router's table. Never a new skill. Every batch runs on every plan and states its own applicability first; nothing in the plan selects batches, so a new batch needs no registration beyond its table row.
+新的一类问题：在所属机制的批次文件里加一条四面的 `## Rule N`，这里加一节事故。同一类问题：在现有规则失守的那一面下加一条，事故追加到对应小节。新机制：新批次文件、路由表加一行。永远不新建 skill。每个批次对每份计划都会运行并先声明自己是否适用；计划里没有任何东西选择批次，所以新批次除了表里那一行不需要别的登记。

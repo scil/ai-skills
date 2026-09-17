@@ -7,7 +7,8 @@ A library hook, component or option object that you use partially will keep doin
 ### Tell
 
 - The plan pairs a library hook, component or option object with a hand-written listener or effect for the same event family (`beforeunload` beside a navigation blocker; `resize` beside a layout hook; `keydown` beside a menu primitive; `scroll` beside a virtualiser).
-- The plan names two options of a hook whose type has more, and says nothing about the rest.
+- The same shape on the server: a hand-rolled retry loop beside an HTTP or queue client that already retries; a hand-written CORS, body-limit or rate-limit step beside the framework's plugin for it; a manual existence check before an insert beside an ORM whose conflict option already decides it; an explicit acknowledge in a consumer whose client acknowledges on its own.
+- The plan names two options of a hook, client or plugin whose type has more, and says nothing about the rest.
 - The plan says "the same guard screen X carries" or "copy the pairing from the sibling".
 - The plan explains a library's or the browser's behaviour in a sentence with no source named.
 
