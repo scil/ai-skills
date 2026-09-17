@@ -6,9 +6,9 @@ description: Organize the docs AI agents load — AGENTS.md / CLAUDE.md, skills,
 
 # Organizing the documents agents read
 
-**Scope.** This skill owns only the docs a harness loads; where any other project fact belongs is docs-maintainer's (or the project's local docs skill's) question; the content of one instruction file is ai-agents-md's, and the content of one skill's `SKILL.md` — description, router body, references, slimming, folding a fork back — is ai-skills-manager's. It covers measuring what each harness loads and where it silently stops, the byte budget and its guard, always-loaded versus pointer-reached versus hot pointer-reached material, what belongs in memory versus the repo, the diet procedure for the contract and for a hot doc, tracing each problem to the rule, tool or habit that produced it so source and symptom are fixed together, and reviewing the plan with the other agent before editing.
+Hand-offs: the content of one instruction file → ai-agents-md; one skill's `SKILL.md` (description, body, references, slimming, folding a fork back) → ai-skills-manager; where any other project fact lives → docs-maintainer or the project's own docs skill.
 
-A **harness** is the program that runs a model (Claude Code, Codex CLI). Each harness decides what it loads into the model's context on its own, what it truncates, and what stores it can see — and none of them tells you when it drops something. The lesson this skill was born from: a 66 KB `AGENTS.md` maintained "for both agents" for months had been arriving at Codex cut mid-sentence at 32 KiB (its default `project_doc_max_bytes`), with the discipline, guards, testing rules and skill routing never received, while Claude Code — which loads `CLAUDE.md`, not `AGENTS.md` — received none of it automatically. Both agents worked the whole time and nothing looked wrong. See [`readme.md`](readme.md).
+A **harness** is the program that runs a model (Claude Code, Codex CLI). Each decides on its own what it loads into context, what it truncates and which stores it can see — and none tells you when it drops something. Origin: [`readme.md`](readme.md).
 
 ## The loading model comes first
 
@@ -50,7 +50,7 @@ A stale sentence, a duplicated fact, a section that keeps regrowing: each is a *
 4. **Add a guard where one can exist** (a byte budget, a path-exists check, a test that reads the file): a corrected rule regrows without one.
 5. **Record the trace** (commit, rule, every copy touched) in the change, so the next reader can tell a decision from a leftover.
 
-Worked example in [`readme.md`](readme.md): a skills section in the contract, traced to the meta-rule in the contract's first commit and to an ownership row it had spawned in the docs skill; both deleted, the section removed, the rule recorded here.
+Worked example: [`readme.md`](readme.md).
 
 ## Skills, hooks, memory
 
@@ -73,10 +73,6 @@ Find them in the inventory's layer D: any doc that the contract or two or more s
 6. **Prune the pointers that named it** the same way as any move: a sentence that stands without the pointer drops it (a stale pointer misleads; it never saved a token).
 
 Instance: a 71 KB domain plan four skills routed to, ≈18k tokens per read; changelog out, table padding out, shipped blocks to their 49 specs, map in → 53 KB, and the routing skill told to range-read.
-
-## Slimming a skill, and folding a fork back
-
-Owned by the sibling skill [`ai-skills-manager`](../ai-skills-manager/SKILL.md) since 2026-09-16: a skill body's budget is attention, not bytes; the slim moves blocks verbatim behind one-level pointers; a drifted fork is folded back into the shared skill. When the inventory (layer B) surfaces a skill that needs it, hand off there.
 
 ## Anti-patterns
 
