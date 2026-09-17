@@ -6,14 +6,10 @@ description: Use when creating or editing notes in a local Obsidian vault - writ
 
 # Obsidian Vault Ops
 
-Two kinds of work happen in a vault: **authoring** (notes a human reads) and **wiring** (notes that
-*do* things via plugins).
-
-They fail differently. Authoring fails *softly* — the document is technically fine and simply does
-not land, usually because it was pitched at the wrong reader. Wiring fails *hard* — plugin config
-lives in JSON files the running app owns, button actions are matched by exact string, and shell
-interpolation can execute arbitrary text. This skill encodes both sets of failure modes, because
-both are invisible until they bite.
+Two kinds of work happen in a vault: **authoring** (notes a human reads; fails softly, by being
+pitched at the wrong reader) and **wiring** (notes that *do* things via plugins; fails hard — the
+running app owns the config JSON, button actions match by exact string, shell interpolation can
+execute arbitrary text).
 
 ## Non-negotiable rules
 
@@ -61,10 +57,8 @@ Get-ChildItem <likely-root> -Recurse -Depth 3 -Filter ".obsidian" -Directory -Fo
     ForEach-Object { $_.Parent.FullName }
 ```
 
-The sweep is minutes rather than milliseconds across whole drives, and it returns things that are not
-Obsidian vaults — other note apps (Notable, Logseq exports) leave folders that match the shape, and
-an abandoned copy of a vault looks exactly like the live one. If you must use it, confirm the hit
-against the registry or with the user before writing anything.
+The sweep also returns look-alikes (other note apps' folders, an abandoned copy of a vault), so
+confirm a hit with the user before writing anything.
 
 **When one vault holds several projects**, do not assume the top hit. Pick by evidence, in order:
 a folder already named after the project, then the `open: true` vault, then ask. And check what the
@@ -203,32 +197,4 @@ will use. Command strings are testable even though the plugin is not.
 State plainly what was verified and what only the user can confirm (button rendering, notification
 display, prompts). Give them a **safe first test**: a read-only command with visible output, so a
 green result proves the whole chain without side effects.
-
-## Anti-patterns
-
-| Anti-pattern | Why it fails |
-|---|---|
-| Writing a document without deciding its reader | Ends up pitched at the writer, i.e. at nobody |
-| Terms used before they are defined | Reader bounces in paragraph three |
-| Wholesale rewrite of a note the user may have edited | Discards their changes |
-| Recreating a note whose edit failed | It moved, not vanished — you just made a duplicate |
-| Writing plugin config while Obsidian runs | Overwritten on next plugin save |
-| `{{selection}}` in a cmd.exe command | No escaper; text becomes executable |
-| Guessing a plugin's config schema | Silent load failure or reset settings |
-| Button action typed by hand | Exact-match failure, no obvious error |
-| Inlining project commands into vault config | Two sources of truth, drifts silently |
-| A button that runs a follow/tail command | Never returns; looks hung |
-| Reusing a remembered vault path | Users reorganize; writes land in the wrong place |
-
-## References
-
-- `references/document-design.md` — reader calibration, document structures (primer / runbook /
-  decision record), and the patterns that make a note worth returning to.
-- `references/obsidian-markdown.md` — callouts, wikilinks, embeds, Mermaid, frontmatter, `file:///`
-  encoding traps, plus filenames, encoding and safe external editing.
-- `references/project-console.md` — end-to-end recipe for a project console: button set, grouping,
-  per-button checklist, note skeleton, text-input pattern, maintenance.
-- `references/plugin-config.md` — the data.json protocol, schema-extraction recipes, and verified
-  reference for Shell commands + Buttons.
-- `references/windows-scripts.md` — making scripts safe to call from a plugin on Windows.
 
