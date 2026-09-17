@@ -6,7 +6,7 @@ description: Review a plan (design doc, diagram, pseudocode) or a diff against t
 
 # Rules harvested from incidents, reviewed in batches
 
-One kind of problem, one rule; one mechanism, one batch file. Each rule has four sides — **tell** (what it looks like in a plan, before code exists), **write** (how the code is made), **prove** (how the test shows it), **view** (what the reviewer asks). Incidents behind the rules: [`readme.md`](readme.md).
+One kind of problem, one rule; one mechanism, one batch file. Each rule has four sides — **tell** (what it looks like in a plan, before code exists), **write** (how the code is made), **prove** (how the test shows it), **view** (what the reviewer asks). Incidents behind the rules: [`readme.md`](readme.md). In an OpenSpec repository the plan pass is the change's `review` artifact, gated by the CLI: [`references/openspec.md`](references/openspec.md).
 
 ## Principles
 
