@@ -4,6 +4,10 @@
 
 Invalidating a cached query marks it stale and *starts* a refetch. Until the round trip returns the screen shows the old value; if the refetch fails, it shows the old value forever.
 
+### Stack
+
+Bound to TanStack Query (`setQueryData`, `invalidateQueries`, key helpers, `dataUpdatedAt`). Holds for any client cache with keyed entries and invalidation (SWR, Apollo, RTK Query, Pinia Colada, urql) with the calls translated. Skip where the screen has no client cache — data fetched and held in component state — and say so; Rule 7 then owns the value.
+
 ### Where
 
 Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
@@ -60,6 +64,10 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 
 ## Rule 9 — A step that may fail without failing the call reports whether it applied
 
+### Stack
+
+Any. Never skipped.
+
 ### Where
 
 - One call performs two or more effects: save the text and apply the photo; create the row and send the mail; write the row and publish an event.
@@ -95,6 +103,10 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 ## Rule 15 — A failed read is not an empty answer
 
 Two shapes. A failure painted as success: `fetch` rejects only on network errors, so a `try/catch` around a call that never checks `res.ok` treats a 500 as done. A failure painted as "there is nothing here": with no error branch, `!isPending && data === undefined` renders the empty state, and an author who can no longer manage their own cards is told they have none.
+
+### Stack
+
+The branch-table half is any client and is never skipped. The `res.ok` half is bound to WHATWG `fetch` and any HTTP client that resolves on an error status; skip that half where the client rejects on non-2xx (axios, ky, got by default) — and confirm the default was not turned off.
 
 ### Where
 

@@ -6,6 +6,10 @@ Both rules in this batch are marked **liveness**. A liveness failure is "somethi
 
 A write lock on a row that a public path can reach is not "a bit slower": once arrivals exceed the rate the lock can serve, the queue only grows, waiting time diverges, and every waiter holds a pool connection — so requests with nothing to do with that row start failing. The lock does not fail where it is; it makes something else fail. And the correct move in the safety cell — a conditional write whose failure signal is zero rows — comes back here as livelock if the reaction to zero rows is a naive retry.
 
+### Stack
+
+The lock half is bound to PostgreSQL (`lock_timeout`, `statement_timeout`, `pg_stat_activity`, the foreign-key `FOR KEY SHARE`) and holds for any database with pessimistic row locks and a connection pool (MySQL InnoDB's `innodb_lock_wait_timeout`, SQL Server's `LOCK_TIMEOUT`) with the names translated; skip the lock half where the store takes no pessimistic locks at all. The retry half — backoff, ceiling, what the caller is told — is any stack and is never skipped.
+
 ### Where
 
 Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
@@ -58,6 +62,10 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 ## Rule 14 — Subscribe, then read once
 
 A push tells a screen that something changed. If the change happens between the screen's first render and the moment its subscription is live, the notification goes out into a window where nobody is listening, and the screen waits forever for an event that has already fired.
+
+### Stack
+
+Any push channel and any client. Never skipped.
 
 ### Where
 

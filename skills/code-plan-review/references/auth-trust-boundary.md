@@ -4,6 +4,10 @@
 
 "Is this reader signed in, and as whom" is answered from the request's cookie or token on the server. The client's session store is unresolved on first paint, cached for whoever asked last, and changeable from another tab.
 
+### Stack
+
+Any client that talks to a server holding the credentials. Never skipped.
+
 ### Where
 
 Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
@@ -48,6 +52,10 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 
 A value inferred "because only X can reach here" is correct on the route that guarantees X and wrong on every other route that reaches the same code. A comment stating the warrant is not a check.
 
+### Stack
+
+Any. Never skipped.
+
 ### Where
 
 - A value is derived from a precondition instead of read: "the caller must be the author here", "there is exactly one grant, so it is this one", "this only runs after approval".
@@ -91,6 +99,10 @@ A value inferred "because only X can reach here" is correct on the route that gu
 
 Client to server, one user's request touching another user's data, external to internal (webhook, callback, upload): existence is not permission.
 
+### Stack
+
+Any. Never skipped.
+
 ### Where
 
 - A request carries an id, a path segment, a body field or a query string that names a row.
@@ -133,6 +145,10 @@ Client to server, one user's request touching another user's data, external to i
 ## Rule 18 — A withheld outcome is indistinguishable on every channel
 
 When the product decides not to tell the caller something — that they were declined, that a row exists but is not theirs, that an account is registered — the refusal leaks through whichever channel differs: the response shape, a `reason` field, the status code, the timing, the copy, or the ability to ask again. Once a refusal can be recognised it is no longer a refusal. Rule 6 states one case ("not found" and "not yours" are the same answer); this rule is the table.
+
+### Stack
+
+Any. The "database constraint that decides the repeat" row assumes a store with unique constraints; on a store without them, that row names whatever decides the repeat instead. Never skipped.
 
 ### Where
 

@@ -4,6 +4,10 @@
 
 Anything derivable is derived during render. Request facts come from the data library; UI facts come from state; an effect exists only for a named external system.
 
+### Stack
+
+Bound to React (`useState`, effects, render). Holds for any component framework with local state and a reactive source (Vue's `ref` seeded from a prop and `watch`; Svelte's `$state` from a prop; Solid's signals) with the names translated. Skip where the UI holds no client-side state — server-rendered forms with no script — and say so.
+
 ### Where
 
 Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
@@ -49,6 +53,10 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 
 A mutation observer reports only its most recent call. Two overlapping saves sharing one observer share one answer: "what happened last".
 
+### Stack
+
+Bound to TanStack Query mutations (the observer, `scope`). Holds for any client where a save has a pending and error state — a hand-rolled `saving` boolean shared by two requests is the same bug — with "observer" read as "the status a surface renders from"; the scope bullet applies only where the library offers one. Never skipped.
+
 ### Where
 
 - One screen has two or more saves: text fields and a photo; a toggle and a form; an autosave and a submit.
@@ -84,6 +92,10 @@ A mutation observer reports only its most recent call. Two overlapping saves sha
 ## Rule 16 — A refill is computed on a baseline
 
 A save response is the server's answer to the value it was sent. If the user keeps typing during the round trip, the response arrives carrying a value 1.2 seconds old, and `setState(response)` swallows what was typed since. Nothing failed: the server was right, the request succeeded, and the clobbering write is the screen's own success response. The other update source is the user's next keystroke, which looks nothing like interleaving and is exactly that.
+
+### Stack
+
+Any client with an editable field and an asynchronous save. Never skipped.
 
 ### Where
 
@@ -130,6 +142,10 @@ Any one of these makes the rule apply, whether or not the plan already guards ag
 ## Rule 17 — Judge against the value that will be stored
 
 A schema trims, collapses whitespace and normalizes the draft before storing it. Every check made on the raw draft — is it dirty, is it valid, is it equal to the stored value, may Save be enabled — answers about a value that will not be stored, and a Save button that lights up for a whitespace-only change, or a Back button that discards a draft one character from valid, follows.
+
+### Stack
+
+Any client with a draft and a schema that normalizes; the shared-schema bullets assume a validator that runs on both sides (zod, valibot, a JSON Schema) and translate to any. Never skipped.
 
 ### Where
 

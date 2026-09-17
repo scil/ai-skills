@@ -6,6 +6,10 @@ This batch is resolved first at merge. A concept the domain lacks cannot be guar
 
 An entity with several states answered with "is there a row"; a rule the spec states that no column can express; a write anyone can trigger that nothing bounds; a value derived from other rows when a column already holds it; a constraint removed without counting the paths it was blocking. Each is a missing or wrong concept, and each was first mistaken for a race because it surfaced in a concurrency test.
 
+### Stack
+
+Any store with a schema; the words are relational (column, unique index, enum) and translate to a document store as the field the documents carry and the validation rule or index that expresses it. Never skipped.
+
 ### Where
 
 Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.

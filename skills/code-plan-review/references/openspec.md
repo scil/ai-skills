@@ -33,8 +33,9 @@ The structured intermediates — numbered pseudocode at the deciding statements,
        …
        The review artifact that follows anchors its findings to this document, so
        the design also carries what <skill path>/SKILL.md lists under "What a
-       reviewable plan contains" (numbered pseudocode at the deciding statements;
-       the diagram the mechanism needs as fenced Mermaid; participants named,
+       reviewable plan contains" (the stack in one line; numbered pseudocode at
+       the deciding statements; the diagram the mechanism needs as fenced Mermaid;
+       participants named,
        messages and transitions numbered; an Assumptions section, each with how it
        was verified). Which diagram, if any, is your judgement from what the change
        touches.
@@ -52,7 +53,8 @@ The structured intermediates — numbered pseudocode at the deciding statements,
        missing; dispatch one fresh-context subagent per batch file — all of them,
        in one step — with the skill's plan prompt verbatim, design.md, the
        batch file and the change's spec deltas; assemble outputs verbatim under
-       one "## <batch>" heading each, keeping every APPLIES and SEARCHED line;
+       one "## <batch>" heading each, keeping every APPLIES, SKIPPED and SEARCHED
+       line;
        merge: verify each row at its anchor, return a row with no anchor or no
        proof to its batch once and list it under Unresolved if it comes back
        still empty (never drop it), resolve blocking rows in design.md (recorded

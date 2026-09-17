@@ -6,6 +6,10 @@ Three safety cells of interleaving: the bad thing happens at a moment you can po
 
 Under READ COMMITTED, PostgreSQL's default, every statement sees a fresh snapshot. A check in one statement and a write in the next have a gap between them, even inside one transaction, and another request fits in that gap.
 
+### Stack
+
+Bound to PostgreSQL: the syntax (`FOR UPDATE`, `ON CONFLICT`, rows affected), the READ COMMITTED default and its re-check of a `WHERE` after a blocking writer commits. Holds for any SQL database with row locks and per-statement snapshots (MySQL InnoDB, SQL Server, Oracle, SQLite in WAL with `BEGIN IMMEDIATE`) with the syntax translated, and for any store with an atomic conditional write (DynamoDB condition expressions, MongoDB filtered `findOneAndUpdate`) for the condition-in-the-write half only. Skip where the store has neither a conditional write nor a row lock — and say which store.
+
 ### Where
 
 Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
@@ -71,6 +75,10 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 
 Only one writer, and the write does happen; what is wrong is the order of two events. A redirect fires before the transaction that justifies it commits, and the next screen reads a snapshot from before the commit: the flow that just said "welcome in" says "you are not in", and a refresh fixes it. A condition in a `WHERE` cannot help — nothing raced, nothing was stolen.
 
+### Stack
+
+Any transactional store and any client that navigates or refetches after a write. Never skipped.
+
 ### Where
 
 Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
@@ -115,6 +123,10 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 ## Rule 12 — Reads that must agree share one snapshot
 
 Two reads are each correct, but they read two moments, and the state assembled from them never existed: the list says "this card has reached nobody" while the seat card below says "Sam is holding it". Read skew. The fix is not a lock — the procedure writes nothing — it is one query, or one snapshot for both.
+
+### Stack
+
+The server half is bound to PostgreSQL's `REPEATABLE READ` and holds for any SQL database with snapshot isolation (MySQL InnoDB's `REPEATABLE READ`, SQL Server's `SNAPSHOT`) with the name translated; skip the server half where the store has no multi-statement snapshot (a store where the fix is "one query" only, and say so). The client half — two queries assembling one fact — is any client and is never skipped.
 
 ### Where
 

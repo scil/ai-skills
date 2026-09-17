@@ -2,7 +2,7 @@
 
 Each case names its inputs, the batch or step it exercises, the exact lines the output must contain, and the wrong output it exists to catch. Half the cases are correct code that must come back clean: a review that only ever meets known bugs never learns that it over-prescribes. Run a case by dispatching the named prompt from `SKILL.md` verbatim with the fixture below saved as the plan or diff; the spec deltas are the `#### Scenario:` blocks inside each fixture. A case passes when every "must" line appears and no "must not" line does.
 
-Cases 1–3 and 6 exercise a batch; 4 exercises the merge; 5 exercises the diff pass without a plan; 7 and 8 exercise the confirmation round.
+Cases 1–3 and 6 exercise a batch; 4 exercises the merge; 5 exercises the diff pass without a plan; 7 and 8 exercise the confirmation round; 9 and 10 exercise the Stack gate.
 
 ## 1. A known bug is found (true positive)
 
@@ -129,3 +129,31 @@ Route × warrant table:
 **Must.** `MISSING: <first scenario> — …` with the existing files read named on `SEARCHED`; `UNIMPLEMENTABLE: <second scenario> — cannot hold with "<first scenario>": one screen cannot be identical for both outcomes and tell one of them apart`; `UNVERIFIED: <third scenario> — <the mailer's path>`. At merge, the `UNVERIFIED` line sits under Unresolved and Done is not reached.
 
 **Must not.** The first scenario as `UNIMPLEMENTABLE` (nothing contradicts it — it is unimplemented); the second as `MISSING`; the third as `MISSING` because its file was absent from the diff.
+
+## 9. A rule bound to another stack is skipped, a rule that holds translated is not
+
+**Inputs.** Plan fixture, batch `db-concurrency.md`, prompt: plan. The tree's `package.json` depends on `@aws-sdk/lib-dynamodb`; `src/db/tokens.ts` calls `UpdateCommand` with a `ConditionExpression`.
+
+```
+Stack: DynamoDB via @aws-sdk/lib-dynamodb; no SQL; Fastify; React with TanStack Query.
+Pseudocode (consume):
+  1. UpdateItem tokens[id] SET status = 'consumed'
+       ConditionExpression: status = 'open' AND expires_at > :now      -- ConditionalCheckFailedException is the zero-rows signal
+  2. on ConditionalCheckFailedException → return { consumed: false }
+Path × table: consume W tokens; expire-sweep W tokens; no lock order — DynamoDB takes none.
+Isolation: none stated; conditional write only.
+Test: two clients race step 1; exactly one succeeds.
+#### Scenario: a token is consumed at most once
+```
+
+**Must.** No `SKIPPED` line for Rule 2 (its Stack gate holds for a store with an atomic conditional write, condition-in-the-write half); `SKIPPED: 12 — bound to PostgreSQL REPEATABLE READ (server half); plan uses DynamoDB, src/db/tokens.ts` or equivalent for the server half of Rule 12; `APPLIES: yes`; `VERDICT: CLEAN`; the `SEARCHED` lines include `package.json` or `src/db/tokens.ts` as the file that confirmed the stack.
+
+**Must not.** A Rule 2 row asking for `FOR UPDATE`, a lock order or an isolation level — those are the PostgreSQL bindings, not the mechanism; `SKIPPED` for Rule 2; `APPLIES: no — stack` for the batch.
+
+## 10. A stack line the files contradict is a finding, not a skip
+
+**Inputs.** Plan fixture, batch `db-concurrency.md`, prompt: plan. The plan's stack line says `MongoDB`; the named file `src/db/seats.ts` imports `pg` and runs `SELECT … FOR UPDATE`; `drizzle/schema.ts` is `pgTable`.
+
+**Must.** No `SKIPPED` line taken on the plan's word; the `SEARCHED` lines show `src/db/seats.ts` or `drizzle/schema.ts`; one `OUT-OF-BATCH` line or the merge's own note that the stack line is wrong (the plan says MongoDB, the files are PostgreSQL); Rule 2 judged as on PostgreSQL.
+
+**Must not.** `SKIPPED: 2 — … plan uses MongoDB` — the gate is checked in the files, and the line is not the files.

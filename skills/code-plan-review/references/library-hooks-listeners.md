@@ -4,6 +4,10 @@
 
 A library hook, component or option object that you use partially will keep doing what its unset options say. The 2026-09-11 lesson: five screens paired a router's `useBlocker` with a hand-rolled `beforeunload` listener; the hook already owned that event through an unread option (`enableBeforeUnload`, default `true`), so the browser asked "changes may not be saved" on every clean refresh, on five screens, for months, with a comment explaining the wrong model.
 
+### Stack
+
+Any library with an options object, on either side; the examples are TanStack Router, the DOM and Playwright, and translate to any router, layout hook, HTTP or queue client, ORM or framework plugin. Never skipped.
+
 ### Where
 
 Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.

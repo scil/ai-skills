@@ -6,6 +6,10 @@ One truth, more than one copy. Every rule here fails single-threaded and single-
 
 Two implementations of one thing start drifting the day one of them is changed first, and the drift is found only when somebody happens to hold both outputs at once. No assertion fires on its own.
 
+### Stack
+
+Any. Never skipped.
+
 ### Where
 
 Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
@@ -57,6 +61,10 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 
 A business rule written in several places is reported in several costumes — one per site that forgot it — and each report gets its own `if`. The fourth report is when someone notices they are one rule. A class fix moves the rule to the one statement that writes; an instance fix adds another `if` where the finding pointed.
 
+### Stack
+
+Any. Never skipped.
+
 ### Where
 
 Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
@@ -99,6 +107,10 @@ Any one of these makes the rule apply, whether or not the plan already guards ag
 ## Rule 21 — A promise travels into the writing statement
 
 A confirmation sentence before an irreversible action names a value: who will be removed, what will be sent, how many will be charged. If the sentence reads one copy of that value and the write uses another — a snapshot in one, fresh data in the other — the sentence is a lie on the one action that cannot be undone. This rule is the intersection of two families: the value has two copies (this batch) *and* it is one state with several update sources (Rule 2), so its defence has half from each.
+
+### Stack
+
+Any client with a confirmation and any store with a conditional write (Rule 2's Stack gate says which); where Rule 2 is skipped for the store, the `WHERE` half of this rule is skipped with it and the snapshot and layout halves stay. Never skipped whole.
 
 ### Where
 
