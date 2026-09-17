@@ -1,68 +1,65 @@
 ---
 name: code-plan-review
 disable-model-invocation: true
-description: One rule per kind of problem, each with a writing side, a proving side and a reviewing side. Use when adopting or already using a library hook, component or option object; when about to add a DOM listener, effect or guard beside one, or copy such a pairing from a sibling file; when testing anything that prompts, blocks or warns; when a suite stubs a library hook or the harness bypasses the browser behaviour under test; when reviewing a diff that does any of these; and when harvesting a lesson from an incident — the lesson becomes a rule here, never a new skill.
+description: Review a plan (design doc, diagram, pseudocode) or a diff against the rules harvested from incidents, one batch per mechanism, each batch in a fresh context. Use when a change touches a conditional database write, two paths over the same tables, a cache after a mutation, auth or visibility, a library hook beside a hand-written listener, or UI state seeded from a prop; when reviewing a diff that does any of these; and when harvesting a lesson from an incident — the lesson becomes a rule in a batch here, never a new skill.
 ---
 
-# Rules harvested from incidents
+# Rules harvested from incidents, reviewed in batches
 
-One kind of problem, one rule. Each rule has three sides — **write** (how the code is made), **prove** (how the test shows it), **view** (what the reviewer asks) — because every incident so far was missed on all three. The incidents themselves are in [`readme.md`](readme.md); this file holds only what would have prevented them.
+One kind of problem, one rule; one mechanism, one batch file. Each rule has four sides — **tell** (what it looks like in a plan, before code exists), **write** (how the code is made), **prove** (how the test shows it), **view** (what the reviewer asks). Incidents behind the rules: [`readme.md`](readme.md).
 
-## Rule 1 — Use the API you are already holding
+## Principles
 
-A library hook, component or option object that you use partially will keep doing what its unset options say. The 2026-09-11 lesson: five screens paired a router's `useBlocker` with a hand-rolled `beforeunload` listener; the hook already owned that event through an unread option (`enableBeforeUnload`, default `true`), so the browser asked "changes may not be saved" on every clean refresh, on five screens, for months, with a comment explaining the wrong model.
+1. **A batch is graded in a context that did not write the plan.** Each batch runs as its own subagent with exactly two inputs: the plan (or diff) and that batch's file. The author's context selects, dispatches and merges; it never fills in a batch's findings itself.
+2. **Only the batches whose surfaces the plan names run.** A plan describable in one sentence runs none. Batches are independent, so they run in parallel; sequencing buys nothing.
+3. **A finding anchors to a numbered step, message or transition and names its rule.** Unanchored rows are dropped at merge; the plan is numbered so rows can anchor.
+4. **Blocking rows are resolved in the plan before the first edit; advisory rows never block.** Every row is verified by the author against the anchor before it is acted on.
 
-### Write
+## Surfaces → batches
 
-- **Read the whole options type.** Open the `.d.ts` and read every field, not the two you came for.
-- **Unset ≠ off.** For every option left unset, say its default and what the default *does*. If it touches your behaviour, set it explicitly even when the value equals the default — the line documents that you looked.
-- **The guide, not only the reference.** The type says what exists; the guide says what the author intended it for.
-- **Same event, stop sign.** A DOM listener for an event family the library already handles (`beforeunload` beside `useBlocker`; `resize` beside a layout hook; `keydown` beside a menu primitive) means the library probably owns it. Grep the library's `dist` for the event name before writing the listener.
-- **One predicate, fed to the library.** When the library exposes the second case as an option, feed it the *same* condition the first case uses, in function form so it is evaluated at the event:
+The plan's `## Surfaces` line names the surfaces it touches, from this vocabulary. A surface with no batch yet is noted in the review and skipped.
 
-  ```ts
-  useBlocker({
-    shouldBlockFn: () => hasUnsavedText,        // in-app navigation
-    enableBeforeUnload: () => hasUnsavedText,   // browser unload — same predicate
-    withResolver: true,
-  });
-  ```
+| Surface named in the plan | Batch file | Rules |
+|---|---|---|
+| `db-write-with-condition`, `two-paths-same-tables`, `migration` | [`references/db-concurrency.md`](references/db-concurrency.md) | 2 |
+| `cache-after-mutation` | [`references/server-state-cache.md`](references/server-state-cache.md) | 3, 9 |
+| `auth-visibility`, `public-contract` | [`references/auth-trust-boundary.md`](references/auth-trust-boundary.md) | 4, 5, 6 |
+| `library-hook-pairing` | [`references/library-hooks-listeners.md`](references/library-hooks-listeners.md) | 1 |
+| `ui-state` | [`references/ui-state-ownership.md`](references/ui-state-ownership.md) | 7, 8 |
+| `lifecycle-state`, `retry-or-external` | no batch yet | — |
 
-- **Replace, don't add.** Once the library form works, delete the hand-rolled listener. Both together is correct whenever dirty and wrong whenever clean — and nobody checks clean.
-- **A comment is a claim.** Write what you *verified* ("the router's own listener is disabled here because …") and name the source that would prove you wrong.
-- **The second copy is the audit.** Copying "the same guard X carries" inherits X's unaudited debt; verify the pattern once against the library at the second copy, and fix all copies in one change.
+## Paths
 
-### Prove
+### Plan pass
 
-- **Arms when dirty AND silent when clean.** The silence assertion is the one people skip, and the one that catches over-blocking. Also assert silence *after* anything that saves itself (a photo picked → stored) and *after* resolution (arm, Cancel/Save, stood down). Three states, three assertions.
-- **A stubbed hook is an absent library.** `vi.mock(router, () => ({ useBlocker: () => ({ status: "idle" }) }))` is fine for the screen's own logic, but that suite can no longer see what the hook does. Keep **one** test where the real hook mounts (browser e2e), asserting the outcome, not a handler's intent.
-- **Probe what the harness bypasses.** Playwright's `reload()` / `goto()` never fire `beforeunload`. Ask the page the question the browser would ask:
+1. Read the plan. If it has no `## Surfaces` line, derive one from its content and write it in. Select batches from the table; if none applies, write `tier 1 — no batch applies` where the review goes and stop.
+2. For each selected batch, dispatch one subagent in a fresh context (Claude Code: the Agent tool; Codex: `codex exec -s read-only "<prompt>"`) with the prompt below, the plan's path and the batch file's path. Dispatch all selected batches in one step.
+3. Assemble the outputs verbatim, one `## <batch>` heading each, into the review artifact (`review.md` beside the plan, or the plan's own Traps section).
+4. Merge: open each anchor and verify the row; drop rows with no anchor or no rule; resolve every blocking row in the plan; re-run only the batches whose surface the resolution touched.
+5. Done when every selected batch has a verdict, every blocking row is resolved in the plan or accepted with a written reason, and no row is unanchored.
 
-  ```ts
-  const wouldPromptOnUnload = (page: Page) =>
-    page.evaluate(() =>
-      !window.dispatchEvent(new Event("beforeunload", { cancelable: true })),
-    );
-  ```
+### Diff pass
 
-  `dispatchEvent` returns `false` if *any* listener cancelled — so it measures the prompt, not a handler.
-- **Positive control in the same test.** After the silence assertions, arm the guard and assert the probe reports `true`; without it a probe that always returns `false` passes vacuously.
-- **Run the revert check, don't reason it.** Undo the fix, watch the *silence* assertion go red, restore, watch it go green; paste both.
-- **Name what the test does not cover.** "Verified by test on settings; by identical shape on four siblings" — never plain "verified".
-- **Manual pass gets a negative-space step.** "Open a clean screen; refresh; nothing should happen."
+1. Select batches from the plan's Surfaces line and from what the diff touches (a mutation, a listener, a state seed, a client-supplied id).
+2. Dispatch as in the plan pass, with the diff and the plan as inputs and "the diff" in place of "the plan" in the prompt; the subagent applies the **view** side, anchored to file and line.
+3. Done when every selected batch has a verdict and every blocking row is fixed in the diff or accepted with a reason.
 
-### View
+### Harvest a lesson
 
-- **List the unset options** of every library hook in the diff, with defaults. A default that does something is a finding unless the code says why it is acceptable.
-- **A hand-rolled listener for an event the library handles** is the tell; grep the library's `dist`. If the library owns it, one of the two is wrong.
-- **A comment describing library or browser behaviour is a claim**; ask the author to cite what they read.
-- **"The same guard X carries" — has X been audited?** Review the pattern once at its source; the finding applies to all N copies.
-- **Where is the silence test, and does any test run the real library?** A guard proven only as "prompts when dirty" through a stubbed hook is untested on its library half.
-- **One symptom, how many sites?** Grep the pairing across the tree and expect the fix at every site with the same option shape.
-- **Does an existing requirement already forbid the symptom?** If the spec already says "leaving with nothing written SHALL simply leave", the fix is compliance, not a spec change — say so.
-- **Compare the two designs in code, side by side** (own handler + `enableBeforeUnload: false` versus `enableBeforeUnload: () => predicate`); choose the one that cannot drift, and show the diff.
-- **Ask why, after the fix.** The fix closes one bug; the why closes the class — and becomes the next rule here.
+1. State the incident: what was written, what should have been, what let it pass on all four sides.
+2. Find the mechanism's batch. Same kind of problem as an existing rule → one bullet under that rule's side that failed. New kind → a new `## Rule N` in that batch with four sides. New mechanism → a new batch file, one row in the table above, and a surface name for it. Never a new skill.
+3. Tell the story once in `readme.md`, with the date.
+4. Done when the rule is in one batch, the table routes to it, and the readme holds the incident.
 
-## Adding a rule
+## Subagent prompt
 
-A new kind of problem gets a new `## Rule N` in this file with its three sides, and its incident story in `readme.md`. It never gets a new skill: the roster is a budget, and a rule is cheaper than a description. A rule about the *same* kind of problem is a bullet under the existing rule. Each bullet comes from a real incident and names the thing that would have prevented it.
+Send verbatim, with the two paths filled in:
+
+```
+You review one plan against one batch of rules. Inputs: the plan at <plan path>; the batch at <batch path>. Read both. Read code only where the plan names a file, and only that file.
+For each rule in the batch, compare its Tell to the plan. Where a Tell matches, write one row anchored to the plan's numbered step, message or transition, and fill mitigation from the rule's Write side and proof from its Prove side.
+Report only findings that match a Tell in this batch or would change correctness. Do not rewrite the plan. Do not comment on style, naming or scope.
+Output exactly this and nothing else:
+VERDICT: CLEAN | FINDINGS
+| anchor | rule | effect | why it would be silent | mitigation | proof | blocking or advisory |
+```
