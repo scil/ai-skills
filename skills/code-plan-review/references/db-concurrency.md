@@ -4,14 +4,34 @@
 
 Under READ COMMITTED, PostgreSQL's default, every statement sees a fresh snapshot. A check in one statement and a write in the next have a gap between them, even inside one transaction, and another request fits in that gap.
 
+### Where
+
+Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
+
+- The spec states a cap, quota, budget, "only one", "first wins", "single use", "never holds two", or "a decline closes the allowance".
+- Two request paths (two endpoints, an endpoint and a job, a job and a retry of itself) write the same table, or two tables between them.
+- A write depends on what another row or a count currently says.
+- A helper that touches the database is called from inside a caller's transaction.
+- The same call can arrive twice at once: a double-click, a retry, a webhook redelivered, a cron overlapping its last run.
+
+### Asks for
+
+What the plan must carry for the Tells below to be checked by inspection rather than inferred from prose. A plan where a Where holds and one of these is missing is returned for it, not reviewed.
+
+- **The condition beside its write.** Each numbered write states the `WHERE` it carries and what the caller does with the rows-affected count. A condition that sits in an `if` above the write, with no `WHERE` restating it, is visible as such.
+- **A path × table matrix.** One row per path that writes, one column per table it touches, each cell `R`, `W` or `RW`, and the order the path takes its locks written beside the row. Two rows sharing two `W` columns with different orders, or no order, is the finding.
+- **Handles on the pseudocode.** Each helper call inside a transaction is annotated with the handle it receives — `pool`, `client` or `tx` — and the helper's signature says which it accepts.
+- **The isolation level, once**, and the reason if anything beyond a conditional write is planned.
+- **The concurrency test's connections.** The test plan says how many connections it opens and which one holds a transaction open across the other's write.
+
 ### Tell
 
 - Pseudocode reads a row or a count, tests it in code (`if count < limit`, `if status == open`, `if not exists`), then writes the same row or table in a later statement.
 - A cap, quota, budget, "only one", "first wins" or "single use" rule is enforced anywhere but in the write itself.
 - An insert whose conflict branch says "the row exists, use it".
-- A sequence diagram or two flows in which two participants write the same two tables, with no lock order stated.
-- A helper that takes "the database" and is called from inside a caller's transaction.
-- A test plan that says "call it twice at once" or `Promise.all`.
+- Two rows of the matrix write the same two tables and no lock order is stated, or the orders differ.
+- A helper annotated `pool` inside a `tx`; a helper whose signature accepts "the database".
+- A test plan that says "call it twice at once" or `Promise.all` with no second connection named.
 - A rule the spec states ("never holds two", "a decline closes the allowance", "only one wins") that no write in the plan enforces in its `WHERE`.
 
 ### Write
@@ -32,6 +52,7 @@ Under READ COMMITTED, PostgreSQL's default, every statement sees a fresh snapsho
 
 ### View
 
+- **Does the matrix match the files?** Open each path the plan names and list every table it writes; a table the file touches and the matrix omits is a finding against the matrix, before any finding against the design.
 - **Where is the read between the check and the write?** Any condition on a value read in an earlier statement, followed by a write, is a finding unless the write's `WHERE` re-states the condition.
 - **Which order do these two paths lock, and where is it written?** If the answer is "they don't touch the same tables", grep both paths for every table they touch.
 - **On conflict, does the handler lock and re-read, or use the row it did not write?**

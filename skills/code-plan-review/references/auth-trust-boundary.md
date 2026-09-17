@@ -4,11 +4,27 @@
 
 "Is this reader signed in, and as whom" is answered from the request's cookie or token on the server. The client's session store is unresolved on first paint, cached for whoever asked last, and changeable from another tab.
 
+### Where
+
+Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
+
+- The same screen or the same request serves a signed-in reader and a guest, or two different users, and does something different for each.
+- A client file reads the session — a store, a client-side cookie, a cached "me" query, local storage — for anything other than choosing what to render after a server answer.
+- Identity can change under the screen: first paint before the session resolves, a sign-in or sign-out in another tab, a query cached for the previous user.
+
+### Asks for
+
+What the plan must carry for the Tells below to be checked by inspection rather than inferred from prose. A plan where a Where holds and one of these is missing is returned for it, not reviewed.
+
+- **A trust-boundary row per identity-dependent decision**: "client sends X; server decides Y from Z" — with the deciding side and the source (cookie or token, or a client value) filled. A row whose deciding side is the client, or whose source is a session store, is visible as such.
+- **A before-answer state per identity-dependent control**: what the control does until the server's answer arrives — inert, hidden, a stated default. A control with no such state is visible as such.
+- **The endpoint count**: one endpoint that reports which branch it took, or two; if two, the row says who chooses.
+
 ### Tell
 
 - Client code branches on "if signed in" or "as user X" to choose between two behaviours.
-- A control's enabled state, or a link's target, depends on a session value read on the client.
-- The plan reads a session store, local storage or a cached "me" query to decide what a request will do.
+- A trust-boundary row whose deciding side is the client, or whose source is a session store, local storage or a cached "me" query.
+- A control's enabled state, or a link's target, depends on a session value read on the client; a control with no before-answer state.
 - Two endpoints, "the signed-in one" and "the guest one", chosen by the client.
 
 ### Write
@@ -24,6 +40,7 @@
 
 ### View
 
+- **Do the rows match the client files?** Open the named client files; every read of a session store, local storage or "me" query that feeds a branch rather than a render must have a row. A read with no row is a finding against the list, before any finding against the design.
 - **For each branch on identity in client code: who decided, and from what?** A client-side decision is a finding unless it only chooses what to render after a server answer.
 - **What does the control do before the identity answer arrives?**
 
@@ -31,10 +48,21 @@
 
 A value inferred "because only X can reach here" is correct on the route that guarantees X and wrong on every other route that reaches the same code. A comment stating the warrant is not a check.
 
+### Where
+
+- A value is derived from a precondition instead of read: "the caller must be the author here", "there is exactly one grant, so it is this one", "this only runs after approval".
+- The code that makes the inference is a helper, or is reachable from more than one route, job or event.
+- The derived value is write-once, authorizing, or names another user.
+
+### Asks for
+
+- **A route × warrant table** for each inference: one row per route, job or event that reaches the inferring code — found by grepping the named file's callers, not from memory; columns: the constraint the inference rests on; where on that route it is checked, as file and line, or "not checked". A "not checked" cell is visible as such.
+- **The check in the pseudocode at the point of inference**, numbered, not a comment above it.
+
 ### Tell
 
-- The plan derives a value from a precondition ("the caller must be the author here", "there is exactly one grant, so it is this one").
-- A comment or a sentence states a precondition and nothing checks it.
+- The plan derives a value from a precondition and the table has no row for one of the routes grep finds.
+- A route row that says "not checked"; a comment or a sentence states a precondition and no numbered step checks it.
 - A helper written for one route is reused by a second route.
 - A write-once or authorizing value is set from an inference.
 
@@ -51,6 +79,7 @@ A value inferred "because only X can reach here" is correct on the route that gu
 
 ### View
 
+- **Does the route table match the callers?** Grep the tree for the inferring function; every caller, job and event handler is a row. A caller with no row is a finding against the table, before any finding against the design.
 - **List the routes that reach this code. Which carry the warrant?** A comment stating a precondition is a claim: where is the check?
 - **Is any value set here permanent or authorizing?** If so, which route guarantees the inference, and is that the only route?
 
@@ -58,13 +87,25 @@ A value inferred "because only X can reach here" is correct on the route that gu
 
 Client to server, one user's request touching another user's data, external to internal (webhook, callback, upload): existence is not permission.
 
+### Where
+
+- A request carries an id, a path segment, a body field or a query string that names a row.
+- A request from one user can read or write data another user owns.
+- Input arrives from outside the process: a webhook, an OAuth callback, an upload, a queue message, a query string.
+- The plan's sequence diagram has a participant on the far side of a trust boundary.
+
+### Asks for
+
+- **A crossing table**: one row per boundary crossing in the diagram or the trust-boundary list; columns: each field that crosses; its shape check; its authorization check — an ownership check against the caller, or the project's one visibility gate by name; its consistency check. An empty check cell is visible as such. "The row exists" does not fill the authorization cell.
+- **The visibility gate named once**, and per path whether it goes through the gate or re-implements it.
+
 ### Tell
 
-- A client-supplied id is used to load, modify or delete a row.
+- A client-supplied id is used to load, modify or delete a row; a crossing row whose authorization cell is empty or says "exists".
 - "The row exists" is used as "the caller may act on it".
-- One user's request reads or writes data owned by another user.
-- External input (a webhook, an OAuth callback, an upload, a query string) is parsed and acted on without a stated validation.
-- A boundary appears in the plan's diagram with no check named at the crossing.
+- One user's request reads or writes data owned by another user with no row for it.
+- External input is parsed and acted on with an empty shape cell.
+- A boundary appears in the plan's diagram with no crossing row.
 
 ### Write
 
@@ -80,6 +121,7 @@ Client to server, one user's request touching another user's data, external to i
 
 ### View
 
+- **Does the crossing table match the handler?** Open the named handler; every field read from params, body, query or headers is a "what crosses" entry. A field with no entry is a finding against the table, before any finding against the design.
 - **For each id from the client: where is the ownership check, or which gate does the read go through?**
 - **Which single function is the visibility gate, and does this path use it or re-implement it?**
 - **Does any crossing in the diagram lack a check?**

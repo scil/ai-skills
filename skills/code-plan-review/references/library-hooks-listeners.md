@@ -4,12 +4,29 @@
 
 A library hook, component or option object that you use partially will keep doing what its unset options say. The 2026-09-11 lesson: five screens paired a router's `useBlocker` with a hand-rolled `beforeunload` listener; the hook already owned that event through an unread option (`enableBeforeUnload`, default `true`), so the browser asked "changes may not be saved" on every clean refresh, on five screens, for months, with a comment explaining the wrong model.
 
+### Where
+
+Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
+
+- The plan uses a library hook, component, client or plugin that takes an options object: a router's blocker, a layout or virtualiser hook, an HTTP or queue client, an ORM insert, a framework plugin.
+- Beside it, the plan adds a listener, effect, loop or check for a concern in the same family: navigation or unload, resize, keys, scroll, retries, CORS, limits, conflicts, acknowledgements.
+- The plan copies a pairing from a sibling screen or module.
+- The plan states how a library or the browser behaves.
+
+### Asks for
+
+What the plan must carry for the Tells below to be checked by inspection rather than inferred from prose. A plan where a Where holds and one of these is missing is returned for it, not reviewed.
+
+- **An options ledger per library API used**: every field of its options type, read from the `.d.ts`; the value set, or "unset"; the default; what the default does to this feature. A row "unset" whose default touches the concern is visible as such.
+- **Each hand-written listener, loop or check paired with the library feature it sits beside**, and one sentence saying which of the two owns the concern, with the source that says so — the guide, or a grep of the library's `dist` for the event name.
+- **For a copied pairing**: the sibling audited against the ledger, and the list of every copy in the tree.
+
 ### Tell
 
 - The plan pairs a library hook, component or option object with a hand-written listener or effect for the same event family (`beforeunload` beside a navigation blocker; `resize` beside a layout hook; `keydown` beside a menu primitive; `scroll` beside a virtualiser).
 - The same shape on the server: a hand-rolled retry loop beside an HTTP or queue client that already retries; a hand-written CORS, body-limit or rate-limit step beside the framework's plugin for it; a manual existence check before an insert beside an ORM whose conflict option already decides it; an explicit acknowledge in a consumer whose client acknowledges on its own.
-- The plan names two options of a hook, client or plugin whose type has more, and says nothing about the rest.
-- The plan says "the same guard screen X carries" or "copy the pairing from the sibling".
+- A ledger row "unset" whose default touches a concern a hand-written listener also handles; a ledger with fewer rows than the type has fields.
+- The plan says "the same guard screen X carries" or "copy the pairing from the sibling" with no audit and no copy list.
 - The plan explains a library's or the browser's behaviour in a sentence with no source named.
 
 ### Write
@@ -53,6 +70,7 @@ A library hook, component or option object that you use partially will keep doin
 
 ### View
 
+- **Does the ledger match the `.d.ts`?** Open the options type; a field the type has and the ledger omits is a finding against the ledger, before any finding against the design.
 - **List the unset options** of every library hook in the diff, with defaults. A default that does something is a finding unless the code says why it is acceptable.
 - **A hand-rolled listener for an event the library handles** is the tell; grep the library's `dist`. If the library owns it, one of the two is wrong.
 - **A comment describing library or browser behaviour is a claim**; ask the author to cite what they read.
