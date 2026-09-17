@@ -6,17 +6,17 @@ description: Create, review, update or grow a repository's agent instruction fil
 
 # Agent instruction files: AGENTS.md and CLAUDE.md
 
-**Scope.** This skill owns the content of one instruction file: which rules earn a line, how a rule is worded and enforced, the templates, and the sources it is derived from. Which files each harness loads, byte budgets across the chain, and the diet of an oversized contract belong to ai-docs-organizing; where any other project fact lives belongs to docs-maintainer.
+Hand-offs: which files each harness loads, byte budgets across the chain and the diet of an oversized contract → ai-docs-organizing; where any other project fact lives → docs-maintainer.
 
-An **instruction file** is the Markdown a coding harness injects into every session it starts in a repository: `AGENTS.md` for Codex and most other tools, `CLAUDE.md` for Claude Code. It is a behavioural layer, not a brake, and it is paid for on every turn. This skill decides what earns a line there, writes it, reviews it, and keeps its own sources current. Origin, and what was kept or rejected from the two conversations it grew from: [`readme.md`](readme.md).
+An **instruction file** is the Markdown a coding harness injects into every session it starts in a repository: `AGENTS.md` for Codex and most other tools, `CLAUDE.md` for Claude Code. It is a behavioural layer, not a brake, and it is paid for on every turn. Origin: [`readme.md`](readme.md).
 
 ## Principles
 
-1. **Only what the repository cannot tell the agent — the two vendors say so first.** Anthropic: "For each line, ask: would removing this cause Claude to make mistakes? If not, cut it"; `/doctor` trims "directory layouts, dependency lists, and architecture overviews" and keeps "pitfalls, rationale, and conventions that differ from tool defaults". OpenAI: "A short, accurate AGENTS.md is more useful than a long file full of vague rules… add new rules only after you notice repeated mistakes." Research corroborates the direction and is mixed on the details (seven studies in [`references/sources.md`](references/sources.md), tier 2): developer-written beats generated in every study that compares them; unconditional testing instructions raise cost; whether a navigational map helps is contested, so a map is a Pointers line, not a directory listing. A line earns its place by passing the admission threshold in [`references/rules.md`](references/rules.md): non-inferable, costly when wrong, repeated, a team agreement, an architecture boundary, or a verification requirement.
+1. **Only what the repository cannot tell the agent.** Both vendors say so: Anthropic — cut any line whose removal would not cause mistakes; keep pitfalls, rationale and conventions that differ from tool defaults, not directory layouts or dependency lists. OpenAI — short and accurate beats long and vague; add a rule only after a repeated mistake. Research agrees on the direction and is mixed on details ([`references/sources.md`](references/sources.md)): developer-written beats generated; unconditional testing instructions raise cost; a navigational map is contested, so it is a Pointers line, not a directory listing. A line earns its place by passing the admission threshold in [`references/rules.md`](references/rules.md): non-inferable, costly when wrong, repeated, a team agreement, an architecture boundary, or a verification requirement.
 2. **One canonical file, one-line bridges.** `AGENTS.md` is the shared source; `CLAUDE.md` is `@AGENTS.md` plus Claude-only lines. A rule written only in the bridge is a rule the other agent never sees.
 3. **A rule is a wish until it has an enforcement layer.** Each rule names its layer: a hook, a CI check, a linter rule, a test, or the explicit tag `advisory`. Destructive-action policy sits at the top, short; the real brake is the sandbox and approval config.
 4. **Grow by incident, prune by review.** A rule enters when a failure repeats, with `Instance:` and date; every PR asks *add, change, delete?*; a stale rule is worse than none because the file is trusted.
-5. **Bytes and attention are the budget.** Codex cuts the whole chain at 32 KiB silently; Claude Code has no cut but a 200-line target per file. Measure before and after; the harness table lives in [ai-docs-organizing](../ai-docs-organizing/references/harness-loading.md).
+5. **Bytes and attention are the budget.** Codex cuts the whole chain at 32 KiB silently; Claude Code has no cut but a 200-line target per file. Measure before and after; the harness table lives in [ai-docs-organizing](../ai-docs-organizing/references/harness-loading.md), and what each harness does with the file's content in [`references/harness/`](references/harness/).
 
 ## Every run starts with the refresh gate
 
@@ -49,13 +49,4 @@ Read the `last-refresh` line at the top of [`references/sources.md`](references/
 ### Refresh (sources and research)
 
 Procedure in [`references/refresh.md`](references/refresh.md): run `scripts/check-sources.ps1`, read only the sources whose fingerprint moved, search for research and vendor announcements since the last refresh with the domain allowlist, write the dated entry in [`references/changelog.md`](references/changelog.md), and *propose* edits to this skill for the user to accept. Sources carry an authority tier: vendor documentation decides, research corroborates (two independent studies, or one that explains a vendor rule), exemplars illustrate, reports point. **Disputes**: when sources conflict (different vendor recommendations, research findings contradict each other, or empirical evidence contradicts vendor guidance), name each disagreement in the report with the sources on each side, the tier of each source, and which recommendation the sources' weight supports. Fingerprints and `last-refresh` update only after the user has seen the report.
-
-## References and templates
-
-- [`references/rules.md`](references/rules.md) — admission threshold, wording, rule shape, section menu, what never enters.
-- [`references/review-checklist.md`](references/review-checklist.md) — the review pass.
-- [`references/refresh.md`](references/refresh.md), [`scripts/check-sources.ps1`](scripts/check-sources.ps1), [`references/sources.md`](references/sources.md), [`references/changelog.md`](references/changelog.md) — the refresh machinery.
-- [`references/harness/claude-code.md`](references/harness/claude-code.md), [`references/harness/codex.md`](references/harness/codex.md) — what each harness does with the file's content, verified with dates.
-- [`references/stacks/`](references/stacks/) — candidate non-inferable rules per stack; a menu, never auto-inserted.
-- [`templates/`](templates/) — root, nested, bridge.
 

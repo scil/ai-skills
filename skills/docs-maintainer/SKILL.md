@@ -6,9 +6,9 @@ description: Create, organize, audit or maintain the documentation system of a p
 
 # Documentation for a repository whose first reader is an agent
 
-**Scope.** This skill owns layers 1–6 of the docs system; the always-loaded instruction file's content is ai-agents-md's, and loading budgets are ai-docs-organizing's.
+Hand-offs: the always-loaded instruction file's content → ai-agents-md; loading budgets → ai-docs-organizing.
 
-Facts must be discoverable, stable, linkable, and safe for an agent to act on. Since 2026-09-15 the system is organized by **loading layer** — how a fact reaches the agent and what each read costs — and its rules carry tiered sources. Why, and on what evidence: [`readme.md`](readme.md).
+Facts must be discoverable, stable, linkable, and safe for an agent to act on. The system is organized by **loading layer** — how a fact reaches the agent and what each read costs. Origin and evidence: [`readme.md`](readme.md).
 
 ## Principles
 
@@ -31,7 +31,7 @@ Choose the owning node, then decide section, file, or directory. One file per to
 
 ### Adopting a system the project already has (route, do not scaffold)
 
-1. Refresh gate. Inventory what already owns facts: contract, spec system, plans, package code, skills, CI checks.
+1. Refresh gate. Inventory what already owns facts: contract, spec system, plans, package code, skills, CI checks. A project that runs OpenSpec has a ready mapping in [`references/adopting-openspec.md`](references/adopting-openspec.md).
 2. Build the **Ownership Map** from [`templates/ownership-map.md`](templates/ownership-map.md): one row per fact type → existing owner → layer → enforced by → reading rule. Walk every node of the Annotated Structure (`structure.md` → Mapping) and map it or mark it *skipped — reason*.
 3. Hand every procedure found in a doc to layer 5; declare every artefact a generator could produce as layer 3 with its command; mark prose that mirrors code as code-wins.
 4. Add a file only when no owner fits and the split rule allows, in the repository's own naming.
@@ -64,13 +64,4 @@ Choose the owning node, then decide section, file, or directory. One file per to
 ### Refresh (standards, vendor guidance, research)
 
 Procedure in [`references/refresh.md`](references/refresh.md): run the shared checker (`ai-agents-md/scripts/check-sources.ps1 -Path … -GateDays 30`), read only what moved, search with the domain allowlist, write the dated entry in [`references/changelog.md`](references/changelog.md), and *propose* edits. Tier 1 (vendor, standard) decides alone; Tier 2 (research) corroborates in pairs; exemplars illustrate; reports point.
-
-## References and templates
-
-- [`references/structure.md`](references/structure.md) — the seven layers, what moved and why, adoption mappings, where the structure lives, repo map vs code locator, hot-doc reading rule.
-- [`references/adopting-openspec.md`](references/adopting-openspec.md) — the mapping for a project that runs OpenSpec: change folders as plans, `design.md` as ADR, the gaps `docs/` fills, six rules, a starter ownership-map excerpt.
-- [`references/cross-cutting.md`](references/cross-cutting.md) — cross-cutting checklist, decision states and promotion, link rules, where framework-specific rules live.
-- [`references/diagramming.md`](references/diagramming.md) — PlantUML rules for C4 L1/L2, flows and trap entries.
-- [`references/sources.md`](references/sources.md), [`references/refresh.md`](references/refresh.md), [`references/changelog.md`](references/changelog.md) — the tiered sources and the refresh machinery.
-- [`templates/ownership-map.md`](templates/ownership-map.md) — the Adopting path's deliverable and the layer-6 owner.
 

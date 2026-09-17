@@ -6,7 +6,7 @@ description: Review, slim or grow one skill's SKILL.md — a description that is
 
 # One skill's SKILL.md
 
-**Scope.** This skill owns the content of one skill: what its `description` carries, what stays in the body and what moves behind a pointer, the shape of a router, the slim, and folding a fork back into the shared skill it forked from. The roster — which directories each harness scans, provenance classes, how many skills load and under what budget — is ai-docs-organizing's; the always-loaded instruction file's content is ai-agents-md's; creating a skill from nothing and measuring it with evals is skill-creator's; where any other project fact lives is docs-maintainer's.
+Hand-offs: the roster (which directories each harness scans, provenance classes, how many skills load under what budget) → ai-docs-organizing; the instruction file's content → ai-agents-md; creating a skill from nothing or measuring it with evals → skill-creator; where any other project fact lives → docs-maintainer.
 
 A **skill** is a directory with a `SKILL.md`: its `description` is loaded into every session by every harness; its body loads only when the skill triggers. The two halves have different budgets and different failure modes. Origin: [`readme.md`](readme.md).
 
@@ -53,11 +53,4 @@ Done when: every sentence left in `SKILL.md` changes what the agent does, every 
 
 ### Refresh (sources)
 
-Procedure in [`references/refresh.md`](references/refresh.md): run the shared checker against this skill's `sources.md`, read only the sources whose fingerprint moved, search for vendor changes to the skill format since the last refresh, write the dated changelog entry, and *propose* edits for the user to accept. Disputes between sources are named with the tier of each side. Fingerprints and `last-refresh` update only after the user has seen the report.
-
-## References
-
-- [`references/slimming.md`](references/slimming.md) — the slim, step by step, and the fold-back as the same move at the skill-set level.
-- [`references/review-checklist.md`](references/review-checklist.md) — the review pass: description, body, references, mirror.
-- [`references/refresh.md`](references/refresh.md), [`references/sources.md`](references/sources.md), [`references/changelog.md`](references/changelog.md) — the refresh machinery; the checker script is [`ai-agents-md/scripts/check-sources.ps1`](../ai-agents-md/scripts/check-sources.ps1), shared.
-- [`ai-docs-organizing/references/harness-loading.md`](../ai-docs-organizing/references/harness-loading.md) — which directories each harness scans and how it reports a roster over budget.
+Procedure in [`references/refresh.md`](references/refresh.md): run the shared checker ([`ai-agents-md/scripts/check-sources.ps1`](../ai-agents-md/scripts/check-sources.ps1)) against this skill's `sources.md`, read only the sources whose fingerprint moved, search for vendor changes to the skill format since the last refresh, write the dated entry in [`references/changelog.md`](references/changelog.md), and *propose* edits for the user to accept. Disputes between sources are named with the tier of each side. Fingerprints and `last-refresh` update only after the user has seen the report.

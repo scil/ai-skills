@@ -6,7 +6,7 @@ description: Research a question, verify a set of claims, or build the source ba
 
 # Tiered research
 
-Research whose output is a set of verdicts and a source table, not an impression. Two failures produced this skill on 2026-09-15: a claim called "not found" because the wrong corpus was searched, and a claim called "contradicted" because it was compared against the wrong object ([`readme.md`](readme.md)).
+Research whose output is a set of verdicts and a source table, not an impression. Origin: [`readme.md`](readme.md).
 
 ## Principles
 
@@ -43,10 +43,4 @@ Research whose output is a set of verdicts and a source table, not an impression
 ## Anti-patterns
 
 "The research shows" from one paper. A verdict without the corpus it searched. Trusting a blog's description of a repository file. A guessed publication date. Resolving a vendor disagreement by taste. Registering a source without saying what is *not* taken from it.
-
-## References and templates
-
-- [`references/source-tiers.md`](references/source-tiers.md) — the tier table, what each tier may do, scope fields for a study.
-- [`references/verdict-protocol.md`](references/verdict-protocol.md) — corpus-first procedure, verdict vocabulary, the report shape.
-- [`templates/sources.md`](templates/sources.md) — registry compatible with `ai-agents-md/scripts/check-sources.ps1`.
 
