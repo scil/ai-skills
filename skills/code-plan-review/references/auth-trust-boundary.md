@@ -29,7 +29,7 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 
 ### Write
 
-- **One endpoint that reports what it did**: the server reads the request's credentials, chooses the branch, and returns which (`{ mode: "attributed" }` / `{ mode: "claim" }`); the client renders the outcome.
+- **The property: whichever endpoint the request reaches, the server decides who the caller is from the request's credentials**, and a request whose claim disagrees with its cookie gets the cookie's outcome. The plain implementation is **one endpoint that reports what it did**: the server reads the credentials, chooses the branch, and returns which (`{ mode: "attributed" }` / `{ mode: "claim" }`); the client renders the outcome. Two endpoints hold the property only when each decides from the credentials and refuses, redirects or re-routes a caller the credentials do not match — then the client's choice is a hint the server may overrule, and the endpoint-count row says so. Two endpoints where the guest one trusts that it was chosen by a guest do not.
 - **Where the client must know first**, it asks on its own query key, trusts only a succeeded answer, and keeps the control inert until then. An unresolved answer is not "guest".
 - **Never carry the identity decision in a request body** the client could set.
 

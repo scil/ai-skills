@@ -67,7 +67,7 @@ A mutation observer reports only its most recent call. Two overlapping saves sha
 
 ### Write
 
-- **Saves that can overlap get their own observer each**, plus a shared scope id so their writes serialise on the server.
+- **Saves that can overlap get their own observer each**, plus a shared scope id so this client sends them one at a time — a client-side queue and nothing more. It does not order this client's writes against another device's or another tab's; that is the server's conditional `WHERE` (Rule 2), and a plan that names the scope as its cross-client protection has named nothing.
 - **Saves the UI structurally prevents from overlapping** (one submit button, disabled while pending) may share one observer.
 - **Each surface renders its own observer's state**, not a screen-wide one.
 

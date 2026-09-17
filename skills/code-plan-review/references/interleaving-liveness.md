@@ -1,6 +1,6 @@
 # Batch: interleaving liveness — Rules 13, 14
 
-Both rules in this batch are marked **liveness**. A liveness failure is "something good never happens": the request does not fail, it is never served; the page does not error, it never learns. There is no moment at which an assertion turns red, so the Prove side of these rules is not a test — it is the argument the plan carries (arrival against service, subscribe against fire) and the metric that would show the failure in production. A row from this batch whose proof cell names a test is suspect; one whose proof names neither an argument nor a metric is dropped at merge. Deadlock is the one liveness failure the database reports (`40P01`) and it lives in db-concurrency, Rule 2; starvation and lost wakeup get no such courtesy.
+Both rules in this batch are marked **liveness**. A liveness failure is "something good never happens": the request does not fail, it is never served; the page does not error, it never learns. There is no moment at which an assertion turns red, so the Prove side of these rules is not a test — it is the argument the plan carries (arrival against service, subscribe against fire) and the metric that would show the failure in production. A row from this batch whose proof cell names a test is suspect; one whose proof names neither an argument nor a metric is returned to the batch once at merge, then listed under Unresolved. Deadlock is the one liveness failure the database reports (`40P01`) and it lives in db-concurrency, Rule 2; starvation and lost wakeup get no such courtesy.
 
 ## Rule 13 — Every pessimistic lock answers for its arrival rate
 
@@ -34,8 +34,8 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 
 ### Write
 
-- **Public reads take no write lock.** A path anyone can trigger reads without `FOR UPDATE` and writes, if at all, through a conditional statement (Rule 2) that does not wait.
-- **A cap on a hot row is self-healing, not instantaneous.** Sweep the excess later, ordered by what was last shown or touched, instead of counting under a lock on every request.
+- **Public reads take no write lock.** A path anyone can trigger reads without `FOR UPDATE` and writes, if at all, through a conditional statement (Rule 2). That statement still waits for a writer holding the row, and still holds the row lock until its own transaction ends, so it is a row in the lock × arrival table like any other; what makes it cheap is a service time of one statement — which holds only when it is the transaction's last statement or runs in autocommit. A conditional write followed by more work in the same transaction has the service time of that work, measured from the lock to the commit or rollback.
+- **A cap on a hot row is as exact as the spec requires, and no more.** Where the spec tolerates eventual — a storage limit, a cleanup threshold, "roughly N" — sweep the excess later, ordered by what was last shown or touched, instead of counting under a lock on every request. Where the spec demands exact, the cap stays exact and the lock × arrival table shows what bounds the queue; relaxing to eventual is a spec change to propose, not a mitigation to apply.
 - **A retry has jittered backoff and a ceiling**, and the caller is told what happened after the last attempt; a zero-rows result on a conditional write is an answer to report, not always a reason to try again.
 - **Set a ceiling on waiting.** `lock_timeout` on the path, or `statement_timeout`, so a waiter fails on its own instead of holding a pool connection until the pool is empty.
 - **Write the queue's cost in the plan** as arrival against service, not as milliseconds.

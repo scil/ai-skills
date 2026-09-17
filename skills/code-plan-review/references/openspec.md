@@ -50,16 +50,19 @@ The structured intermediates — numbered pseudocode at the deciding statements,
        Follow the Plan pass in <skill path>/SKILL.md: check design.md against
        "What a reviewable plan contains" and return to the design if an item is
        missing; dispatch one fresh-context subagent per batch file — all of them,
-       in one step — with the skill's subagent prompt verbatim, design.md, the
+       in one step — with the skill's plan prompt verbatim, design.md, the
        batch file and the change's spec deltas; assemble outputs verbatim under
-       one "## <batch>" heading each, keeping every APPLIES line; merge: verify
-       each row at its anchor, drop unanchored rows, resolve blocking rows in
-       design.md (recorded under Decisions), re-run only the batches the
-       resolution touched, dedupe OUT-OF-BATCH lines across batches into one
-       list under Accepted with a disposition each.
+       one "## <batch>" heading each, keeping every APPLIES and SEARCHED line;
+       merge: verify each row at its anchor, return a row with no anchor or no
+       proof to its batch once and list it under Unresolved if it comes back
+       still empty (never drop it), resolve blocking rows in design.md (recorded
+       under Decisions), re-run only the batches the resolution touched, dedupe
+       OUT-OF-BATCH lines across batches into one list under Accepted with a
+       disposition each.
        Complete when every batch has an APPLIES line and a verdict, every
-       blocking row is resolved in design.md or listed under Accepted with a
-       reason, and no row is unanchored.
+       blocking row is resolved in design.md or listed under Accepted with the
+       author's reason, no row is unanchored, and Unresolved is empty. Moving a
+       line from Unresolved to Accepted needs the reason, not the move.
      requires: [design]
 
    - id: tasks
@@ -75,7 +78,7 @@ The structured intermediates — numbered pseudocode at the deciding statements,
 
    `<skill path>` is where the skill is reached in that repository (for a junction-linked shared skill, `.agents/skills/code-plan-review`).
 
-2. **Template slots.** `templates/review.md`: one `## <batch>` heading per batch file in the router's table, in that order, then `## Accepted`, with a leading HTML comment saying to paste each subagent's output verbatim and never to fill a section from the design's context. `templates/design.md`: an HTML comment under Decisions naming the pseudocode and diagram requirement, and an `## Assumptions` section before Risks.
+2. **Template slots.** `templates/review.md`: one `## <batch>` heading per batch file in the router's table, in that order, then `## Accepted` and `## Unresolved`, with a leading HTML comment saying to paste each subagent's output verbatim and never to fill a section from the design's context. `templates/design.md`: an HTML comment under Decisions naming the pseudocode and diagram requirement, and an `## Assumptions` section before Risks.
 
 3. **`openspec/config.yaml`.**
 
@@ -98,7 +101,8 @@ The structured intermediates — numbered pseudocode at the deciding statements,
        guidance:
          - Read review.md with the other context files; implement each blocking row's
            mitigation column, and treat a blocking row that is neither resolved in
-           design.md nor listed under Accepted as a blocker to pause on.
+           design.md nor listed under Accepted, or any line under Unresolved, as a
+           blocker to pause on.
    ```
 
    Write rules as `>-` folded scalars: a plain scalar containing `: ` parses as a mapping, and the CLI then ignores the artifact's rules with a one-line warning ("Rules for 'design' must be an array of strings") that is easy to miss.

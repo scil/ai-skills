@@ -44,7 +44,7 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 
 - **A contract test across the sites**: one input, both surfaces or both parsers, assert identical output; this is the assertion that goes red when one side changes alone.
 - **The normalized-value test**: submit a value that differs from the stored one only by what normalization removes; assert the client reports nothing to save and the server writes nothing.
-- **Where no test can hold both** (visual output), a side-by-side snapshot of both surfaces checked into the review, with the diff empty.
+- **Where no unit test can hold both** (visual output), a visual-diff assertion: render both surfaces from one input under the test runner and assert the two screenshots match — the assertion that goes red when one surface changes alone. A side-by-side pair pasted into the review by hand is evidence for the reviewer, not a proof (Principle 6): nothing turns red the next time one side moves.
 
 ### View
 
@@ -115,14 +115,14 @@ Any one of these makes the rule apply, whether or not the plan already guards ag
 
 ### Tell
 
-- The sentence reads a snapshot and the request reads live data, or the reverse; the plan recomputes `expected…` from fresh query data at click.
+- The sentence reads a snapshot and the request reads live data, or the reverse; the plan recomputes `expected…` from fresh query data at click; a promise-table row whose snapshot moment is the confirming click rather than the confirmation's opening.
 - A promise-table row with an empty `WHERE` cell: the expected value is sent and the server evicts whoever is there.
 - The sentence renders at the end of a list and the button stays fixed, so on a phone the sentence scrolls away while the button does not.
 - The plan calls the expected value "a hint" or "for display".
 
 ### Write
 
-- **One snapshot object feeds both.** At the moment of the click, capture `{ who, their name, current holder, holder's name }` once; the sentence and the request both read that object and nothing else.
+- **One snapshot object feeds both.** When the confirmation opens, capture `{ who, their name, current holder, holder's name }` once; the sentence renders from that object, and the confirming click submits that same object — never a value re-read at the click. The moment is the opening of the confirmation, not the click that confirms it: a snapshot taken at confirm reads what the sentence never showed, and is the drift this rule exists for.
 - **The expected value goes into the writing statement's own `WHERE`** (Rule 2), and zero rows affected is reported to the user as "this changed under you", not as success.
 - **The sentence sits beside the button** — in the selected row, next to the control — so what is read is what is clicked.
 - **Replace the value anywhere along the way with "the newest" and the sentence becomes a lie**; the guard was dismantled once by the client and once by the layout in the same feature.

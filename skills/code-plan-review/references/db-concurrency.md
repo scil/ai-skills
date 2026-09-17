@@ -31,6 +31,7 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 - Pseudocode reads a row or a count, tests it in code (`if count < limit`, `if status == open`, `if not exists`), then writes the same row or table in a later statement.
 - A cap, quota, budget, "only one", "first wins" or "single use" rule is enforced anywhere but in the write itself.
 - An insert whose conflict branch says "the row exists, use it".
+- An insert guarded by `WHERE NOT EXISTS`, `if not exists` or a count, with no unique constraint on the columns the guard tests.
 - Two rows of the matrix write the same two tables and no lock order is stated, or the orders differ.
 - A helper annotated `pool` inside a `tx`; a helper whose signature accepts "the database".
 - A test plan that says "call it twice at once" or `Promise.all` with no second connection named.
@@ -38,7 +39,8 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 
 ### Write
 
-- **Condition in the write, outcome from rows affected.** `UPDATE … SET granted = granted + 1 WHERE id = $1 AND granted < limit`; `UPDATE … WHERE id = $1 AND status = 'open'`. Zero rows affected is the failed check, and it failed atomically. The same holds for `INSERT … WHERE NOT EXISTS` and `DELETE … WHERE status = …`.
+- **Condition in the write, outcome from rows affected.** `UPDATE … SET granted = granted + 1 WHERE id = $1 AND granted < limit`; `UPDATE … WHERE id = $1 AND status = 'open'`; `DELETE … WHERE status = …`. Zero rows affected is the failed check, and it failed atomically — because the statement locks the row it found and, once a blocking writer commits, re-evaluates its `WHERE` on that row's newest version.
+- **An insert has no row to lock, so its guard is the unique constraint.** `INSERT … SELECT … WHERE NOT EXISTS (…)` is not the conditional write above: under READ COMMITTED two transactions both see absence and both insert. What decides "only one" for an insert is a unique constraint on the columns the condition tests, with `INSERT … ON CONFLICT DO NOTHING` and rows affected as the outcome — or the conflict handled by the next bullet. A `WHERE NOT EXISTS` with no such constraint is a check in one statement and a write in the next, wearing one statement's clothes.
 - **A uniqueness conflict proves a row exists, never that it is usable.** The row that exists may be expired, consumed, or another caller's. Lock it (`SELECT … FOR UPDATE`), read it again, then decide.
 - **Two paths that touch the same two tables take the locks in the same order.** Write the order down once, beside the tables, and say which path holds for which; a path that needs the other order restructures, never improvises.
 - **A helper's signature says which handle it needs** — a pool or client, an executor, or a transaction — and no call site casts one into another. A helper that takes the pool while its caller holds a transaction silently escapes that transaction.
@@ -48,6 +50,7 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 
 - **A second connection holding a transaction open.** Open a transaction on connection A, run the first path up to its write, leave it open; run the second path on connection B; assert it waits or fails as designed; commit A; assert the final state. Two calls fired from one process usually serialise on one connection and pass without ever overlapping.
 - **Test either side of the cap, never at it**: at N−1 the write affects one row; at N it affects zero and the caller reports the failure.
+- **The double insert**: two connections, each past the absence check and before its insert, both commit; assert one row — the assertion that goes red when the unique constraint is dropped and `WHERE NOT EXISTS` is left to decide.
 - **The conflict re-read**: seed the existing-but-unusable row (expired, consumed, another owner), run the path, assert it does not use it.
 - **The lock-order test**: run path A and path B against each other on two connections and assert both complete; a deadlock surfaces as the driver's deadlock error or a timeout, and the test fails, not hangs.
 - **The handle test**: a compile-time or test-time check that fails when a helper declares a wider handle than it uses, or when a call site asserts one handle type into another.
@@ -57,6 +60,7 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 - **Does the matrix match the files?** Open each path the plan names and list every table it writes; a table the file touches and the matrix omits is a finding against the matrix, before any finding against the design.
 - **Where is the read between the check and the write?** Any condition on a value read in an earlier statement, followed by a write, is a finding unless the write's `WHERE` re-states the condition.
 - **Which order do these two paths lock, and where is it written?** If the answer is "they don't touch the same tables", grep both paths for every table they touch.
+- **For each insert guarded on absence: which unique constraint decides?** "The `WHERE NOT EXISTS`" is a finding.
 - **On conflict, does the handler lock and re-read, or use the row it did not write?**
 - **Does any test hold a transaction open on a second connection?** If every concurrency test runs in one process on one connection, the concurrent half is untested.
 - **Which handle does each helper take, and does any call site inside a transaction pass the outer one?**
