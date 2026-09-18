@@ -128,6 +128,7 @@ Any one of these makes the rule apply, whether or not the plan already guards ag
 - `try/catch` around `fetch` with no status check; "the call succeeded" measured by the promise resolving.
 - A branch table with three rows.
 - A parent's error branch that returns early above a child block which could still render.
+- A read result branched on `null` alone, so `undefined` (the failed read) shares the branch. Which states the branch names is Rule 23's ledger; this rule owns what the error branch shows.
 
 ### Write
 

@@ -20,7 +20,7 @@ Any one of these makes the rule apply, whether or not the plan already guards ag
 
 What the plan must carry for the Tells below to be checked by inspection rather than inferred from prose. A plan where a Where holds and one of these is missing is returned for it, not reviewed.
 
-- **A trust-boundary row per identity-dependent decision**: "client sends X; server decides Y from Z" — with the deciding side and the source (cookie or token, or a client value) filled. A row whose deciding side is the client, or whose source is a session store, is visible as such.
+- **A trust-boundary row per identity-dependent decision**: "client sends X; server decides Y from Z" — with the deciding side and the source (cookie or token, or a client value) filled. A row whose deciding side is the client, or whose source is a session store, is visible as such. The rows are a living intermediate (SKILL.md, "Project intermediates"): the project's `trust-boundaries.md` holds every decision the codebase makes, and the plan carries the delta — the rows it adds or alters, each naming the file's row — or one line saying no row changes, checked against the file.
 - **A before-answer state per identity-dependent control**: what the control does until the server's answer arrives — inert, hidden, a stated default. A control with no such state is visible as such.
 - **The endpoint count**: one endpoint that reports which branch it took, or two; if two, the row says who chooses.
 
@@ -65,7 +65,7 @@ Any. Never skipped.
 
 ### Asks for
 
-- **A route × warrant table** for each inference: one row per route, job or event that reaches the inferring code — found by grepping the named file's callers, not from memory; columns: the constraint the inference rests on; where on that route it is checked, as file and line, or "not checked". A "not checked" cell is visible as such.
+- **A route × warrant table** for each inference: one row per route, job or event that reaches the inferring code — found by grepping the named file's callers, not from memory; columns: the constraint the inference rests on; where on that route it is checked, as file and line, or "not checked". A "not checked" cell is visible as such. The table lives in the project's `trust-boundaries.md` beside the trust-boundary rows; a new route that reaches an existing inference is a delta row against the inference's table, which is how a route added weeks later still meets the warrant.
 - **The same table for each "cannot happen"**: one row per path that could produce the state, found by grepping every writer of the columns involved — the plainest create call with an ordinary parameter included; the cell says what stops it there. "Unreachable" with no rows is visible as such.
 - **The check in the pseudocode at the point of inference**, numbered, not a comment above it.
 

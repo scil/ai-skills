@@ -24,7 +24,7 @@ Any one of these makes the rule apply, whether or not the plan already guards ag
 
 What the plan must carry for the Tells below to be checked by inspection rather than inferred from prose. A plan where a Where holds and one of these is missing is returned for it, not reviewed.
 
-- **A site list per shared thing.** For each value rendered or parsed in more than one place: every site, found by grepping the named files' tree for the field, the schema or the render; the one owner (the component, the schema, the helper) as file and export; and each site's relation to the owner — *imports it* or *re-implements it*. A "re-implements" cell is visible as such.
+- **A site list per shared thing.** For each value rendered or parsed in more than one place: every site, found by grepping the named files' tree for the field, the schema or the render; the one owner (the component, the schema, the helper) as file and export; and each site's relation to the owner — *imports it* or *re-implements it*. A "re-implements" cell is visible as such. The list is a living intermediate (SKILL.md, "Project intermediates"): the project's `sites.md` holds every shared thing's sites, and the plan carries the delta — the sites it adds, removes or re-points, each naming the file's row — or one line saying no site changes, checked against the file; a new site of a thing the change did not otherwise touch is still a delta row.
 - **The contract stated by the name.** For each prop, field or parameter that crosses a package boundary: what it holds in one phrase (a raw name; a whole localized sentence, bidi-isolated), and that the name says so.
 - **Who does not touch what**, one line per package boundary the change crosses (for example: the UI package composes nothing localized; the app composes the sentence and passes it whole).
 
@@ -76,7 +76,7 @@ Any one of these makes the rule apply, whether or not the plan already guards ag
 
 ### Asks for
 
-- **A rule × site table.** One row per rule the change enforces or touches: the rule in the spec's words; every site that enforces it today, by file and line, found by grepping the effect (every caller that creates the row); the single writing statement that performs the effect; and whether the rule is checked *at* that statement or *before* it at each site. A rule with more than one enforcing site and no row saying which one is the writer is visible as such.
+- **A rule × site table.** One row per rule the change enforces or touches: the rule in the spec's words; every site that enforces it today, by file and line, found by grepping the effect (every caller that creates the row); the single writing statement that performs the effect; and whether the rule is checked *at* that statement or *before* it at each site. A rule with more than one enforcing site and no row saying which one is the writer is visible as such. The table lives in the project's `sites.md` beside the site list, and the plan carries the delta.
 - **Exemptions at the writer**, each with its reason in one sentence, in the same table row.
 
 ### Tell
