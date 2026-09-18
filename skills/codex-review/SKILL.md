@@ -14,7 +14,7 @@ description: Review a change with the codex CLI and iterate until it reports not
 - **The cheapest round reviews the design.** When the change has a written design (a design doc, an ADR, a plan), review it *before* implementing; at that point the fix is a paragraph, not a refactor with tests to re-prove:
 
   ```bash
-  codex exec -s read-only "Review <design file> as a design, not as prose. What will be hard to get right, and what will keep going wrong?"
+  codex exec -s read-only -c model="gpt-5.5" "Review <design file> as a design, not as prose. What will be hard to get right, and what will keep going wrong?"
   ```
 
 ## Before the first round
@@ -24,23 +24,24 @@ Run the project's local gate (typecheck, lint, unit tests) over **every package 
 ```bash
 <gate command> 2>&1 | Tee-Object gate.log ; Select-String -Path gate.log -Pattern "error"
 ```
-
 ## Invoking it
 
 **Always pass a read-only sandbox.** A full-access sandbox gives the review agent an unrestricted shell, and it has used it to **commit the working tree unprompted** — which also empties `--uncommitted`, so the next round reviews nothing and reports clean for the wrong reason.
 
 ```bash
 codex review --uncommitted \
+  -c model="gpt-5.5" \
   -c model_reasoning_effort="medium" \
   -c sandbox_mode="read-only" \
   -c approval_policy="never"
 ```
 
+- **Always pass `-c model="gpt-5.5"`** (also on `codex exec`). The config default is `gpt-6-astra`, which is left for interactive work: a review round is a token-heavy read, and the GPT-6 tier spends far more per round for findings the 5.5 tier reaches. Since 2026-09-18 the installed CLI also rejects `gpt-6-astra` outright, so a round without the override is wasted. `codex review` has no `-m` flag; the model goes through `-c`.
 - `sandbox_mode=read-only` is what blocks writes and git. Keep `approval_policy=never` rather than `on-request`: a non-interactive run auto-denies escalation instead of stalling on a prompt nobody can answer.
 - **After every run, check `git log --oneline -3` and `git status`** before trusting either.
 - Review a specific commit with `--commit <sha>` (works on a dangling commit, e.g. after `git reset --soft`). `--uncommitted` and a `[PROMPT]` argument are **mutually exclusive** — use `codex exec` for a scoped review with custom instructions.
 - An invalid `-c` value aborts at config load in about a second, so trying a setting is cheap. `windows.sandbox` accepts only `elevated`/`unelevated`.
-- Leave the model alone unless the user names one; effort is the lever that pays, and swapping models mid-loop changes what "the last round said" means.
+- Stay on `gpt-5.5` unless the user names another model; effort is the lever that pays, and swapping models mid-loop changes what "the last round said" means.
 
 ## Making rounds faster
 
@@ -58,7 +59,7 @@ Effort and scope are the two levers.
 
   ```bash
   git diff --cached > review.diff
-  codex exec -s read-only "Review review.diff. Read only the files it touches; do not explore the rest of the repo."
+  codex exec -s read-only -c model="gpt-5.5" "Review review.diff. Read only the files it touches; do not explore the rest of the repo."
   ```
 
 - **Middle rounds review the increment** (`git diff <last-reviewed-sha>`); one full pass at the end.
