@@ -1,4 +1,4 @@
-# Batch: library hooks and listeners — Rule 1
+# Batch: library hooks and listeners — Rules 1, 24
 
 ## Rule 1 — Use the API you are already holding
 
@@ -84,3 +84,67 @@ What the plan must carry for the Tells below to be checked by inspection rather 
 - **Does an existing requirement already forbid the symptom?** If the spec already says "leaving with nothing written SHALL simply leave", the fix is compliance, not a spec change — say so.
 - **Compare the two designs in code, side by side** (own handler + `enableBeforeUnload: false` versus `enableBeforeUnload: () => predicate`); choose the one that cannot drift, and show the diff.
 - **Ask why, after the fix.** The fix closes one bug; the why closes the class — and becomes the next rule here.
+
+## Rule 24 — Search before you write an interaction
+
+Rule 1 is about the API already in your hands. This rule is one step earlier: before a plan hand-writes any interaction or event concern on a UI surface, it searches — first the stack and the dependency tree, then the ecosystem — and carries the search as a ledger. A hand-written listener is the *last* option, taken only after both searches came back empty or a found library was rejected for a named reason. The requirement was stated on 2026-09-18, not harvested from an incident; the Rule 1 incident is its nearest relative — five screens hand-rolled an event the router already owned.
+
+### Stack
+
+Bound to a UI surface: a plan whose named files render in a browser or a native client (React and the DOM are the examples; Vue, Svelte, Solid, React Native, Flutter with the names translated). Skipped, on a `SKIPPED` line, for a plan that touches no UI file — a server-only change has no interaction to search for.
+
+### Where
+
+Any one of these makes the rule apply, whether or not the plan already guards against it. Judge from the spec deltas and the named files, not from the plan's own claims.
+
+- The spec deltas describe an interaction: pointer, keyboard, focus, scroll, resize, drag and drop, paste, hotkey, long-press, swipe, click-outside, focus trap, scroll lock, virtualised list, sortable list, resizable panel, debounced or throttled input, undo, toast or notification queue, navigation blocking, enter or exit animation, clipboard, file drop, IME-aware input.
+- The plan adds an effect with `addEventListener`, a custom hook, or a component that implements one of those.
+- The plan names no library for the concern, or names one it has not yet installed.
+
+### Asks for
+
+What the plan must carry for the Tells below to be checked by inspection rather than inferred from prose. A plan where a Where holds and one of these is missing is returned for it, not reviewed.
+
+- **A concern list**: one row per interaction or event concern the plan implements, named as the concern ("focus trap inside the dialog", "reorder by drag on touch and pointer"), not as the code ("a keydown handler").
+- **A search ledger per concern, two tiers in order, each with what was searched and what it returned**:
+  1. *The stack and the dependency tree*: the UI framework and its first-party ecosystem; every package in the manifest, including the headless kit, router, form, query and animation libraries the named files already import; transitive packages in the lockfile that could be promoted. Checked in the package's docs or `.d.ts`, or a grep of its `dist` for the event name. Result: the API found, or "none", per package looked at.
+  2. *The ecosystem*: a web search by the concern's name; the candidates seen, each with a maintenance signal (last release, weekly downloads, open issues), its size, and whether it covers the concern's edge cases. Result: candidates, or "none" with the query used.
+  Each row ends in a **disposition**: *adopt* (which package, which API); *reject* (a reason that names a number or a missing feature); or *hand-write* (both tiers returned none, or every candidate was rejected). A row whose disposition is hand-write and whose tier 2 cell is empty is visible as such.
+- **For a hand-written concern, an edge-case checklist**: the cases a library would have handled — touch as well as pointer, IME composition, keyboard and screen-reader access, RTL, nested instances, unmount during the event, server rendering, reduced motion — each marked *handled at step N* or *out of spec, because …*. An unmarked case is visible as such.
+
+### Tell
+
+- The plan writes "add a listener / effect / handler for X" with no library named and no search ledger beside it.
+- A custom hook whose name is a well-known library export — `useClickOutside`, `useHotkeys`, `useDebounce`, `useResizeObserver`, `useIntersectionObserver`, `useFocusTrap`, `useVirtualizer`, `useDrag`, `useBlocker` — in a plan whose manifest already holds a package that exports it, or a headless kit whose primitive owns it (a dialog primitive owns focus trap, Escape, click-outside and scroll lock; a router owns blocking; a form library owns dirty tracking).
+- A ledger whose tier 1 says "none" and whose disposition is hand-write, with tier 2 blank — the ecosystem was never searched.
+- A rejection with no number and no missing feature: "too heavy", "simpler to write ourselves", "we only need a small part of it".
+- A tier 1 row that names the framework but not the packages the named files import — the search stopped at the framework's own API.
+- The plan says a library "does not support X" with no source (Rule 1's claim Tell, one step earlier).
+- A hand-written concern with no edge-case checklist, or a checklist where "touch" or "keyboard" is unmarked.
+
+### Write
+
+- **The property**: every interaction concern has one owner, and the owner is the most-exercised implementation reachable — the framework, then a package already installed, then a mature library, then hand-written code — each step taken only after the one before returned nothing or was rejected for a named reason. The fix below is the search that establishes the owner; the property is that the order was followed and the record shows it.
+- **Search the stack first, in the files.** Open the manifest; for each package the named files import, open its docs or `.d.ts` for the concern; grep its `dist` for the event name. The framework's own API (React's `useSyncExternalStore`, the DOM's `dialog` and `popover`, CSS `scroll-snap`, `overscroll-behavior`, `:focus-visible`) counts as tier 1 — a concern the platform owns needs no package.
+- **Then the ecosystem, by the concern's name.** One web search per concern; take candidates that have a maintenance signal; compare them on the edge cases the concern needs, not on the happy path.
+- **Adopt whole.** Once a library owns the concern, use its form for the whole concern and feed it the plan's predicate (Rule 1's "one predicate, fed to the library"); delete the hand-written half rather than keeping both.
+- **Reject with a number or a scenario.** "Adds 34 kB gzipped to a route budgeted at 20"; "does not support nested dialogs, which scenario 3 needs"; "last release 2021, 140 open issues". A reason that names neither is not a reason.
+- **Hand-write against the checklist.** When both tiers come back empty, the edge-case checklist becomes the plan's pseudocode: each case is a numbered step or a line saying it is out of spec and why. The checklist is what the library would have given for free; writing it down is the price of not taking it.
+- **Record the search in the code.** A comment on the hand-written hook names what was searched and why each candidate was rejected, so the next reader does not redo the search — or redoes it with the sources in hand.
+
+### Prove
+
+- **An adopted library mounts for real in one test** (Rule 1's "a stubbed hook is an absent library"), asserting the outcome, not the handler's intent.
+- **A hand-written concern has one test per checklist row** — the touch path, the keyboard path, the unmount-mid-event path. A checklist row marked *handled* with no test is the row a library would have covered.
+- **A rejection that names a missing feature names the scenario the library fails**; that scenario has a test on the hand-written code, so the reason for writing it is the assertion that proves it needed writing.
+- **Silent when not applicable** (Rule 1): a click-outside that closes nothing when the click is inside; a hotkey that does nothing while an input has focus; a drag that does not start on a scroll gesture.
+
+### View
+
+- **Does the ledger match the manifest?** Open `package.json` and the lockfile. A package present that owns the concern and is absent from tier 1 of the ledger is a finding against the ledger, before any finding against the design.
+- **Was tier 2 run?** A hand-write disposition with tier 2 blank is a finding; do not run the search for the author. A hand-write disposition with tier 2 filled: run one web search yourself by the concern's name, record it on a `SEARCHED` line, and treat an obvious maintained candidate the ledger omits as a finding against the ledger.
+- **Is each rejection a number or a scenario?** "Too heavy" with no size, "does not fit" with no feature named: ask for the figure or the scenario.
+- **Grep the tree for the concern hand-written elsewhere** — the hook name and the event name. A second hand-written copy of the same concern means the adoption, or the checklist, applies at both; name every site.
+- **Does the headless kit already in the tree own this?** A dialog, menu, combobox or tooltip primitive in the manifest owns focus, Escape, click-outside and scroll lock; a hand-written version beside it is Rule 1's Tell, and one of the two is wrong.
+- **Is the checklist complete for this concern?** Name the standard cases yourself — touch, IME, keyboard and screen reader, RTL, nested, unmount mid-event, SSR, reduced motion — and each one the checklist lacks is a row.
+- **A "does not support X" claim — where was it read?** Ask for the issue, the doc page or the `.d.ts` line.
