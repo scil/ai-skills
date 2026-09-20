@@ -63,6 +63,7 @@ Most intermediates describe the change and live in the plan. Five describe the c
 | [`references/single-source-of-truth.md`](references/single-source-of-truth.md) | 19, 20, 21 | the same thing rendered or parsed twice; one rule enforced at several sites; a confirmation sentence whose value does not reach the write |
 | [`references/navigation-flow.md`](references/navigation-flow.md) | 22 | a carried context dropped by one exit of one hop; a conditional redirect Back re-enters; two routes whose redirect conditions can both hold or neither |
 | [`references/branch-completeness.md`](references/branch-completeness.md) | 23 | a conditional naming fewer states than its value has; a residue that lands in a branch which offers or performs a write; truthiness on a three-state value; a `switch` whose `default` is a normal case |
+| [`references/module-depth.md`](references/module-depth.md) | 25, 26, 27 | a new module reimplementing one that already exists with no search recorded; a decision with more than one site — old, new, or mixed — and no site marked as the owner; a new module whose interface makes the caller assemble, order, or already know what the module could have owned itself |
 
 The domain-model batch is resolved first at merge (Plan pass step 5): a missing concept, state or column changes what every other batch's `WHERE`, key and check can say.
 
