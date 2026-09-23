@@ -70,7 +70,7 @@ Any one of these makes the rule apply, whether or not the plan already guards ag
 
 ### Asks for
 
-- **A site tally, not just a same-plan list**: for each decision this rule catches, every site that decides it — pre-existing sites Rule 25's ledger found, and any new sites this plan adds — in one list, not two separate ones; the single site marked as owner; and, for every other site, whether it already imports the owner or still carries its own copy. A tally of two or more with no owner marked is visible as such regardless of how old each site is.
+- **A site tally, not just a same-plan list**: for each decision this rule catches, every site that decides it — pre-existing sites Rule 25's ledger found, and any new sites this plan adds — in one list, not two separate ones; the single site marked as owner; and, for every other site, whether it already imports the owner or still carries its own copy. A tally of two or more with no owner marked is visible as such regardless of how old each site is. The tally is the site list Rule 19 keeps in the living `sites.md` (SKILL.md, "Project intermediates"); the plan carries the delta against it.
 
 ### Tell
 
