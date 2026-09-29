@@ -77,6 +77,10 @@ tags: [only::this-card]    ← optional per-card key: value lines (deck / model 
 - Section bodies are **HTML as-is**, with one convenience: fenced code blocks
   ```` ```lang … ``` ```` become `<pre><code>…</code></pre>` with `<`, `>`, `&` escaped and
   newlines turned into `<br>` — so write code raw inside fences, never pre-escaped.
+- `# ` / `## ` headings are only recognised **outside** ```` ``` ```` fences, so shell/Python/YAML
+  comment lines inside code are safe. `templates/fenced-headings.md` is the check:
+  `anki_add.py --file templates/fenced-headings.md --dry-run` → `would add 2 note(s)`, first lines
+  `Which file does DVC read the pipeline from? # dvc.yaml …` and `What does this Python snippet print?`.
 - A `.json` file (or stdin starting with `[`/`{`) is parsed as the interchange format instead.
 
 ### 3. Speech convention (what `anki_audio.py` reads aloud from a field)

@@ -247,28 +247,39 @@ def parse_markdown_cards(text: str) -> List[Dict[str, Any]]:
         body = body[fm.end():]
 
     cards: List[Dict[str, Any]] = []
-    for chunk in re.split(r"^# ", body, flags=re.M)[1:]:
-        title, _, rest = chunk.partition("\n")
+    for title, rest in _split_headings(body.split("\n"), "# ")[1:]:
         card: Dict[str, Any] = {"title": title.strip(), "fields": {}, "tags": list(defaults.get("tags", []))}
         for k in ("deck", "model"):
             if k in defaults:
                 card[k] = defaults[k]
+        head, *sections = _split_headings(rest, "## ")
         # key: value lines before the first '## '
-        head, sep, sections = ("\n" + rest).partition("\n## ")
-        for line in head.splitlines():
+        for line in head[1]:
             kv = _parse_kv(line)
             if kv:
                 if kv[0] == "tags":
                     card["tags"] = list(dict.fromkeys([*card["tags"], *kv[1]]))
                 else:
                     card[kv[0]] = kv[1]
-        if sep:
-            for sec in ("## " + sections).split("\n## "):
-                sec = sec[3:] if sec.startswith("## ") else sec
-                name, _, content = sec.partition("\n")
-                card["fields"][name.strip()] = _fence_to_html(content.strip())
+        for name, content in sections:
+            card["fields"][name.strip()] = _fence_to_html("\n".join(content).strip())
         cards.append(card)
     return cards
+
+
+def _split_headings(lines: List[str], prefix: str) -> List[Tuple[Optional[str], List[str]]]:
+    """Split lines at headings starting with `prefix`, ignoring lines inside ``` fences.
+    Returns [(None, lines before the first heading), (heading text, lines under it), ...]."""
+    parts: List[Tuple[Optional[str], List[str]]] = [(None, [])]
+    in_fence = False
+    for line in lines:
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+        elif not in_fence and line.startswith(prefix):
+            parts.append((line[len(prefix):], []))
+            continue
+        parts[-1][1].append(line)
+    return parts
 
 
 def load_cards_file(path: str) -> List[Dict[str, Any]]:
