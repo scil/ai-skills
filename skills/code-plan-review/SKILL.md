@@ -76,6 +76,7 @@ A form submit, a save, an action button, an autosave, an upload.
 8. The call succeeded but a step inside it did not (text saved, photo not applied) and "saved" is shown. Suggest: per step that may fail alone, the response says whether it applied; the client renders that flag, not the call's status.
 9. A failed response is painted as success or as "nothing here": a fetch that rejects only on network errors; `!pending && !data` rendering the empty state with no error branch. Suggest: an error branch with a way to look again; check `res.ok`; the empty state is for a successful read that found nothing.
 10. The client navigates or refetches on "success" before the server's transaction commits, and the destination reads the old snapshot ("you are not in"; a refresh fixes it). Suggest: the response carries what the next screen needs; navigate after the commit; write the cache from the response.
+11. A refusal (403, 404, an access error) goes through the data client's default retries, so the screen that says "not for you" appears seconds late, after backoff, while a spinner suggests the answer is still coming. Suggest: an access refusal is an answer and is not retried; a load fault keeps its retries; the plan names which errors are which.
 
 ### B. The server handles a write
 
@@ -158,6 +159,7 @@ A form submit, a save, an action button, an autosave, an upload.
 1. The screen leaves "waiting" only in the push handler; an event that fires between first render and the subscription going live is never seen, and the screen waits forever. Suggest: subscribe, then read once; the push is a hint to read again.
 2. A poll starts on a timer with no immediate first tick. Suggest: tick now, then on the interval.
 3. The handler is not idempotent, so a read and a late push double the effect. Suggest: make it idempotent.
+4. The screen asks again automatically when an answer disagrees with what it expects (a response for another account, a stale version, a missing row), and nothing says what happens when the second answer disagrees too: the re-ask fires once and the screen waits forever, or it fires on every render and storms. Suggest: a bounded number of automatic attempts keyed on the disagreement, not on a function's identity, then a visible state the person can act on (retry, sign in again).
 
 #### D4. A read that failed
 
@@ -209,6 +211,7 @@ A form submit, a save, an action button, an autosave, an upload.
 #### G4. A constraint removed
 
 1. A write-once field becomes mutable, a unique index loses a column, a status condition is dropped, with no list of the paths the constraint was blocking. Suggest: enumerate those paths and what now stops each.
+2. A new path writes rows into a table, or into a row shape, that existing foreign keys and CHECKs were written for under the old writer (a composite FK that assumes the provider owns the referenced row; a CHECK that assumes one kind of row), and the plan names none of them. The first insert or update on the new path fails at runtime, or the design quietly depends on a constraint it would have to drop. Suggest: list every constraint on each table the new path writes, and state for each one whether the new rows satisfy it; a constraint they cannot satisfy is a design decision, settled before code.
 
 ### H. Someone already owns this
 

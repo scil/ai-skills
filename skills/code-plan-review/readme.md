@@ -61,6 +61,7 @@ The machinery had grown past its findings. A plan could not be reviewed until it
 | The diff pass and the confirmation round | left this skill; `codex-review` |
 | The five living intermediates | left this skill; E1.1 and C2.1 say "grep" where they said "the living file" |
 | New on 2026-10-02, from the reshaping request | A1.1, A1.2, A2.2, A2.3, A3.3, A3.4 |
+| New on 2026-10-03, from what the repost and porch-browsing reviews missed | A3.11, D3.4, G4.2 |
 
 ## Rule 1 — the `useBlocker` incident (2026-09-11, ThanksPorch) / 事故一
 
@@ -252,6 +253,23 @@ No dated incident; the rule was asked for as a standing requirement on frontend 
 
 **Family.** 25 sits in misplaced responsibility, beside Rules 1 and 24 (who owns this: an existing internal module, or new code) — its batch differs from theirs because its evidence (a codebase-wide grep ledger) is not scoped to library/hook options the way Rule 24's ecosystem search is. 26 sits in multiplicity, beside Rules 19–21 (how many sites answer this) — its batch differs because its site tally spans old and new sites by design, where Rule 19's is about a value's rendered/parsed form specifically. 27 fits none of the five families cleanly: it depends on neither ownership, copy count, ordering, nor domain state — on how much a caller must learn versus how much the module hides. It is filed here, naming a sixth family, **interface depth**.
 **归族。** 25 属于职责错位，和规则 1、24 同族（这该由仓库里已有的模块拥有，还是这份新代码拥有）——批次不同是因为它的证据（全仓库 grep 账本）不像规则 24 的生态搜索那样只框在库/hook 的选项上。26 属于多副本，和规则 19–21 同族（同一个问题有几个站点在回答）——批次不同是因为它的站点计数按设计横跨新旧，而规则 19 专指一个值的渲染/解析形式。27 五个族都套不上：既不依赖归属，也不依赖副本数、先后或领域状态——依赖的是调用者要学多少、模块藏了多少。它在这里立案，命名了第六个族：**接口深度**。
+
+## A3.11, D3.4, G4.2 — what three reviews missed (2026-10-03, ThanksPorch `add-offering-repost`, `add-porch-browsing`) / 三轮评审漏掉的
+
+The catalog was walked three times in one session — twice over a design that lets a porch owner's family members repost their offerings, once over the porch page that design turned out to need — and in each case it was the session that had written the design. The rows that mattered came from opening files, not from reading prose: the request path's lock order, an "already asked" check still keyed per offer, a selectable audience scope, a composer's local draft. Three problems got past every pass and were found later, each by something other than the review.
+同一会话里把目录走了三遍——两遍审一份让门廊主人的家人转发其 offering 的设计，一遍审那份设计后来发现离不开的门廊页——每次都是写了设计的那个会话在审。有用的行都来自打开文件，不是读文字：请求路径的加锁顺序、仍按 offer 计数的"已经问过"、一个可选的受众范围、发布页的本地草稿。有三个问题穿过了每一轮，后来分别被评审以外的东西发现。
+
+**G4.2 — found by implementation.** The design routed a request made through an owner-handled repost to the owner, with the reposter's handoff places. Writing the schema showed `fk_request_confirmed_handoff_location_provider`: a confirmed place must belong to the request's provider, so the owner could never confirm the reposter's place. G4.1 asks about a constraint being *removed*; nothing asked whether constraints that *stay* hold for the rows a new path writes. The founder settled it — whoever handles owns the places — and the model became cleaner (such a request is a request on the owner's own offer).
+**G4.2 —— 实现时发现。** 设计把经"主人处理"的转发提出的请求路由给主人，交接地点用转发者的。写 schema 时看到 `fk_request_confirmed_handoff_location_provider`：确认的地点必须属于请求的处理人，所以主人永远确认不了转发者的地点。G4.1 问的是约束被*去掉*；没有问题问*留下的*约束对新路径写的行是否成立。创始人拍板——谁处理就用谁的地点——模型反而更干净了（这种请求就是主人自己 offer 上的请求）。
+
+**A3.11 — found in the browser.** A porch page refusing a non-porchmate answered NOT_FOUND in 300 ms and drew the refusal about seven seconds later: React Query retries every error three times with backoff by default, and nothing in the plan said a refusal is an answer. The offering page had carried the same delay unnoticed.
+**A3.11 —— 浏览器里发现。** 门廊页拒绝一个非 porchmate，服务端 300 ms 就回了 NOT_FOUND，拒绝画面约七秒后才出现：React Query 默认对每个错误带退避重试三次，计划里没有任何一句说拒绝本身就是答案。offering 页一直带着同样的延迟，没人注意。
+
+**D3.4 — found by a diff review.** To stop a porch page cached for one account being drawn for the next, every answer carried `viewerUserId` and a mismatch triggered a re-ask. If the second answer still disagreed (a tab whose session store lagged a sign-in in another tab), the effect never fired again and the page waited forever. Its first fix storm-fetched in a test, because the effect depended on a function whose identity changed each render; `useEffectEvent`, keyed on the disagreement alone, settled it, with a visible retry after the one re-ask.
+**D3.4 —— diff 评审发现。** 为了不把为一个账号缓存的门廊页画给下一个账号，每个回答都带 `viewerUserId`，不一致就重新请求。若第二个回答仍不一致（会话存储落后于另一个标签页登录的那个标签页），effect 不会再触发，页面永远等着。第一版修法在测试里狂发请求，因为 effect 依赖了一个每次渲染身份都变的函数；改成只以"不一致"为键的 `useEffectEvent`，重新请求一次后给出可见的重试，才定下来。
+
+Two further gaps were proposed and not adopted: "is there any way in to the new thing" (the repost was unreachable because no page browsed a porch) and "a list calls a per-item loader" (the porch page would have read ~5 times per offering). Both were real in this change, and both were left out of the catalog by the owner's choice. And one usage lesson, not a question: all three passes ran in the authoring session, which the skill already advises against — the authoring session judged its own blind spots *unlikely*.
+另有两个缺口被提出、没有采纳："新东西到底有没有入口"（转发到达不了，因为没有浏览门廊的页面）和"列表逐项调用加载器"（门廊页每个 offering 要读约 5 次）。在这次改动里两者都真实存在，按所有者的选择没有写进目录。还有一条用法教训，不是问题：三轮都在写设计的会话里跑，skill 本来就劝过别这样——写设计的会话会把自己的盲区判成 *unlikely*。
 
 ## The acceptance run (2026-09-16) / 验收运行
 
