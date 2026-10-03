@@ -1,152 +1,251 @@
 ---
 name: code-plan-review
 disable-model-invocation: true
-description: Review a plan (design doc, diagram, pseudocode) or a diff against the rules harvested from incidents, one batch per mechanism, each batch in a fresh context. Use when a change touches a conditional database write, two paths over the same tables, a cache after a mutation, auth or visibility, a library hook beside a hand-written listener, an interaction or event concern hand-written on a UI surface before the stack and the ecosystem were searched for it, UI state seeded from a prop, a rule or cap over an entity with states, a pessimistic lock on a path anyone can reach, a push a screen waits on, a save response refilled into an editable field, a value rendered or parsed on two surfaces, a confirmation sentence before an irreversible action, a journey across several routes that must end at a particular one, or a conditional over a value with more states than it names; when reviewing a diff that does any of these; and when harvesting a lesson from an incident — the lesson becomes a rule in a batch here, never a new skill.
+description: Review a plan (a design doc, pseudocode, a diagram, a described change) before code exists by walking a catalog of scenarios and asking each one's questions: a client sending a request, a server write, who is asking, screen state, a journey across routes, a branch over several states, the domain model, reuse of libraries and modules, one truth in several copies. Use when asked to review a plan or design, before implementing a change that touches any of those, or when harvesting a lesson from an incident into a question here.
 ---
 
-# Rules harvested from incidents, reviewed in batches
+# Plan review by scenario
 
-One kind of problem, one rule; one mechanism, one batch file — a batch being the rules one reviewer can check with the same files open and the same intermediate filled. Each rule opens with three gates — **stack** (the technology its tells and writes are phrased for, what it holds for with the syntax translated, and when it is skipped; a rule skipped for stack is recorded, never silently omitted), **where** (the situations that make it apply, judged from the spec and the code, whether or not the plan already guards against it) and **asks for** (the structured intermediate the plan must carry so the rule's tells can be checked by inspection: a column on the pseudocode, a table beside the diagram, or — for the five intermediates whose rows are facts about the codebase rather than about the change — a delta against the project's living copy, see "Project intermediates"; never a document the review cannot anchor to) — and has four sides — **tell** (what it looks like in a plan, before code exists), **write** (the property the spec needs, then how the code is made to hold it), **prove** (how the test shows it: the assertion that turns red when the mitigation is reverted — or, for a rule marked *liveness*, the argument the plan carries and the metric that would show the failure, because a liveness failure has no moment at which an assertion turns red), **view** (what the reviewer asks; its first question is always whether the intermediate matches the named files). Incidents behind the rules: [`readme.md`](readme.md). In an OpenSpec repository the plan pass is the change's `review` artifact, gated by the CLI: [`references/openspec.md`](references/openspec.md).
+A plan is reviewed by reading it with the right questions in hand. The catalog below is those questions, grouped by the scenario that raises them. A question does not need a confirmed defect to be worth reporting: where the plan leaves room for it, report the possibility and a suggestion. The review runs in this context from start to finish, with no subagents; where you can, run it in a session that did not write the plan. Where the questions came from: [`readme.md`](readme.md).
 
-## Principles
+## How to review
 
-1. **A batch is graded in a context that did not write the plan.** Each dispatched batch runs as its own subagent whose only rules are that batch's file; it reads the plan (or diff), the spec deltas, the living intermediates and what the prompt's read scope allows. The author's context screens, dispatches and merges; it never fills in a batch's findings, and never overrides a dispatched batch's own applicability finding.
-2. **The dispatcher screens before it dispatches; a dispatched batch still decides its own applicability.** Every batch holds at least one rule that is never skipped for stack, so screening is by reach alone, read from the `Batches` table without opening the batch file: the dispatching context may skip a batch when nothing the plan or diff describes could plausibly produce any entry in its Catches column. This is a cheap, provisional call, not the batch's own applicability finding — doubt is resolved by dispatching, not by skipping. A skipped batch gets one `SKIPPED — not dispatched` line naming the reason, in place of a subagent run.
-   A batch that passes screening is ready when its subagent's documents are present: the plan (or diff), the spec deltas, the files the plan names, and each living file its rules read (the `Read by` column). A missing document holds the batch with one `NOT READY — missing: <path>` line and no subagent run, until it is supplied and the batch re-screened. A living file not yet created is not missing: the plan carries that whole table instead (Project intermediates).
-   A batch that is ready is dispatched and still runs the full check itself: each rule's **stack** gate is read first against the plan's stack line, verified in the named files: a rule bound to a stack the plan does not use, and not holding for the one it does, is skipped on a `SKIPPED` line and judged no further. Then whether any remaining rule's **where** conditions hold is the first thing the subagent writes, judged from the plan, the spec deltas, the files the plan names and what its own greps find — never from what the plan says about itself, and never from whether the plan already guards against the rule: a well-guarded plan is applicable and clean, not inapplicable. A batch that does not apply costs two lines. Dispatched batches are independent, so they run in parallel.
-3. **An applicable rule whose intermediate is missing returns the plan, it does not review prose.** The subagent reports `INCOMPLETE` with the missing items; it never builds the table from the plan's sentences, because a table the author fills is what makes absence visible, and a table the reviewer infers hides it again.
-4. **A finding anchors to a numbered step, message or transition and names its rule.** A row that arrives without an anchor, a rule or a proof is returned to its batch once, not dropped; what still cannot be anchored is listed under Unresolved, where it blocks Done until somebody verifies it or accepts it with a reason. Nothing is deleted at merge: a finding whose evidence is incomplete is a finding whose evidence is incomplete, not a clean review.
-5. **Blocking rows are resolved in the plan before the first edit; advisory rows never block.** Every row is verified by the author against its anchor before it is acted on.
-6. **A proof is the assertion that goes red when the mitigation is reverted.** A row's proof cell names that assertion; a test that stays green without the mitigation is not a proof, it is coverage impersonated — worse than no test, because it makes the spot look guarded. Only a rule marked *liveness* may prove by argument and metric instead.
-7. **The second row of one shape gets one class fix, not two instance fixes.** Two rows in a review that name the same rule receive one mitigation that removes the possibility, with the anchors it covers listed; a mitigation that reads "add a check at anchor N" while another row names the same rule is returned to the author.
-8. **Accepted and Unresolved are different sections.** Accepted holds risks somebody chose to carry, each with that person's reason; Unresolved holds what nobody has looked at yet — a row returned once and still unanchored, a scenario that could not be verified, an out-of-batch line with no disposition. A review with an Unresolved line is not done, and moving a line from Unresolved to Accepted needs the reason, not the move.
+1. **Read the plan**, and the spec it implements if there is one. Files the plan names that exist in the checkout may be opened, and the tree grepped for callers, sites and exits, to settle a question; that is reading, not asking. A plan reviewed without them is still reviewed.
+2. **Walk the catalog**, scenario by scenario. Decide whether the plan touches each top-level scenario; for each it touches, walk its sub-scenarios and ask every question. Judge from what the plan does, not from what it says about itself. A plan that already guards against a question gets that question marked *unlikely* with the guard cited, not skipped.
+3. **Ask once for what only the author can supply.** Some questions cannot be judged from prose or from the files: which paths write a table, the order two paths lock, the arrival rate on a public path, which exits a journey may end at on purpose, which spec rule governs. Collect everything you would need into one message, each item with the question it serves, and ask. The user may decline any or all of it. Do not build the material yourself from the plan's sentences, and do not stop: continue with the rest, and mark the questions that depended on it *cannot tell*, with the possibility as your best guess and the suggestion still given.
+4. **Report** in the shape below. Nothing is dropped silently: a question judged unlikely is still listed by number, and a scenario the plan does not touch gets one line saying so.
+5. **Done when** every top-level scenario has a table or a not-touched line, every row carries a possibility with its reason and a suggestion, and every material you needed is recorded as supplied, declined, or read from the files.
 
-## What a reviewable plan contains
+## What to report
 
-- **The stack, one line**: the database and its dialect, the UI framework, the data or cache library, the HTTP client — each as the package the named files import or the dialect the schema file is written in, so a batch can check the line against the files and skip the rules bound to another stack. A plan with no stack line is reviewed as if every rule's stack held.
-- **Numbered pseudocode at the deciding statements** — the write that carries its condition, each lock taken, the cache write after the mutation, the authorization check and what it reads. Not the whole feature.
-- **The diagram the mechanism needs, as fenced text** (Mermaid or PlantUML), never an image: a sequence diagram with activations and error branches wherever two participants write the same tables or a request path forks; a state diagram wherever a lifecycle is introduced or changed; a trust-boundary list ("client sends X; server decides Y from Z") wherever identity or visibility is decided; a navigation graph — nodes are routes, one edge per navigation out of each route, as a fenced `flowchart` or `stateDiagram-v2` — wherever a journey crosses more than one route. Cache and UI-state work needs the pseudocode only.
-- **Participants named; messages and transitions numbered.**
-- **An update-source table** wherever the plan holds mutable state: one row per state (a row, a column, a cache entry, a field's draft), one entry per writer of it — a request path, a job, a retry, another device, the user's own next keystroke while a response is in flight, a later human edit — and whether two writers can overlap. Weeks apart still overlaps — which is why this table is a living one (below): the second writer of a column usually arrives in a later change, and only the project's copy shows both. Rule 2's path × table matrix and Rule 8's save ledger are projections of this table; Rule 16 reads it directly.
-- **What each applicable rule asks for**, as columns on the pseudocode and tables beside the diagram: the `WHERE` beside each write and a path × table matrix (Rule 2); an ordering column (Rule 11); a reads-that-must-agree list (Rule 12); a mutation × entries table with four screen states (Rule 3); may-fail-alone marks with their response fields (Rule 9); a response-branch table (Rule 15); trust-boundary rows with the deciding side (Rule 4); a route × warrant table (Rule 5); a crossing table (Rule 6); an indistinguishability table (Rule 18); an options ledger (Rule 1); a concern list with a two-tier search ledger and, per hand-written concern, an edge-case checklist (Rule 24); a state ledger and a save ledger (Rules 7, 8); a refill ledger (Rule 16); the four gates in order (Rule 17); a state ledger per entity and a cap-owner table (Rule 10); a lock × arrival table (Rule 13); a site list, a rule × site table and a promise table (Rules 19–21); a journey goal and a hop × exit table, the edge list of the navigation graph (Rule 22); a branch ledger with its residue and effect class (Rule 23); a module search ledger and a one-line interface statement per new module (Rule 25); a site tally with its owner marked (Rule 26); a caller-knowledge list (Rule 27). Each batch file's **Asks for** section defines its shape.
-- **Assumptions, each with how it was verified.**
+One table per scenario the plan touches, holding the questions judged *likely*, *possible* or *cannot tell*:
 
-A plan that lacks the diagram or pseudocode where a mechanism is plainly in play is returned before dispatch. A plan that lacks a rule's intermediate where that rule's **where** holds is returned by that batch as `INCOMPLETE`.
+| question | where in the plan | possibility | suggestion |
+|---|---|---|---|
+| A3.1 | step 4, "reset the form from the response" | likely: the intro field stays editable while the save is in flight | refill only server-owned fields; guard the rest by a token captured at send |
 
-## Project intermediates
+- **question**: the catalog number.
+- **where in the plan**: the step, sentence or diagram message that raises it; "nowhere" when the plan is silent on something it must say.
+- **possibility**, each with a half-sentence why: *likely* (the plan describes the shape, or is silent where it must speak); *possible* (nothing in the plan rules it out); *cannot tell* (depends on material that was declined or absent).
+- **suggestion**: the change to the plan, in one or two sentences. Two rows with one cause get one suggestion that names both; a suggestion that patches one spot while another row names the same cause is the wrong suggestion.
 
-Most intermediates describe the change and live in the plan. Five describe the codebase: their rows are true of routes, columns, entities, boundaries and render sites that existed before the change and will exist after it, and the row that hides the trap is usually one the change did not write — the 2026-09-18 token was lost on an exit of a route the change never touched, and the second writer of a column arrives weeks after the first. A per-change table cannot show those rows; only a copy that outlives the change can. So each repository keeps these five as living files in one folder, named in the repository's instruction file (in an OpenSpec repository, `openspec/intermediates/`: [`references/openspec.md`](references/openspec.md)):
+Under each table, one line: `Unlikely: A1.2 (idempotency key, step 6), A1.5 (one save on this screen), …` — the number and the guard, so the record that the question was asked exists without a row.
 
-| File | Holds | Read by |
-|---|---|---|
-| `navigation-graph.md` | The navigation graph as fenced Mermaid — every route, every navigation out of it — and the hop × exit table that is its edge list | Rule 22 |
-| `update-sources.md` | The update-source table: one row per mutable state, one entry per writer, overlap marked | Rules 2, 8, 16, and every rule that asks whether two writers overlap |
-| `state-ledgers.md` | The state ledger per entity, read from the schema, with the truth column per question already asked of it; the cap-owner table | Rule 10 |
-| `trust-boundaries.md` | The trust-boundary rows and the route × warrant table | Rules 4, 5, 6 |
-| `sites.md` | The site list per shared thing, its owner marked, and the rule × site table | Rules 19, 20, 21, 26 |
+After the tables: **Not touched**, one line per scenario with the reason; **Materials**, each item asked for and whether it was supplied, declined or read from the files; **Outside the catalog**, a problem you saw that no question names, one line each, so it can become a question later.
 
-- **The plan carries the delta, the file carries the whole.** Under the Decision it belongs to, the plan lists the rows it adds, removes or alters, each naming the living file and the row it touches; the review anchors to the delta's rows. Where a rule's **where** holds and no row changes, the plan says so on one line, naming the file it was checked against — silence is `INCOMPLETE`. Where a living file does not exist yet, the plan carries the whole table.
-- **The batch reads both, and its View's first question runs against the file.** A living row the named files or the greps contradict is one row with effect `intermediate differs from code`, anchored to the file's row, blocking — a finding against the file even when the change did not write the row, because that is where the incident's exit hid. It is resolved by correcting the file, then re-running the batch.
-- **The delta merges into the file when the change is archived**, in the same step that merges spec deltas into the living specs, and by the same hand: the CLI does not know the folder. A repository adopting the skill with existing code bootstraps each file once by the diff-pass method — the batch builds the intermediate from the code and the greps its View names — and keeps it by deltas afterwards.
-- **What stays in the plan**: the pseudocode columns, the diagrams other than the navigation graph, the ledgers of one screen (Rules 7, 8, 16), the options ledger, the lock × arrival table, the response-branch table, the crossing and indistinguishability tables, the branch ledger, the gates — everything whose rows are about this change's statements.
+Do not rewrite the plan. Do not comment on style, naming or scope. In an OpenSpec repository the plan is the change's `design.md` and the report is `review.md` beside it: [`references/openspec.md`](references/openspec.md).
 
-## Batches
+## Harvest a lesson
 
-| Batch file | Rules | Catches |
-|---|---|---|
-| [`references/domain-model.md`](references/domain-model.md) | 10 | a rule no column can express; "is there a row" on an entity with states; a write anyone can trigger with no cap owner; a holder derived when a column holds it; a constraint removed with no path count |
-| [`references/db-concurrency.md`](references/db-concurrency.md) | 2, 11, 12 | a read between the check and the write; a conflict row used unread; two paths with no lock order; concurrency tests on one connection; helpers taking the wrong handle; a redirect before the commit; two reads that must agree on separate snapshots |
-| [`references/interleaving-liveness.md`](references/interleaving-liveness.md) | 13, 14 | a write lock on a row a public path reaches; a retry with no backoff or ceiling; no ceiling on waiting; a screen that flips only on a push |
-| [`references/server-state-cache.md`](references/server-state-cache.md) | 3, 9, 15 | invalidate treated as replace; derived entries left stale; a previous identity's copy painted; partial success shown as saved; a failed read painted as empty |
-| [`references/auth-trust-boundary.md`](references/auth-trust-boundary.md) | 4, 5, 6, 18 | identity decided on the client; an inference without its warrant; "cannot happen" with no path enumeration; a client-supplied id used as permission; a withheld outcome that can be told apart |
-| [`references/library-hooks-listeners.md`](references/library-hooks-listeners.md) | 1, 24 | a hand-written listener or helper beside a library feature that already owns the concern; an interaction hand-written with no search of the stack, the manifest and the ecosystem, or with a rejection that names no number and no missing feature |
-| [`references/ui-state-ownership.md`](references/ui-state-ownership.md) | 7, 8, 16, 17 | state seeded from a prop or query; overlapping saves sharing one observer; a save response refilled over what the user typed meanwhile; a check made on the raw draft instead of the value that will be stored |
-| [`references/single-source-of-truth.md`](references/single-source-of-truth.md) | 19, 20, 21 | the same thing rendered or parsed twice; one rule enforced at several sites; a confirmation sentence whose value does not reach the write |
-| [`references/navigation-flow.md`](references/navigation-flow.md) | 22 | a carried context dropped by one exit of one hop; a conditional redirect Back re-enters; two routes whose redirect conditions can both hold or neither |
-| [`references/branch-completeness.md`](references/branch-completeness.md) | 23 | a conditional naming fewer states than its value has; a residue that lands in a branch which offers or performs a write; truthiness on a three-state value; a `switch` whose `default` is a normal case |
-| [`references/module-depth.md`](references/module-depth.md) | 25, 26, 27 | a new module reimplementing one that already exists with no search recorded; a decision with more than one site — old, new, or mixed — and no site marked as the owner; a new module whose interface makes the caller assemble, order, or already know what the module could have owned itself |
+1. State the incident: what was planned, what went wrong, and which question, asked of the plan, would have raised it.
+2. Find the sub-scenario where that moment belongs and append one numbered line: the shape the problem takes in a plan, then *Suggest:* the change, stated as the property the spec needs rather than only the fix the incident used. A moment no sub-scenario covers gets a new sub-scenario; a mechanism no scenario covers gets a new lettered scenario. Numbers are never reused or shifted. Never a new skill.
+3. Tell the story once in [`readme.md`](readme.md), dated. Done when the question is in the catalog and the readme holds the incident.
 
-The domain-model batch is resolved first at merge (Plan pass step 5): a missing concept, state or column changes what every other batch's `WHERE`, key and check can say.
+## Catalog
 
-## Paths
+Each question is the shape a problem takes in a plan, then the suggestion. A question applies whether or not the plan already guards against it; the guard makes it unlikely, not absent.
 
-### Plan pass
+### A. The client sends a request
 
-1. Check the plan against "What a reviewable plan contains" for the diagram and pseudocode items only. Where a mechanism is plainly in play and one is missing, return the plan with the list of missing items and stop. Do not check the intermediates here: which rules apply is the batches' decision, not the author's.
-2. Screen and check readiness per Principle 2, recording each `SKIPPED — not dispatched` and `NOT READY` line. Dispatch one subagent for every batch that is ready — in one step or in as many as the tool's concurrency allows, in fresh contexts (Claude Code: the Agent tool; Codex: `codex exec -s read-only "<prompt>"`) — with the plan prompt below, the plan's path, the batch file's path, the spec deltas' paths and the project's intermediates folder (or NONE). A subagent that fails, times out or returns anything but the output shape is dispatched again; its batch has no `APPLIES` line until it does, and Done cannot be reached without one.
-3. Once no batch is `NOT READY`, assemble the outputs verbatim, one `## <batch>` heading each, then `## Accepted` and `## Unresolved`, into the review artifact (`review.md` beside the plan, or the plan's own Traps section). A batch skipped at screening contributes only its `SKIPPED — not dispatched` line as that heading's content. Keep every `APPLIES`, `SKIPPED` and `SEARCHED` line, and the `NOT READY` line each resolved batch started from: a "no" with its reason is the record that the batch was considered, a skipped rule with its stack is the record that it was not silently omitted, a resolved `NOT READY` line is the record of what was missing before the run, and the search lines are the record of what the review actually looked at. A `SKIPPED` line whose stack the named files contradict (the plan says MySQL, the schema file is PostgreSQL) is a finding against the plan's stack line: correct it and re-run that batch.
-4. Return for `INCOMPLETE` first: collect every `MISSING` line across batches, add the intermediates to the plan, and re-run only the batches that reported `INCOMPLETE`. Their findings come from the filled tables, so nothing is merged from an `INCOMPLETE` batch.
-5. Merge: open each anchor and verify the row. A row with no anchor, no rule, or a proof cell that names no assertion (or, for a liveness rule, no argument and metric) is returned to its batch once, with the empty cell named; the batch re-runs on the same plan and answers only for the returned rows. A row that comes back still empty goes under Unresolved with the cell it lacks — never dropped, and never completed by the author's context (Principle 1). Resolve every `intermediate differs from code` row next, by correcting the living file and re-running its batch — the other rows were judged against the file as it stood. Resolve the domain-model batch's blocking rows first among the rest — if the resolution adds a field, a state or a column, every other batch is re-run, because their conditions were written against the schema that changed. Then resolve every other blocking row in the plan, one class fix per rule (Principle 7) — rows from different batches on the same anchor and the same owner are one fix, listing both rules; re-run only the batches whose rules the resolution touched. Dedupe the `OUT-OF-BATCH` lines across batches into one list, each with a one-line disposition under Accepted, or under Unresolved while it has none.
-6. Done when no batch is left `NOT READY`, every batch has either a `SKIPPED — not dispatched` line from screening or an `APPLIES` line and a verdict other than `INCOMPLETE`, every blocking row is resolved in the plan or listed under Accepted with the author's reason, no row is unanchored, every proof names its assertion (or, for a liveness rule, its argument and metric), every out-of-batch line has a disposition, and Unresolved is empty (Principle 8).
+A form submit, a save, an action button, an autosave, an upload.
 
-### Diff pass
+#### A1. Before it leaves
 
-Inputs: the diff and the spec deltas, always; the plan and its review where they exist. A diff with no plan pass behind it is reviewed the same way, with the plan-side comparisons skipped — the subagent then builds every intermediate from the code and nothing is compared against a table.
+1. The control stays enabled while the request is in flight, so a double click or a second Enter sends the same request again. Suggest: disable on send and re-enable on settle; where a duplicate would write twice, an idempotency key the server checks.
+2. The same request can also leave from a retry, another tab or a reconnect, which a disabled button does not stop. Suggest: name every sender; the server-side guard (B1) is what covers them all.
+3. The payload is the raw draft while the server trims, collapses or normalizes it, so the client's dirty, valid and equal checks answer about a value that will not be stored. Suggest: parse once through the shared schema, send the parsed value, and run every check on it.
+4. The control can be used before the data it acts on has arrived: an editor opened while the row still shows a fallback; Save enabled while another write to the same field is in flight. Suggest: gate in order (stored value arrived, no write in flight, parses, differs) and say on the spot why Save is disabled.
+5. Two saves on one screen (text fields and a photo; a toggle and a form; autosave and submit) can be in flight at once and share one pending or error state, so the screen reports whichever finished last. Suggest: one observer per save that can overlap; each surface renders its own save's state.
 
-1. Screen, check readiness and dispatch as in plan pass step 2, with the diff's own files in place of a plan's named files. For every batch that is dispatched, with the diff prompt below, the subagent applies the **view** side, anchored to file and line. `INCOMPLETE` is not a verdict here: the code exists, so the subagent builds each applying rule's intermediate from it, and where a plan exists the view side's first question — does the plan's table match the files — becomes a row with effect `plan differs from code` wherever they differ.
-2. Where a plan review exists, the same subagent finds, for each of its rows, the test in the diff that is that row's proof and asks whether it would stay green with the mitigation reverted (one process where two connections were required; a stubbed hook where the real one was required; an assertion on the handler's intent where the outcome was required). A test that would stay green is a row with effect `fake proof`; no test is `no proof`; both blocking. Without a plan review, each row of this pass carries its own proof cell and the subagent looks for that test.
-3. Dispatch one more subagent — the confirmation round — with the confirmation prompt below: the spec deltas and the diff, no plan and no batch. It is the only round that looks from the spec toward the code instead of from the plan. Its lines are read as follows: `SATISFIED` is not a finding; `MISSING` is a blocking finding against the diff, valid only after the round has read the existing files the diff touches or calls — a diff shows changed lines, and an unchanged helper may already satisfy the scenario; `UNIMPLEMENTABLE` is a finding against the spec only when the line shows the contradiction (which two requirements, or which requirement and which constraint of the system, cannot both hold) — a line that names no contradiction is returned to the round once and then goes under Unresolved; `UNVERIFIED` goes under Unresolved and blocks Done the way `INCOMPLETE` does in the plan pass.
-4. Merge as in plan pass step 5. Done when no batch is left `NOT READY`, every batch has either a `SKIPPED — not dispatched` line from screening or an `APPLIES` line and a verdict, every blocking row is fixed in the diff or listed under Accepted with the author's reason, every scenario is `SATISFIED`, `MISSING` and then fixed, or `UNIMPLEMENTABLE` with its disposition, and Unresolved is empty.
+#### A2. While it is in flight
 
-### Harvest a lesson
+1. The user keeps editing the field whose save is out, so the response will carry a value seconds old (A3.1). Suggest: capture a token when the request leaves; the response is judged against it.
+2. The screen can unmount or navigate before the response lands, and the handler writes into a component that is gone or into another route's state. Suggest: ignore or cancel on unmount; tie the handler to the request it belongs to.
+3. The reader can change under the screen (sign-out in another tab, a session resolving late), so the response is applied for the wrong person. Suggest: the reader is part of the cache key; identity is decided server-side (C1).
+4. A slow step (an upload, a third-party call) sits inside the request beside fast ones and the screen has no state between "saving" and "saved". Suggest: four states per shown value: no data, refetching with data, fresh, error.
 
-1. State the incident: what was written, what should have been, what let it pass on all four sides — and whether a **where** would have caught the situation, and which intermediate would have shown the absence as an empty cell.
-2. Classify before filing. **A family is defined by what you must know to see the defect**; ask the questions in order of cost, and the first yes is the family. *Can the defect be seen from the code and its types alone, with no spec?* → **logic error** (branch-completeness). *Does it depend on which side or actor is supposed to decide or own something?* → **misplaced responsibility** (auth-trust-boundary for who the caller is; ui-state-ownership for who owns a value on a screen; navigation-flow for where the person ends up; library-hooks-listeners for who owns a concern a library already handles, or a mature one would; module-depth for which of the codebase's own modules owns a decision, or a caller doing a module's work). *Does it depend on how many copies or writers exist?* → **multiplicity** (single-source-of-truth; server-state-cache when the copies are server and client cache). *Serialize the two activities — finish one completely before the other — and it is gone?* → **ordering** (*can you point at the moment it happened?* → db-concurrency; *is the evidence "still nothing"?* → interleaving-liveness). *Does it depend on what the domain says the states and rules are?* → **model** (domain-model). The families are open: an incident that fits none of the five names a sixth, and is filed there rather than forced into the nearest — candidates already seen but not yet filed are in `readme.md`. Two traps in classifying: the fix that was at hand is not the classification (an incident fixed with `FOR UPDATE` whose bug survives serialization is a model incident); and a question can match while the batch's evidence does not — "a value passed along and lost" answered the multiplicity question but its evidence is a table of exits, so it is navigation-flow, and "`null` branched on while `undefined` is also possible" answered the model question but the state was already in the type, so it is logic error.
-3. Find the rule in that batch. Same kind of problem as an existing rule → one bullet under that rule's gate or side that failed. New kind → a new `## Rule N` in that batch with the three gates and four sides; its Stack gate names the stack the incident happened on, what the mechanism holds for beyond it, and what it is skipped for — "any" is an answer, and it is the answer for most rules. **A rule joins an existing batch when its Asks-for table shares rows with that batch's table** — a batch is the set of rules one reviewer checks with the same files open and the same intermediate filled; a rule whose table is a projection of none opens a new batch file and one row in the table above. Never a new skill.
-   The **write** side states the property the spec needs first, and the fix the incident used after it, as one implementation under its conditions. A write side that names only the fix at hand turns the next correct alternative into a false finding: "one endpoint" where the property was "the server decides from credentials on whichever endpoint is hit"; "sweep later" where the spec demanded an exact cap.
-4. Tell the story once in `readme.md`, with the date.
-5. Done when the rule is in one batch, the table lists it, and the readme holds the incident.
+#### A3. After the response returns
 
-## Subagent prompts
+1. The response is written back into a field the user can still edit, and what was typed during the round trip is gone; nothing fails. Suggest: refill only what the server alone knows (ids, timestamps, normalized forms); guard any other refill by the token from A2.1 and a dirty-since-send check; a stale response is discarded, not applied.
+2. Two responses for one field arrive out of order and the older lands last. Suggest: the same token; apply only the newest.
+3. The screen has changed since the request left (another item selected, a dialog closed, a route changed) and the update written on return no longer fits where the user is. Suggest: the handler checks the screen still shows the thing the request was about; otherwise it updates the cache and not the view.
+4. The control is usable again as soon as the response arrives, before the cache write, navigation or refetch that follows it, so a second click acts on stale state or sends again. Suggest: re-enable after the whole settle; or navigate first and let the destination own the control.
+5. "Mutate, then invalidate": until the refetch returns the screen shows the old value, and if the refetch fails it shows it forever. Suggest: write the cache from the response first; invalidate afterwards.
+6. The server derives other entries from the changed row (a count, a list it belongs to, a badge, a "mine" view) and they stay stale. Suggest: list them from the server code and invalidate each by its key helper, never a hand-typed key.
+7. An optimistic update has no rollback. Suggest: keep the previous value, restore on error, invalidate on settle.
+8. The call succeeded but a step inside it did not (text saved, photo not applied) and "saved" is shown. Suggest: per step that may fail alone, the response says whether it applied; the client renders that flag, not the call's status.
+9. A failed response is painted as success or as "nothing here": a fetch that rejects only on network errors; `!pending && !data` rendering the empty state with no error branch. Suggest: an error branch with a way to look again; check `res.ok`; the empty state is for a successful read that found nothing.
+10. The client navigates or refetches on "success" before the server's transaction commits, and the destination reads the old snapshot ("you are not in"; a refresh fixes it). Suggest: the response carries what the next screen needs; navigate after the commit; write the cache from the response.
 
-Send verbatim, with the paths filled in. Three prompts: one per batch in the plan pass, one per batch in the diff pass, one for the confirmation round. The read scope in each is the whole scope: the files it names, plus the greps the batch's View side asks for, plus the one web search a View side may ask for by a concern's name (Rule 24), and nothing else — a reviewer that reads only what the plan named cannot answer a View question that begins "grep the tree", and one that reads freely is planning, not reviewing.
+### B. The server handles a write
 
-### Plan prompt
+#### B1. Check, then write
 
-```
-You review one plan against one batch of rules. Inputs: the plan at <plan path>; the batch at <batch path>; the spec deltas at <spec paths>; the project's living intermediates at <intermediates path> or NONE. Read all of them. Read the files the plan names. Where a View question in the batch says to grep, grep the tree for that symbol and read the files it hits. Where a View question says to run one web search by a concern's name, run that one search and read no further than its result list. Read nothing else. Record every file read, every grep run and every web search on SEARCHED lines.
-First read each rule's Stack gate against the plan's stack line, checked in the named files (imports, the schema file's dialect, the package manifest), not taken from the line alone. A rule bound to a stack the plan does not use, and whose gate does not say it holds for the plan's stack, is skipped: one SKIPPED line naming the rule, its stack and the plan's, and no further judgement of that rule. A rule whose gate says it holds for the plan's stack with the syntax translated is not skipped. If every rule in the batch is skipped, APPLIES is "no — stack" and the output ends after the SKIPPED lines.
-Then decide whether any remaining rule's Where in this batch holds for this plan, judged from the plan, the spec deltas, the named files and what the greps found — not from what the plan says about itself, and not from whether the plan already guards against the rule. Write that decision as the first line.
-If it holds, check that the plan carries what each applying rule's Asks for section names. Where the Asks for names a living intermediate (the navigation graph, the update-source table, the state ledgers, the trust-boundary rows, the site list) and the intermediates path is not NONE, the plan carries a delta against that file — rows added, removed or altered, each naming the file's row — or one line saying no row changes and which file that was checked against; with NONE, the plan carries the whole table. List each missing item on a MISSING line and set the verdict to INCOMPLETE; do not build the missing table from the plan's prose, and report no rows.
-Otherwise, where a Tell matches, write one row anchored to the plan's numbered step, message or transition — or, for a living intermediate, to the delta's row; a living row that the named files or the grep hits contradict is one row with effect "intermediate differs from code", anchored to the file's row, blocking, whether or not the plan touched that row; fill mitigation from the rule's Write side and proof from its Prove side. The proof cell names the assertion that turns red when the mitigation is reverted; for a rule the batch marks liveness, it names the argument and the metric instead. A row you cannot anchor, or cannot give a proof, still goes out with that cell marked ?; the merge returns it to you once rather than dropping it. Ask the View side's first question — does the intermediate match the named files and the grep hits — before any other.
-Report as rows only findings that match a Tell in this batch. A correctness problem outside this batch's rules is one OUT-OF-BATCH line, never a row. Do not rewrite the plan. Do not comment on style, naming or scope.
-Output exactly this and nothing else:
-APPLIES: yes | no — <one-line reason>
-VERDICT: CLEAN | FINDINGS | INCOMPLETE
-SKIPPED: <rule> — bound to <stack>; plan uses <stack, and the file that shows it>   (zero or more lines)
-SEARCHED: <file read> | <grep pattern> — <files hit> | web: <query> — <candidates seen>   (one or more lines)
-MISSING: <rule> — <the item from Asks for>   (zero or more lines; INCOMPLETE only)
-| anchor | rule | effect | why it would be silent | mitigation | proof | blocking or advisory |
-OUT-OF-BATCH: <anchor> — <one sentence>   (zero or more lines)
-```
+1. One statement reads (a count under the limit, a status open, a row absent) and a later statement writes; another request fits in the gap, even inside one transaction. Suggest: the condition goes into the write's own `WHERE`; the outcome is read from rows affected.
+2. An insert is guarded by "not exists" or a count with no unique constraint on the columns the guard tests; two transactions both see absence and both insert. Suggest: a unique constraint decides, with `ON CONFLICT DO NOTHING` and rows affected as the outcome.
+3. A uniqueness conflict is read as "the row exists, use it" though the row may be expired, consumed or another caller's. Suggest: lock it, re-read it, decide by its state.
+4. The rows-affected count is never read, so the conditional write decided nothing. Suggest: branch on it and report zero rows to the caller.
+5. A rule the spec states (never two, single use, first wins, a decline closes it) is enforced by no write's condition. Suggest: name the one statement that enforces it and the column it reads; if no column can express it, see G1.
 
-### Diff prompt
+#### B2. Two paths over the same tables
 
-```
-You review one diff against one batch of rules. Inputs: the diff at <diff path>; the batch at <batch path>; the spec deltas at <spec paths>; the plan at <plan path> or NONE; the plan's review at <review path> or NONE; the project's living intermediates at <intermediates path> or NONE. Read all of them. Read in full every file the diff touches. Where a View question asks what a callee does, read the callee. Where a View question says to grep, grep the tree for that symbol and read the files it hits. Where a View question says to run one web search by a concern's name, run that one search and read no further than its result list. Read nothing else. Record every file read, every grep run and every web search on SEARCHED lines.
-First read each rule's Stack gate against the stack the files read actually use (imports, the schema file's dialect, the package manifest). A rule bound to a stack the code does not use, and whose gate does not say it holds for the code's stack, is skipped on one SKIPPED line and judged no further; if every rule is skipped, APPLIES is "no — stack" and the output ends after the SKIPPED lines.
-Then decide whether any remaining rule's Where in this batch holds, judged from the diff, the spec deltas, the files read and what the greps found — not from what the plan or the diff says about itself. Write that decision as the first line.
-If it holds, build each applying rule's Asks for intermediate from the code: the code exists, so you build it, and no verdict is INCOMPLETE. Where a plan exists, compare its intermediate with yours; each difference is one row with effect "plan differs from code", anchored to file and line. Where the intermediate is a living one, compare the living file with the plan's delta applied against yours; each difference is one row with effect "intermediate differs from code", anchored to the file's row and the code's line, and the row goes out whether or not the diff touched it.
-Apply the View side: one row per finding, anchored to file and line, mitigation from Write, proof from Prove.
-Where a plan review exists, for each of its rows find the test in this diff that is that row's proof and ask whether it would stay green with the mitigation reverted (one process where two connections were required; a stubbed hook where the real one was required; an assertion on the handler's intent where the outcome was required). A test that would stay green is one row with effect "fake proof"; no test is one row with effect "no proof"; both blocking. Where no plan review exists, do the same for each row you write here.
-A row you cannot anchor still goes out with that cell marked ?; the merge returns it to you once rather than dropping it. Report as rows only findings that match a Tell in this batch. A correctness problem outside this batch's rules is one OUT-OF-BATCH line, never a row. Do not comment on style, naming or scope.
-Output exactly this and nothing else:
-APPLIES: yes | no — <one-line reason>
-VERDICT: CLEAN | FINDINGS
-SKIPPED: <rule> — bound to <stack>; code uses <stack, and the file that shows it>   (zero or more lines)
-SEARCHED: <file read> | <grep pattern> — <files hit> | web: <query> — <candidates seen>   (one or more lines)
-| anchor | rule | effect | why it would be silent | mitigation | proof | blocking or advisory |
-OUT-OF-BATCH: <anchor> — <one sentence>   (zero or more lines)
-```
+1. Two paths (two endpoints; an endpoint and a job; a job and its own retry) write the same two tables with no stated lock order, or different orders, and deadlock under load. Suggest: one order, written once beside the tables; a path that needs the other order restructures.
+2. A helper takes a pool handle while its caller holds a transaction, so it silently escapes the transaction. Suggest: the helper's signature says which handle it needs; no call site casts one into another.
+3. The same call can arrive twice at once (a double click, a redelivered webhook, an overlapping cron) and nothing makes the second a no-op. Suggest: idempotency on a key the caller controls, or the conditional write.
+4. The concurrency test fires two calls from one process on one connection and never overlaps. Suggest: a second connection holding a transaction open across the other's write; test at N−1 and at N.
 
-### Confirmation prompt
+#### B3. Locks and arrival rate
 
-```
-You confirm one diff against its spec deltas. Inputs: the spec deltas at <spec paths>; the diff at <diff path>. No plan and no batch. For every "#### Scenario:" heading in the deltas, find the test or the code in the diff that satisfies it. Where the diff does not, read the existing files the diff touches or calls before concluding — a diff shows changed lines, and an unchanged helper may already satisfy the scenario. Record every file read on SEARCHED lines.
-Output one line per scenario, and the SEARCHED lines, and nothing else:
-SATISFIED: <scenario> — <the test or code, file and line>
-MISSING: <scenario> — <what is absent, after reading the existing files named on SEARCHED>
-UNIMPLEMENTABLE: <scenario> — <the contradiction, shown: which two requirements, or which requirement and which constraint of the system, cannot both hold>
-UNVERIFIED: <scenario> — <the file that could not be read, or the question that could not be settled from what was readable>
-SEARCHED: <file read>   (one or more lines)
-```
+1. A write lock (`FOR UPDATE`, an advisory lock, `SERIALIZABLE`) sits on a row a public path reaches (a scan, a landing page, a webhook, an anonymous submit); once arrivals exceed what the lock serves the queue only grows, and every waiter holds a pool connection, so unrelated requests fail. Suggest: public paths read without write locks and write through a conditional statement; state the cost as arrival against service, not as milliseconds.
+2. No ceiling on waiting, so a waiter holds its connection until the pool is empty (`lock_timeout` defaults to none). Suggest: a `lock_timeout` or `statement_timeout` on the path, and what the caller sees when it is hit.
+3. A retry has no backoff or no maximum ("retry until it succeeds"); two writers retry on each other's zero-rows signal forever. Suggest: jittered backoff, a ceiling, a message after the last attempt; zero rows is usually an answer to report, not a reason to retry.
+4. A cap on a hot row is exact where the spec would tolerate eventual, or eventual where the spec demands exact. Suggest: say which the spec needs; eventual sweeps the excess later by last touched; exact says what bounds the queue.
+5. A sweep takes the same write lock as the interactive path it cleans up after. Suggest: small conditional batches.
+
+#### B4. One call, several effects
+
+1. One call does two things (write the row and send the mail; save the text and apply the photo) and the second is "best effort", so the caller cannot tell it did not happen. Suggest: the result carries, per degradable step, whether it applied and why; the response contract names those steps.
+2. The record is written before the effect that may still be refused (mark redeemed, then grant), so a refusal leaves a record saying it happened. Suggest: grant first, then record, in one transaction.
+3. A response leaves early (a stream) before the step that sets a cookie or header has run. Suggest: scope the early return to callers that do not need it.
+
+#### B5. Reads that must agree
+
+1. A read-only procedure issues several statements whose results must agree, over rows another path writes; under default isolation they read two moments and assemble a state that never existed. Suggest: one query where it fits; otherwise `REPEATABLE READ` on the read-only transaction; never a lock for a read.
+2. A screen assembles one fact from two queries (the list says nobody holds it, the detail says Sam does). Suggest: derive one view from the other.
+
+### C. Who is asking
+
+#### C1. Who the caller is
+
+1. The client decides "signed in or guest" or "as user X" and chooses the behaviour or the endpoint; its session store is unresolved on first paint, cached for the last asker, and changeable from another tab. Suggest: the server decides from the request's credentials on whichever endpoint is hit and reports which branch it took; the client renders the outcome.
+2. A control depends on identity and has no state for "not yet known", so unresolved reads as guest. Suggest: inert until a succeeded answer arrives.
+3. The identity decision rides in a request body the client could set. Suggest: never; the cookie or token decides.
+
+#### C2. A value inferred from "only X reaches here"
+
+1. A value is derived from a precondition ("exactly one grant, so it is this one"; "this only runs after approval") instead of read, the code is reachable from a route, job or event that does not hold the precondition, and the value is write-once or names another user. Suggest: grep for every caller; check the constraint in code at the point of inference; read a write-once or authorizing value from the source that guarantees it.
+2. "Cannot happen" or "only constructible by hand" with no list of the paths that could produce the state; the plainest create call with an ordinary parameter usually can. Suggest: enumerate the writers of the columns involved and what stops each.
+3. A helper written for one route is reused by a second whose warrant differs. Suggest: the check moves into the helper.
+
+#### C3. Ids and input crossing a boundary
+
+1. A client-supplied id is used after an existence check as if existence were permission. Suggest: an ownership check against the caller, or the project's one visibility gate by name; "not found" and "not yours" are the same answer.
+2. External input (a webhook, an OAuth callback, an upload, a queue message, a query string) is acted on with no shape check before the first dependent read. Suggest: shape, then authorization, then consistency.
+3. One user's request reads or writes data another user owns and the plan names no check for it. Suggest: one line per crossing, naming its check.
+
+#### C4. Outcomes the caller must not tell apart
+
+1. The spec withholds an outcome ("declined looks like waiting"; "does not reveal whether the account exists") and the two outcomes differ on some channel: response shape, a `reason` field, status code, timing, copy, mail, or the ability to ask again (a unique index with a status condition lets one outcome retry and not the other). Suggest: one response, one sentence, one constraint for both; the reason goes to a server-side column for support and never leaves.
+2. A later read, a retry or a push behaves differently by outcome. Suggest: they obey the same rule.
+
+### D. A screen holds state
+
+#### D1. Where a value comes from
+
+1. State is seeded once from a prop, a session or a query result (`useState(prop)`), the screen can mount before the source resolves or the source changes while mounted, and the draft keeps the stale seed. Suggest: derive during render; where a draft must be local, key it to the resolved value.
+2. "When X changes, update Y" is an effect that copies a value from one place to another. Suggest: a derivation or the event handler; an effect exists only for a named external system.
+3. A previous reader's copy paints for the next reader, stopped by comparing a server timestamp with a client clock. Suggest: the reader, or a generation that advances when the reader changes, goes into the cache key.
+
+#### D2. A draft and the stored value
+
+1. Dirty, valid, equal and "Save enabled" are computed on the raw draft while the schema trims and normalizes; a whitespace-only edit lights Save, and a draft one character from valid is discarded by Back as "unchanged". Suggest: every check reads the parsed value; an unparseable draft counts as unsaved text for every guard.
+2. A reset from the server runs while an editor holds a draft opened during an in-flight write. Suggest: no reset while a write is in flight or an editor is open.
+3. Save is greyed out with no reason shown. Suggest: the reason on the spot.
+4. The leave-page guard is wired to one editor while another holds the draft. Suggest: the guard clears whichever editor holds it.
+
+#### D3. Waiting on a push
+
+1. The screen leaves "waiting" only in the push handler; an event that fires between first render and the subscription going live is never seen, and the screen waits forever. Suggest: subscribe, then read once; the push is a hint to read again.
+2. A poll starts on a timer with no immediate first tick. Suggest: tick now, then on the interval.
+3. The handler is not idempotent, so a read and a late push double the effect. Suggest: make it idempotent.
+
+#### D4. A read that failed
+
+1. A parent's error branch returns early above a child block that has its own data, so the whole block disappears. Suggest: the child renders; the parent says it failed.
+2. A result is branched on `null` alone while `undefined` (pending or failed) is also possible and shares the branch, which on this route offers a creation form. Suggest: branch on the discriminant (`isError`, a status); error and unknown land before any branch that offers a write (F2).
+
+### E. A journey across routes
+
+#### E1. Context carried from hop to hop
+
+1. A token or id rides in the URL and every hop must forward it; one exit (a signed-out fallback link, an already-done redirect, a Cancel, Back, a shortcut) is built without it, and the person arrives with nothing and no way back to a URL they never held. Suggest: list every navigation out of every route on the journey (grep for `Link`, `navigate`, `redirect`, `callbackURL`) with the context it forwards or the reason the journey may end there; forward from the same file that reads the value.
+2. The journey crosses a sign-in or OAuth round trip and the context must survive the callback URL. Suggest: the callback carries it; or one holder (the session, a cookie, a pending row keyed on the account) replaces N forwards, where an anonymous visitor or an unstorable token does not rule it out.
+3. The context is forwarded on the happy path and the other exits are called edge cases. Suggest: the list in E1.1.
+
+#### E2. Redirects
+
+1. A conditional redirect is a push, so Back lands on the page that bounces again. Suggest: `replace`.
+2. Two routes redirect to each other on conditions (home sends the unset-up person to setup; setup sends the set-up person home) and a third state, the read pending or failed, satisfies both or neither. Suggest: the two conditions side by side with the failed-read row; a failed read redirects nowhere and says so.
+
+### F. A branch over a value with several states
+
+#### F1. Which states the branch names
+
+1. A conditional (`if`, a ternary, a `switch`, `??`, an `&&`-render) names fewer states than the value has: `null` and `undefined` with different meanings, a status enum, a number where `0` is real, a query result with pending, error, empty and data. Suggest: list the states from the type or the producer, the branch each takes, and where the rest land.
+2. A boolean (`hasX = !!x`, `isEmpty = !data?.length`) hides a third state before the branch. Suggest: branch on the discriminant.
+3. A `switch` has no `default`, or a `default` that returns a normal case; a union gains a member and not every `switch` is revisited. Suggest: `assertNever` on closed unions; exhaustiveness lint.
+4. The branch structure is copied from a sibling and one of the sibling's branches did not come along. Suggest: diff the two.
+
+#### F2. Where the rest lands
+
+1. The states no branch names fall into a branch that offers a write (a form, an enabled button), performs one (a mutation, a redirect) or decides access. Suggest: order the guards so error and unknown reach a read-only branch; the test asserts the form is absent, not that the safe surface is present.
+
+### G. The domain says what exists
+
+#### G1. A rule with no column
+
+1. The spec states a rule over an entity (a cap, a holder, "at most one", "never again", "only while") that no column or index can express, and the plan enforces it in prose, a comment, or an `if` that reads something else. Suggest: add the concept first (a column, a counter, a status, a provenance id); then the check can live in the write (B1).
+
+#### G2. An entity with states
+
+1. "Is there a row" is asked of an entity with several states, so a blocked or expired row reads as "none" or as "reuse it". Suggest: per query, which states count; per question, which column is the truth.
+2. A holder, owner or recipient is derived from relationships while a column holds it; two questions are answered from one piece of data. Suggest: read the column that is the truth; one source per question.
+3. The plan's fix for a bug found by a concurrency test is a lock, and the bug would also fail single-threaded. Suggest: it is a model problem, not a race; fix the concept.
+
+#### G3. A write anyone can trigger
+
+1. A public path (a resolve, a scan, an anonymous submit, a webhook) inserts rows and nothing bounds how many. Suggest: a bound with an owner, self-healing where the path is public, ordered by last touched rather than created.
+
+#### G4. A constraint removed
+
+1. A write-once field becomes mutable, a unique index loses a column, a status condition is dropped, with no list of the paths the constraint was blocking. Suggest: enumerate those paths and what now stops each.
+
+### H. Someone already owns this
+
+#### H1. A library already in the plan
+
+1. A hook, component or client takes an options object and the plan reads two options of it; an unset option's default does something (a router blocker's `enableBeforeUnload` defaults to true and prompts on every clean refresh). Suggest: every option, its value or "unset", its default and what the default does; set explicitly what touches the feature.
+2. A hand-written listener, loop or check sits beside a library feature for the same concern: `beforeunload` beside a navigation blocker, `resize` beside a layout hook, `keydown` beside a menu primitive, a retry loop beside a client that retries, a CORS or rate-limit step beside the framework's plugin, an existence check beside an ORM conflict option. Suggest: one of the two owns it; feed the library the same predicate in function form and delete the hand-written half.
+3. The plan states how a library or the browser behaves with no source. Suggest: the doc page, the `.d.ts` line or the issue.
+4. The pairing is copied from a sibling "with the same guard" and never audited. Suggest: audit once at the source; fix every copy in one change.
+5. Every test stubs the hook, so none sees what the library does, and the tests ask only "does it prompt when dirty", never "is it silent when clean". Suggest: one test with the real library; a silence assertion beside the positive one.
+
+#### H2. An interaction about to be hand-written
+
+1. The plan adds an effect, a custom hook or a component for an interaction concern (click-outside, focus trap, hotkeys, drag, a virtualised or sortable list, debounce, scroll lock, navigation blocking, a toast queue, clipboard, file drop) and names no library and no search. Suggest: search the stack and the manifest first (the headless kit, router, form, query and animation packages already imported own many of these; so does the platform: `dialog`, `popover`, `scroll-snap`), then the ecosystem by the concern's name; adopt whole, or reject with a number or a missing feature, or hand-write against a checklist of what the library would have covered (touch, IME, keyboard and screen reader, RTL, nested instances, unmount mid-event, SSR, reduced motion).
+2. A custom hook's name is a well-known library export (`useClickOutside`, `useDebounce`, `useFocusTrap`, `useVirtualizer`) in a tree whose manifest already holds a package exporting it. Suggest: the grep.
+3. A library is rejected as "too heavy" or "we only need a part" with no number and no scenario. Suggest: the figure, or the scenario it fails.
+
+#### H3. The codebase's own modules
+
+1. A new function, hook, component, schema or helper decides, transforms or renders something an existing module already does under another name, and no search is recorded. Suggest: grep by the entity's name, the fields it touches and the verb of the decision; reuse, extend (naming the seam), or reject with the difference stated.
+2. Once the plan lands, a decision has more than one site (old, new or both: a validation written as comparisons against a module's exported numbers in several files) and none is marked the owner. Suggest: one owner the rest import, repointed in the same change; a parity test across the sites.
+3. A new module's interface makes the caller assemble, order or already know what the module could own: several raw fields it could derive from one value; two exports that must be called in order; a name that promises an answer but needs the answer as input; a test that must reproduce internal steps to reach it. Suggest: one call that performs the sequence; an object naming what varies; nothing the caller must know beyond the parameter list.
+4. A new export forwards its arguments with no decision of its own, and deleting it would make nothing reappear elsewhere. Suggest: call what it wraps.
+
+### I. One truth, several copies
+
+#### I1. Two implementations
+
+1. The same thing is rendered or parsed in two places (an editor's preview and the landing page; client `trim()` beside server normalization; a list row and a detail card) and drifts the day one side changes. Suggest: one component or one schema both sides import; a contract test across the sites; "keep both in sync" is the problem restated.
+2. A prop or field named for a part (`recipientName`, `amount`) receives a composed value (a sentence, a formatted string). Suggest: the name states the contract; one line per boundary saying who composes what.
+
+#### I2. A rule at several sites
+
+1. A business rule ("someone who already left a note is not asked again"; "a removed member cannot post") is enforced by every caller rather than by the one statement that writes, and comes back in a new costume per caller that forgot it. Suggest: the rule moves onto the writing statement with its exemptions and their reasons beside it; caller-side checks are deleted.
+2. Two rows of this review name the same cause and the suggestion for each is "add a check here". Suggest: one class fix that removes the possibility, listing the rows it covers.
+
+#### I3. A promise before an irreversible action
+
+1. A confirmation sentence ("remove Sam"; "charge 3 seats") reads one copy of the value and the write uses another: a snapshot in one, fresh query data at click in the other; or the expected value is sent and the server never checks it. Suggest: one snapshot taken when the confirmation opens feeds both the sentence and the request; the expected value goes into the write's `WHERE`, and zero rows is shown as "this changed under you".
+2. On a phone the sentence sits at the end of a list and scrolls away while the button stays. Suggest: the sentence beside the button.
