@@ -1,24 +1,34 @@
 ---
 name: code-plan-review
 disable-model-invocation: true
-description: Review a plan (a design doc, pseudocode, a diagram, a described change) before code exists by walking a catalog of scenarios and asking each one's questions: a client sending a request, a server write, who is asking, screen state, a journey across routes, a branch over several states, the domain model, reuse of libraries and modules, one truth in several copies. Use when asked to review a plan or design, before implementing a change that touches any of those, or when harvesting a lesson from an incident into a question here.
+description: Review a plan (a design doc, pseudocode, a diagram, a described change) before code exists by walking a catalog of scenarios and asking each one's questions: a client sending a request, a server write, who is asking, screen state, a journey across routes, a branch over several states, the domain model, reuse of libraries and modules, one truth in several copies, a state that changes as time passes. Use when asked to review a plan or design, before implementing a change that touches any of those, or when harvesting a lesson from an incident into a question here.
 ---
 
 # Plan review by scenario
 
-A plan is reviewed by reading it with the right questions in hand. The catalog below is those questions, grouped by the scenario that raises them. A question does not need a confirmed defect to be worth reporting: where the plan leaves room for it, report the possibility and a suggestion. The review runs in this context from start to finish, with no subagents; where you can, run it in a session that did not write the plan. Where the questions came from: [`readme.md`](readme.md).
+A plan is reviewed by reading it with the right questions in hand. The catalog below is those questions, grouped by the scenario that raises them. A question does not need a confirmed defect to be worth reporting: where the plan leaves room for it, report the possibility and a suggestion. One reviewer walks the whole catalog in one context, without fanning out to subagents of its own; where you can, that reviewer is a session that did not write the plan — a fresh session, or an agent the authoring session delegates the review to. Where the questions came from: [`readme.md`](readme.md).
 
 ## How to review
 
-1. **Read the plan**, and the spec it implements if there is one. Files the plan names that exist in the checkout may be opened, and the tree grepped for callers, sites and exits, to settle a question; that is reading, not asking. A plan reviewed without them is still reviewed.
+1. **Read the plan**, and the spec it implements if there is one, then **restate the model** in about five lines — who acts, which states exist, who decides what — so a misreading is corrected before any question is built on it. Files the plan names that exist in the checkout may be opened, and the tree grepped for callers, sites and exits, to settle a question; that is reading, not asking. A plan reviewed without them is still reviewed.
 2. **Walk the catalog**, scenario by scenario. Decide whether the plan touches each top-level scenario; for each it touches, walk its sub-scenarios and ask every question. Judge from what the plan does, not from what it says about itself. A plan that already guards against a question gets that question marked *unlikely* with the guard cited, not skipped.
-3. **Ask once for what only the author can supply.** Some questions cannot be judged from prose or from the files: which paths write a table, the order two paths lock, the arrival rate on a public path, which exits a journey may end at on purpose, which spec rule governs. Collect everything you would need into one message, each item with the question it serves, and ask. The user may decline any or all of it. Do not build the material yourself from the plan's sentences, and do not stop: continue with the rest, and mark the questions that depended on it *cannot tell*, with the possibility as your best guess and the suggestion still given.
+3. **Ask once for what only the author can supply.** Some questions cannot be judged from prose or from the files: which paths write a table, the order two paths lock, the arrival rate on a public path, which exits a journey may end at on purpose, which spec rule governs. Collect everything you would need into one message, each item with the question it serves, and ask. The user may decline any or all of it. Do not build the material yourself from the plan's sentences, and do not stop: continue with the rest, and mark the questions that depended on it *cannot tell*, with the possibility as your best guess and the suggestion still given. **Delegated**, with nobody to ask, write the same items under *Decisions for the owner* in the report — each with the row it serves and your recommendation — and carry on exactly as if they had been declined.
 4. **Report** in the shape below. Nothing is dropped silently: a question judged unlikely is still listed by number, and a scenario the plan does not touch gets one line saying so.
 5. **Done when** every top-level scenario has a table or a not-touched line, every row carries a possibility with its reason and a suggestion, and every material you needed is recorded as supplied, declined, or read from the files.
 
+### A second pass
+
+When the resolutions changed the plan substantially, review again — fixes open new surface. The second pass is narrower:
+
+1. **Re-walk only the scenarios the changed decisions touch**, with the code open as before, and append the result; the first pass's rows stay as they were.
+2. **Check that each resolution reached every place the old decision was stated.** A resolution appended as a new section ("this one wins") while the old text still states the old decision is a plan holding two copies of one truth (I1): the implementer reads whichever comes first. Report each such passage as a row; the fix is to correct it where it stands.
+3. **Re-ask G4.2 and G4.3** for every constraint, column or state the resolutions added: a new CHECK is the most common fix and the most common new break.
+
 ## What to report
 
-One table per scenario the plan touches, holding the questions judged *likely*, *possible* or *cannot tell*:
+First, in this order: **The model, restated** (step 1); **Decisions for the owner** when the review was delegated (step 3), or nothing; **Most severe**, at most five rows from the tables below by number, ranked by what the failure costs — data corrupted, lost or disclosed first; then a screen or action that breaks; then a stale or misleading view; then the rest — so the reader knows where to start without reading every table.
+
+Then one table per scenario the plan touches, holding the questions judged *likely*, *unspecified*, *possible* or *cannot tell*:
 
 | question | where in the plan | possibility | suggestion |
 |---|---|---|---|
@@ -26,7 +36,7 @@ One table per scenario the plan touches, holding the questions judged *likely*, 
 
 - **question**: the catalog number.
 - **where in the plan**: the step, sentence or diagram message that raises it; "nowhere" when the plan is silent on something it must say.
-- **possibility**, each with a half-sentence why: *likely* (the plan describes the shape, or is silent where it must speak); *possible* (nothing in the plan rules it out); *cannot tell* (depends on material that was declined or absent).
+- **possibility**, each with a half-sentence why: *likely* (the plan describes the shape — implemented as written, it fails); *unspecified* (the plan is silent where it must speak — an implementer will have to decide, and nothing says how); *possible* (nothing in the plan rules it out); *cannot tell* (depends on material that was declined or absent). A process that requires every *likely* row resolved before code requires the same of *unspecified*; the split only tells the reader which rows are defects and which are gaps.
 - **suggestion**: the change to the plan, in one or two sentences. Two rows with one cause get one suggestion that names both; a suggestion that patches one spot while another row names the same cause is the wrong suggestion.
 
 Under each table, one line: `Unlikely: A1.2 (idempotency key, step 6), A1.5 (one save on this screen), …` — the number and the guard, so the record that the question was asked exists without a row.
@@ -212,6 +222,7 @@ A form submit, a save, an action button, an autosave, an upload.
 
 1. A write-once field becomes mutable, a unique index loses a column, a status condition is dropped, with no list of the paths the constraint was blocking. Suggest: enumerate those paths and what now stops each.
 2. A new path writes rows into a table, or into a row shape, that existing foreign keys and CHECKs were written for under the old writer (a composite FK that assumes the provider owns the referenced row; a CHECK that assumes one kind of row), and the plan names none of them. The first insert or update on the new path fails at runtime, or the design quietly depends on a constraint it would have to drop. Suggest: list every constraint on each table the new path writes, and state for each one whether the new rows satisfy it; a constraint they cannot satisfy is a design decision, settled before code.
+3. The reverse of G4.2: the plan adds a constraint (a CHECK, a NOT NULL column, a foreign key, a unique index, a required field in a shared schema) to existing data and checks it only against the writers the plan itself adds. Every existing writer must now satisfy it too — the obvious endpoint, but also a second endpoint that moves the same row to the same status, an admin tool, a background job, a data import, a seed script, the test fixtures that insert rows directly — and the first one that does not fails at runtime on an action nobody touched. Suggest: search every insert and update of the table or document (and of the constrained field) across the tree, tests included; list each writer with whether its writes satisfy the new constraint; where several writers must each remember to set something, one helper they all call.
 
 ### H. Someone already owns this
 
@@ -252,3 +263,13 @@ A form submit, a save, an action button, an autosave, an upload.
 
 1. A confirmation sentence ("remove Sam"; "charge 3 seats") reads one copy of the value and the write uses another: a snapshot in one, fresh query data at click in the other; or the expected value is sent and the server never checks it. Suggest: one snapshot taken when the confirmation opens feeds both the sentence and the request; the expected value goes into the write's `WHERE`, and zero rows is shown as "this changed under you".
 2. On a phone the sentence sits at the end of a list and scrolls away while the button stays. Suggest: the sentence beside the button.
+
+### J. Time passes
+
+An expiry, a trial or subscription ending, a hold or reservation lapsing, an invite or token timing out, an auto-close, a grace period, a reminder, "after N days": a state that changes because the clock moved, not because anybody acted.
+
+#### J1. Who makes the change
+
+1. A state changes when a deadline passes and the plan derives it at read time ("shown as expired once the date has passed"). Every decision that reads the *stored* state never sees the deadline: a unique index with a status predicate ("one active per user"), an "is it still held" check before granting it to someone else, a quota or seat count, a refusal to delete while something is active, a permission still granted by a role that has lapsed. The record reads as ended on screen and is still active to every write. Suggest: name who writes the transition — a scheduled sweep (and the runner that executes it), the next touch at every decision point (and the list of those points), or nobody, in which case it is a reminder and not a state; then list every decision that reads the state and which value it reads. An index predicate cannot read `now()`.
+2. Something must happen *at* the deadline — an email or push sent, a charge taken, a hold released to the next in line, a webhook fired — in a deployment with no scheduler, or with a scheduler the plan never names (a serverless host that scales to zero, a single process that restarts). Nothing happens until somebody makes a request, so "the user is notified when it expires" means "whoever next loads a page sees it". Suggest: name the runner and what it does when it is down or late; or compute it at read time and say so in the spec, with who sees it first.
+3. Two clocks decide one deadline: the client computes "overdue", "expires today" or "N days later" from its own clock and time zone (or a day boundary in a third zone, the account's or the venue's) while the server decides from its own, so the screen offers an action the server refuses, or hides one it would allow. Suggest: one side computes it — the server, carried on the response as a flag or an instant — and the other renders it.
