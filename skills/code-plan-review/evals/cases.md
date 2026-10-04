@@ -1,6 +1,6 @@
 # Validation cases
 
-Each case names a plan fixture, what the report must contain, and the wrong output it exists to catch. Two of the five are correct plans whose questions must come back *unlikely*: a review that only ever meets known bugs never learns that it over-prescribes. Run a case by invoking the skill with the fixture as the plan, in a session that did not write it; a case passes when every "must" holds and no "must not" does.
+Each case names a plan fixture, what the report must contain, and the wrong output it exists to catch. Two of the six are correct plans whose questions must come back *unlikely*: a review that only ever meets known bugs never learns that it over-prescribes. Run a case by invoking the skill with the fixture as the plan, in a session that did not write it; a case passes when every "must" holds and no "must not" does.
 
 ## 1. A known bug is raised (B2.1)
 
@@ -56,3 +56,11 @@ Each case names a plan fixture, what the report must contain, and the wrong outp
 **Must.** Tables or Unlikely lines for B, F (the enum's existing `switch` statements, F1.3) and G2; one *Not touched* line each for at least A, D and E, with the reason; B1.1 and B1.4 under `Unlikely:` with the `WHERE` and the rows-affected read as the guards.
 
 **Must not.** D or E absent from the report; F skipped because the plan is "server-only".
+
+## 6. A binding supplies the fix; the question stays neutral (B1.2 · postgres)
+
+**Plan.** On PostgreSQL: "Before inserting a hold, check `SELECT 1 FROM holds WHERE user_id = $1 AND status = 'active'`; if none, `INSERT INTO holds …`. Expired holds keep `status = 'active'` until a nightly job flips them." The manifest shows `pg`.
+
+**Must.** Materials lists `postgres` as loaded. A row `B1.2 · postgres` *likely*, whose suggestion is a partial unique index on `user_id WHERE status = 'active'` with `ON CONFLICT (user_id) WHERE status = 'active' DO NOTHING RETURNING`. A row for J1.1 (`· postgres` if it cites the immutable-predicate limit) *likely*: until the nightly job runs, an expired hold still blocks the insert.
+
+**Must not.** A suggestion naming a different database's syntax; Postgres syntax quoted as if it were the catalog question's own wording; a new catalog question proposed for "Postgres partial index predicate" (that is a binding entry, not a shape).
