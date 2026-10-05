@@ -39,3 +39,8 @@ Each entry: **shows up as** · **look for** · **fix**.
 **H2.1 / H2.2 — an interaction hand-written as a hook.**
 - *Shows up as:* a new `useClickOutside`, `useFocusTrap`, `useDebounce`, `useHotkeys`, `useVirtualizer`, `useMediaQuery` in a tree whose manifest already holds Radix / React Aria / Headless UI / a `use-*` utility package, TanStack Virtual, or a form library.
 - *Fix:* search the manifest and those packages' exports first; the headless kits already handle focus return, nested layers, IME, RTL and touch.
+
+**H4.1 / H4.3 — icons drawn as components.**
+- *Shows up as:* an icons module of components each returning an `<svg viewBox="0 0 24 24">` with hand-written `<path d=…>`, and each later change adding one more.
+- *Look for:* `<path d=` inside component files; a design document naming an icon set the manifest does not hold.
+- *Fix:* an icon package (Lucide `lucide-react` / `lucide-react-native`, Phosphor, Tabler) wrapped by the project's icons module, which sets the stroke and size once and keeps the export names, so call sites never import the package. The module keeps hand-drawn components beside the wrapped ones for the glyphs the package has no honest equivalent for, each with a one-line reason.

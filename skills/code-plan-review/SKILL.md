@@ -1,7 +1,7 @@
 ---
 name: code-plan-review
 disable-model-invocation: true
-description: Review a plan (a design doc, pseudocode, a diagram, a described change) before code exists by walking a catalog of scenarios and asking each one's questions: a client sending a request, a server write, who is asking, screen state, a journey across routes, a branch over several states, the domain model, reuse of libraries and modules, one truth in several copies, a state that changes as time passes. Use when asked to review a plan or design, before implementing a change that touches any of those, or when harvesting a lesson from an incident into a question here.
+description: Review a plan (a design doc, pseudocode, a diagram, a described change) before code exists by walking a catalog of scenarios and asking each one's questions: a client sending a request, a server write, who is asking, screen state, a journey across routes, a branch over several states, the domain model, reuse of libraries, modules and ready-made content, one truth in several copies, a state that changes as time passes. Use when asked to review a plan or design, before implementing a change that touches any of those, or when harvesting a lesson from an incident into a question here.
 ---
 
 # Plan review by scenario
@@ -257,6 +257,14 @@ A form submit, a save, an action button, an autosave, an upload.
 2. Once the plan lands, a decision has more than one site (old, new or both: a validation written as comparisons against a module's exported numbers in several files) and none is marked the owner. Suggest: one owner the rest import, repointed in the same change; a parity test across the sites.
 3. A new module's interface makes the caller assemble, order or already know what the module could own: several raw fields it could derive from one value; two exports that must be called in order; a name that promises an answer but needs the answer as input; a test that must reproduce internal steps to reach it. Suggest: one call that performs the sequence; an object naming what varies; nothing the caller must know beyond the parameter list.
 4. A new export forwards its arguments with no decision of its own, and deleting it would make nothing reappear elsewhere. Suggest: call what it wraps.
+
+#### H4. Content about to be hand-made
+
+Hand-made content is not the defect; hand-made content nobody chose is. An item the maintained set has no honest equivalent for (a brand mark, a domain concept, a glyph whose library twin carries the wrong meaning) is hand-made on purpose, and the reason is the record of that choice.
+
+1. The plan draws, types or copies by hand a commodity set that maintained sources publish — icons, illustrations, flags; country, currency, language or time-zone lists; locale names, emoji data, a font — and names no source and no search. Suggest: the source a design or brand document already names, else a search of the ecosystem by the content's name; adopt it behind one module the project owns, and hand-make the items it has no honest equivalent for, each with its reason.
+2. A prototype or design handoff is ported verbatim, its hand-made assets with it, though a document the project owns names a source for them. Suggest: map each asset to the named source before porting — the prototype decides the look, the document decides the source; an asset kept hand-made says why.
+3. The plan adds one item to a hand-made set. Suggest: ask H4.1 once of the whole set, not only of the new item; the set's size is the figure H2.3 asks for.
 
 ### I. One truth, several copies
 
