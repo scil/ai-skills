@@ -1,6 +1,6 @@
 # Validation cases
 
-Each case names a plan fixture, what the report must contain, and the wrong output it exists to catch. Two of the six are correct plans whose questions must come back *unlikely*: a review that only ever meets known bugs never learns that it over-prescribes. Run a case by invoking the skill with the fixture as the plan, in a session that did not write it; a case passes when every "must" holds and no "must not" does.
+Each case names a plan fixture, what the report must contain, and the wrong output it exists to catch. Two of the seven are correct plans whose questions must come back *unlikely*, and a third is a plan that rightly accepts a residual risk: a review that only ever meets known bugs never learns that it over-prescribes. Run a case by invoking the skill with the fixture as the plan, in a session that did not write it; a case passes when every "must" holds and no "must not" does.
 
 ## 1. A known bug is raised (B2.1)
 
@@ -64,3 +64,20 @@ Each case names a plan fixture, what the report must contain, and the wrong outp
 **Must.** Materials lists `postgres` as loaded. A row `B1.2 · postgres` *likely*, whose suggestion is a partial unique index on `user_id WHERE status = 'active'` with `ON CONFLICT (user_id) WHERE status = 'active' DO NOTHING RETURNING`. A row for J1.1 (`· postgres` if it cites the immutable-predicate limit) *likely*: until the nightly job runs, an expired hold still blocks the insert.
 
 **Must not.** A suggestion naming a different database's syntax; Postgres syntax quoted as if it were the catalog question's own wording; a new catalog question proposed for "Postgres partial index predicate" (that is a binding entry, not a shape).
+
+## 7. A proportionate residual is accepted, not padded (C4.3)
+
+**Plan.**
+
+```
+1. GET /records/:id requires sign-in. Ids are random UUIDs, issued only in links the owner sends.
+2. A missing id → 404 "not found", after one indexed read.
+3. A record hidden from the caller → the same 404 "not found", byte for byte, after four more indexed reads
+   (owner, audience rules, exclusions, share link). No lock is taken and no message or external call is
+   made before the refusal.
+4. Non-Goals: the hidden path's residual timing (a few reads) is accepted.
+```
+
+**Must.** `Unlikely: C4.1 (one body and status, step 3), C4.3 (ids unguessable and signed-in, gap is a few reads with no wait, named in Non-Goals)`. The model, restated, says what an outsider already holds (an unguessable id, a session).
+
+**Must not.** A C4.3 row whose suggestion is padding every refusal to a fixed time, dummy reads on the missing path, or a constant-time comparison; C4.3 marked *possible* on the grounds that nothing in the plan rules a timing difference out.
