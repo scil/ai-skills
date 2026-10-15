@@ -61,7 +61,7 @@ writing. `anki.ps1` (skill root) is the legacy PowerShell helper — do not use 
 
 ## Workflow
 1. **Pick** genuinely-new, worth-understanding concepts; skip what the user clearly knows / pure project trivia. Merge closely-related (e.g. NFC/NFKC). Order shallow→deep.
-2. **Atomic cards** — build every technical card with the required anatomy below. Split one concept into several small notes, but keep enough background on each note for it to stand alone months later. Lead with the situation, not the term.
+2. **Atomic cards** — build every technical card with the required anatomy below, kept short (see "Short cards"). Split one concept into several small notes, but keep enough background on each note for it to stand alone months later. Lead with the situation, not the term.
 3. **Linking cards (必做)** — comparison / relationship / structure / "one method, many uses" cards that connect a cluster; shared `::` tag (e.g. `unicode::skeleton`). A linking card must state a relation that **no single member card already states** — see the no-redundancy rule below.
 4. **Tags (every note)** — `ai-teach-me` (auto) + 1–3 `::`-hierarchy topic tags + the `lib::` tag from the stack-attribution rule below; lowercase-kebab, ≤5 per note, reuse existing tags (`anki_info.py --tags` first).
 5. **Author `cards.md`** (Write tool) in the Markdown cards format — front-matter for deck/model/shared
@@ -82,7 +82,9 @@ Compression is the enemy here — a card is not an index entry.
 ### Required anatomy for every technical card (必做)
 
 A technical card must be self-contained enough that a beginner can recover the original lesson
-months later without the conversation, repository, or project nouns. Use this order:
+months later without the conversation, repository, or project nouns. Use this order — across the
+cards of one lesson; a single short card carries only the parts its one question needs (see "Short
+cards" below):
 
 1. **Scope banner** — name the library/stack, or say the principle is general. Follow the stack-
    attribution rules below.
@@ -124,10 +126,24 @@ depends on it — see `scripts/README.md` "Speech convention"):
 
 Older cards in the deck are Chinese-first; do not rewrite them unless asked.
 
-This structure is mandatory for technical Q&A cards even when it makes the back long. Long backs
-are acceptable; missing context is not. Pure vocabulary, hard-fact Cloze, and linking cards may omit
-broken/fixed code only when code would be artificial, but they still need scope, enough background
-to stand alone, plain-language explanation, and contrasts with commonly confused terms.
+### Short cards (必做)
+
+**One question per card, and a short back.** If a back needs more than about three mechanism
+bullets plus one code block, or more than two or three vocabulary entries, split it into several
+notes — the scenario, the term, the fix and the trade-off are usually separate cards. The user
+rejected long cards (2026-10-13: three cache cards → eleven); the anatomy above is the *menu* for a
+lesson, not a list every single card must carry. Each split card still keeps the scope banner, its
+own short scenario, a plain answer and a memory line, so it stands alone.
+
+**Repeat the key English terms across the split cards.** Seeing `stale`, `TTL`, `revalidate` again
+on the next card, in a new sentence, is how the user learns the English — so reuse the cluster's key
+words in each card's question, answer and memory line. Teach a term's vocabulary entry once, then
+just use it. This is repetition of *words*, not of *answers*: the no-redundancy rule below still
+forbids two cards with the same answer.
+
+Pure vocabulary, hard-fact Cloze, and linking cards may omit broken/fixed code only when code would
+be artificial, but they still need scope, enough background to stand alone, plain-language
+explanation, and contrasts with commonly confused terms.
 
 Two rejected failure modes of the anatomy, both observed: a **scenario built from project nouns**
 ("资料页的头像在冷启动时…", `useSession()`) — the reader cannot tell library from app from point;
