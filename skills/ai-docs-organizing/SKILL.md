@@ -6,71 +6,46 @@ description: Organize the docs AI agents load — AGENTS.md / CLAUDE.md, skills,
 
 # Organizing the documents agents read
 
-Hand-offs: the content of one instruction file → ai-agents-md; one skill's `SKILL.md` (description, body, references, slimming, folding a fork back) → ai-skills-manager; where any other project fact lives → docs-maintainer or the project's own docs skill.
+Hand-offs: the content of one instruction file, including how a guard is phrased and why prose is not the brake → ai-agents-md; one skill's `SKILL.md` → ai-skills-manager; where any other project fact lives → docs-maintainer or the project's own docs skill.
 
-A **harness** is the program that runs a model (Claude Code, Codex CLI). Each decides on its own what it loads into context, what it truncates and which stores it can see — and none tells you when it drops something. Origin: [`readme.md`](readme.md).
+A **harness** is the program that runs a model (Claude Code, Codex CLI). Each decides on its own what it loads, what it truncates and which stores it can see — and none tells you when it drops something. Origin: [`readme.md`](readme.md). `§n` points into [`references/process.md`](references/process.md).
 
 ## The loading model comes first
 
-Before judging any document, establish two things per harness and write them down with the method used ([`references/harness-loading.md`](references/harness-loading.md)):
+Before judging any document, establish per harness, and write down with the method used ([`references/harness-loading.md`](references/harness-loading.md)): **what it auto-loads and where it silently stops** (file names, imports, nested files, byte caps, skills directories, hooks), and **which stores it can see** — one agent's memory is invisible to the other.
 
-1. **What it auto-loads, and where it silently stops** — instruction file names, import syntax, nested-file rules, byte caps, skills directories, slash commands, hooks.
-2. **Which stores each agent can see** — one agent's memory is invisible to the other; the repository is the only store they share.
-
-Never assume either from documentation alone. **Probe**: ask the agent, with file reads forbidden, to quote the last lines of the instructions it received and to name the last heading. A probe costs one minute and settles what a week of "but it's in AGENTS.md" cannot.
+Never take either from documentation alone. **Probe**: ask the agent, with file reads forbidden, to quote the last lines of the instructions it received and name the last heading. One minute settles what a week of "but it's in AGENTS.md" cannot.
 
 ## Principles
 
-1. **The loading layer sets the budget.** Always-loaded material (an instruction file, a skill description, a memory index) is paid by every model on every turn whether or not it fires; pointer-reached material costs only its pointer. For some harnesses the budget is a hard byte cap, not a soft attention cost. Push anything not every task needs behind a pointer. **A pointer is cheap only until something routes every task of a kind through it**: a plan that four skills name as "the domain model" is a *hot* doc, paid whole on each read — a Read tool reads the file, not the section — so it gets its own diet (below).
-2. **The repository is the only memory all agents share.** A project fact living only in one agent's memory is a fact the other engineer cannot see. Memory is for how the user wants *that* agent to behave, and for tool quirks of *that* harness.
-3. **One meaning, one owner.** Route each fact to its existing owner (the project's ownership map; `docs-maintainer` for the generic system). The same meaning in the contract, the code locator and a memory file is three edits and one drift.
-4. **Respect the information hierarchy.** Steps the agent performs, reference it consults, and disclosed reference reached by pointer are three tiers. Executable recipes, retired-environment history and inventories of the environment leave the contract; rules stay, compressed to invariant + `Instance:` + the test or spec that enforces them — the same compression applies to a code-locator entry that has grown into an essay.
-5. **Guards are model-relative.** A rule is a no-op for an agent that already behaves that way and load-bearing for one that does not. Write each guard for the agent that failed, tag its incident and date, prune it when neither agent trips on it. Phrase positively — a list of "Do not…" keeps the forbidden behaviour activated.
-6. **The environment is the source of truth; docs are a cache.** A list of scripts, a command block, "app X exists" — each is a copy of what `ls` or `package.json` answers, and copies go stale. Cache only what cannot be looked up: the unwritten convention, the reason, the gotcha no config confesses.
-7. **Instructions are a behavioural layer, not the brake.** The brake is the harness's sandbox and approval configuration. Put destructive-action policy at the top of the contract, short — and fix the config when the config is the problem.
+1. **The loading layer sets the budget.** Always-loaded material (an instruction file, a skill description, a memory index) is paid on every turn, for some harnesses against a hard byte cap; pointer-reached material costs only its pointer — until the pointer turns *hot* (below).
+2. **The repository is the only memory all agents share.** Agent memory holds how the user wants *that* agent to behave and *that* harness's quirks; project facts go to the repo.
+3. **One meaning, one owner.** Route each fact to its existing owner (the project's ownership map; docs-maintainer for the generic system). Three copies are three edits and one drift.
+4. **Respect the information hierarchy.** Steps performed, reference consulted, reference disclosed by pointer: three tiers. Recipes, retired-environment history and environment inventories leave the contract; rules stay as invariant + `Instance:` + the test or spec that enforces them — so does a code-locator entry grown into an essay.
+5. **The environment is the source of truth; docs are a cache.** A script list or "app X exists" copies what `ls` or `package.json` answers, and goes stale. Cache only what cannot be looked up: the unwritten convention, the reason, the gotcha.
 
 ## Process
 
-1. **Inventory by loading layer**, not by folder: always-loaded contract · skills (descriptions always, bodies on trigger) · harness wiring (hooks, settings) · pointer-reached docs · human mirrors · residue. Template in [`references/process.md`](references/process.md).
-2. **Measure.** Bytes of every instruction chain an agent can be started in (root; each nested file on the path to a working directory; the user-level global file counts too). Probe each harness. Count skills and check whether the harness reports its skill budget as exceeded.
-3. **Verify every claim against the tree** and tag its provenance: `[repo]`, `[user-config]`, `[external-local]`, `[runtime]` (with the probe), `[session]` (one observation, dated). A plan built on an unverified number sends the wrong block to the wrong owner. **Disputes**: when harness documentation, runtime probes, or design sources conflict (e.g., vendor documentation contradicts observed behaviour, or multiple probes give different results), name each disagreement in the inventory with the sources on each side, the evidence level of each, and which finding the evidence's weight supports.
-4. **Review the plan with the other agent before editing** — a read-only design review (`codex-review` skill: `codex exec -s read-only`, "review as a design and as claims"). The other harness knows its own loading model; it will catch the one you got wrong. Verify each finding yourself; reject with evidence.
-5. **Decide a disposition per block**: stay (compressed) · move to an existing owner · delete because the environment is the truth · delete because stale. Amend the ownership map deliberately if a new owner is needed; never invent one to legalize a move.
-   **For every problem the inventory surfaces, trace its source before disposing of it** (next section): the block you are about to delete was put there by a rule, a tool, or a habit that is still running.
-6. **Execute in order**: the byte-budget guard first, so it goes red on the old contract (raising the harness's byte limit instead restores text, not attention); specs for rules that lived only in the contract, written from *shipped behaviour and its tests*, never from the prose (the prose is the stale party); the contract rewrite under budget; skills; hooks; memory triage; the user-level preference file.
-7. **Prove**: guard green, probe again (the last heading is the file's last heading, no mid-sentence cut), the project's full gate, and a rule-by-rule checklist showing every original rule's new home.
+1. **Inventory by loading layer**, not by folder (§1).
+2. **Measure** the bytes of every instruction chain an agent can start in (root, nested files on the path, the user-level global file); probe each harness; count skills and check for a roster-budget warning.
+3. **Verify every claim against the tree** and tag its provenance: `[repo]`, `[user-config]`, `[external-local]`, `[runtime]` (with the probe), `[session]` (dated). Name each dispute between documentation, probes and sources, with the evidence on each side and the finding its weight supports.
+4. **Review the plan with the other agent before editing** — read-only, as a design and as claims (§8, `codex-review`); it knows its own loading model. Verify each finding; reject with evidence.
+5. **Decide a disposition per block** (§2): stay compressed · move to an existing owner · delete because the environment is the truth · delete as stale. Amend the ownership map deliberately; never invent an owner to legalize a move. Trace every problem to its source first (next section).
+6. **Execute in order**: the byte-budget guard, red on the old contract (§3; raising the harness's limit restores text, not attention); specs for contract-only rules, written from shipped behaviour and tests, never the prose (§4); the contract; skills; hooks; memory; the user-level file.
+7. **Prove**: guard green; probe again (the file's last heading arrives, no mid-sentence cut); the full gate; a rule-by-rule checklist giving every original rule its new home.
 
 ## Source and symptom — fix both
 
-A stale sentence, a duplicated fact, a section that keeps regrowing: each is a **symptom**, and something produced it — a rule that says "put X here", a tool that generates it, a hook that nudges toward it, a memory that enshrined it, or an event nobody propagated (an app deleted, an environment retired). Deleting the symptom alone means meeting it again in a month; fixing the source alone leaves every instance it already produced. Do both, in the same change ([`references/process.md`](references/process.md) §7):
-
-1. **Name the producer.** For a section: `git log -S'<its heading or key phrase>' -- <file>` finds the commit that introduced it; read that commit's message and diff for the rule that came with it. For a duplicated fact: `git grep` the phrase across the contract, the docs skill, memories, hook scripts and `.gitignore` comments — every copy is a place the rule propagated to.
-2. **Fix the source where it was first written** — delete or invert the meta-rule, change the generator's input, retire the memory — and fix every copy in the same change, or the rule re-propagates from the copy you missed.
-3. **Fix the symptom too**: the existing instances the source already produced.
-4. **Add a guard where one can exist** (a byte budget, a path-exists check, a test that reads the file): a corrected rule regrows without one.
-5. **Record the trace** (commit, rule, every copy touched) in the change, so the next reader can tell a decision from a leftover.
-
-Worked example: [`readme.md`](readme.md).
+A stale sentence, a duplicated fact, a regrowing section is a **symptom** of a producer still running: a rule, a generator, a hook's nudge, a memory, or an event nobody propagated. In one change: **name the producer** (`git log -S`, `git grep` every store); **fix it where first written and in every copy**, or it re-propagates; **fix the existing instances**; **add a guard** where one can exist; **record the trace** — *commit · rule · copies touched · guard*. Commands and known sources: §7; worked example: [`readme.md`](readme.md).
 
 ## Skills, hooks, memory
 
-- **The contract lists no skills.** Every harness discovers a skill by scanning the skills directory and reading its `description`; a skill is registered by existing. A "Project Skills" section in the instruction file is a second copy of every description, paid on every turn, and a meta-rule like "routing stays here; skills must not reference each other" is what forces it to grow — delete it, and do not replace it with "skills are not listed here": a self-referential sentence is another always-loaded line, and the rule belongs in the project's docs-ownership skill (and here). A description carries its trigger and nothing else (what one belongs in it, and in the skill's body and references, is ai-skills-manager's). Shared-skill membership belongs in the ignore manifest the link script reads, not in prose.
-- **Skills come in four provenance classes**, each with its own policy: *project-owned routers* (a router of 500–900 words, worked examples in `references/`); *shared through directory junctions* (gitignored; an explicit, optional bootstrap script with a configurable source — never an install step; the contract marks them machine-local); *vendored* (never edited selectively — a compiled duplicate is part of the upstream interface; one sanctioned project-owned `OVERLAY.md` inside the folder, outside the upstream hash, pointed at from inside the budget); *generated by a tool* (regenerate, never hand-edit, and never keep a second copy as a slash command for one harness).
-- **The skill roster is a budget too.** Codex shortens *every* description once the roster (repo + user-level + plugins) outgrows its slice, so a skill that never fires costs the others the phrase that would have fired them; on the warning, measure the roster, then in cost order clean the user level, shorten shared descriptions, retire or merge what restates the contract or a spec, park the rest in a sibling folder no harness scans ([`references/process.md`](references/process.md) §11).
-- **A Stop-hook nudge needs a SessionStart baseline**, or a stray edit already in the tree silences it forever; count only owner paths as "docs touched".
-- **Memory triage, four bins**: already owned in the repo → delete or pointer; a project fact the repo lacks → write it into its owner, then delete; a preference about that agent's own behaviour → keep; stale → delete. Regenerate the index from what survives.
-- **User-level preferences live in one file** — where the harness without an import syntax reads natively — imported by the other harness's file, and sized as part of the shared budget (≤ 4 KiB when the cap is 32 KiB).
+- **The contract lists no skills.** A skill is registered by existing; a "Project Skills" section is a second copy of every description. Delete it with the meta-rule that forced it, and write no "skills are not listed here" line — that rule belongs in the docs-ownership skill. Shared-skill membership lives in the ignore manifest the link script reads.
+- **Four provenance classes, four policies** (§1); **the roster is a budget** — Codex shortens *every* description once it overflows (§11).
+- **A Stop-hook nudge needs a SessionStart baseline**, or a stray edit silences it forever; count only owner paths (§5).
+- **Memory triage, four bins** (§6); regenerate the index from what survives.
+- **User-level preferences live in one file**, where the harness without imports reads natively, imported by the other and sized within the shared budget.
 
-## Hot pointer docs — the diet in a different form
+## Hot pointer docs
 
-Find them in the inventory's layer D: any doc that the contract or two or more skills name as *the* place to read for a kind of question. Its cost is bytes × reads, and the reads are whole-file. Then ([`references/process.md`](references/process.md) §10):
-
-1. **Measure per section in bytes**, not lines — a padded Markdown table is half whitespace; the two heaviest sections usually carry the fat.
-2. **Hand the shipped behaviour to its owner.** A section describing what already ships, with a spec or test elsewhere, is a copy that only drifts. It shrinks to the concept, the *reasoning* that produced it (the why is the plan's real value and has no other owner), and the owner's name. Target state that ships nowhere stays whole.
-3. **History out.** Changelog comments, "revised by" narratives, old review notes → an archive file beside it; git holds the same story.
-4. **A question-first map at the top**: section → the question it answers → the owner of its shipped behaviour. That, plus a one-line reading rule ("read the map, then the section, then the spec it names"), is what turns whole-file reads into range reads — and **put the reading rule in the skill that routes there**; a reader who was told "read the plan" reads the plan.
-5. **Split last, by purpose, not by section**: only a section still heavy after the diet and read for a different reason than the rest moves to a sibling file with a two-line stub. Sixteen one-section files lose the narrative that made the doc worth reading and break every `§n` pointer.
-6. **Prune the pointers that named it** the same way as any move: a sentence that stands without the pointer drops it (a stale pointer misleads; it never saved a token).
-
-Instance: a 71 KB domain plan four skills routed to, ≈18k tokens per read; changelog out, table padding out, shipped blocks to their 49 specs, map in → 53 KB, and the routing skill told to range-read.
-
+A doc that the contract or two or more skills name as *the* place for a kind of question costs bytes × reads, and every read is whole-file. Diet before splitting (§10): measure sections in bytes; hand shipped behaviour to its spec, keeping concept, reasoning and owner (unshipped target state stays whole); history to an archive; a question-first map on top, and the reading rule — map, section, owner — in the skill that routes there; split last, by purpose; prune the pointers that named it. Instance: [`readme.md`](readme.md) item 9.

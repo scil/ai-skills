@@ -56,3 +56,29 @@ Since 2026-09-15 the *content* of one instruction file — which rules earn a li
 
 Since 2026-09-16 the *content* of one skill's `SKILL.md` — the description as trigger, the router body and its references, the slim (formerly process.md §9), folding a fork back — is owned by the sibling skill `ai-skills-manager`, on the same line. The roster stays here: which directories load, provenance classes, the roster budget (§11), "the contract lists no skills". Items 7 and 8 above remain as the incidents that produced both halves.
 自 2026-09-16 起，单个 skill 的 `SKILL.md` *内容*——作为触发条件的 description、路由器正文与 references、瘦身（原 process.md §9）、fork 并回——按同一条切线归相邻 skill `ai-skills-manager`。花名册留在这里：加载哪些目录、来源类别、花名册预算（§11）、"契约不列 skill"。上文第 7、8 条作为产生这两半的事故保留。
+
+## Slimmed to a router, 2026-10-19 / 瘦身为路由器
+
+`SKILL.md` had grown to 2,137 words (13 KB), twice the 500–900 word router size this skill sets for project skills, and about 45% of it restated its own `references/process.md` or the sibling `ai-agents-md`. It now holds the principles, the process and one line per topic with a `§n` pointer: 1,046 words, 6.7 KB. No rule was dropped; each moved line has the home below.
+`SKILL.md` 长到 2,137 词（13 KB），是本 skill 给项目 skill 定的 500–900 词路由器尺寸的两倍，约 45% 在重述自己的 `process.md` 或相邻的 `ai-agents-md`。现在只留原则、流程、每个主题一行加 `§n` 指针：1,046 词、6.7 KB。没有丢规则，搬走的每行去向见下表。
+
+| Old place in `SKILL.md` | New home |
+|---|---|
+| Principle 5 "Guards are model-relative… phrase positively" | `ai-agents-md` principle 4 (model-relative guards, write for the agent that failed, prune); positive phrasing was already `ai-agents-md/references/rules.md` |
+| Principle 7 "Instructions are a behavioural layer, not the brake" | `ai-agents-md` principle 3, plus the clause "fix the config, not the prose"; the hand-off line here names it |
+| Principles 1–4, 6 | principles 1–5, compressed; "a Read tool reads the file, not the section" → "every read is whole-file" in Hot pointer docs |
+| Process step 1, the six layer names | `process.md` §1 table (already there) |
+| Process step 3 "Disputes" (one long sentence) | the same rule, one short sentence |
+| Process step 4, the `codex exec` flags | `process.md` §8 (already there) |
+| Source and symptom, five numbered steps | one paragraph with the five verbs; "meeting it again in a month", the guard examples → `process.md` §7 lead; the producer commands were already §7's table |
+| "Do not replace it with 'skills are not listed here': a self-referential sentence is another always-loaded line" | the rule stays in Skills; the reason → `process.md` §7, meta-rule bullet |
+| "A description carries its trigger and nothing else" | the hand-off line to `ai-skills-manager` |
+| Four provenance classes and their policies | `process.md` §1, "Skill provenance classes" |
+| The roster budget's cost order | `process.md` §11 (already there) |
+| Memory triage bin definitions | `process.md` §6, "Bins" line |
+| User-level file "≤ 4 KiB when the cap is 32 KiB" | `references/harness-loading.md` Budgeting (already there) |
+| Hot pointer docs, six numbered steps | one sentence in `SKILL.md`; "padded table is half whitespace", "two heaviest sections", "a reader told to read the plan reads the plan", "sixteen one-section files lose the narrative", "prune the pointers that named it" → `process.md` §10 |
+| Hot pointer docs Instance (71 → 53 KB) | item 9 above (already there) |
+
+Principles were renumbered 1–5. The two citations by number outside this skill — `ai-agents-md/readme.md` (principle 7) and `ai-agents-md/references/harness/claude-code.md` (principle 5) — were repointed to `ai-agents-md`'s own principles 3 and 4.
+原则重新编号为 1–5。本 skill 以外按编号引用的两处——`ai-agents-md/readme.md`（原则 7）和 `ai-agents-md/references/harness/claude-code.md`（原则 5）——已改指 `ai-agents-md` 自己的原则 3 和 4。
