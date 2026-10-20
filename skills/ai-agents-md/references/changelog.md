@@ -2,6 +2,12 @@
 
 Newest first. Each entry is written by the Refresh path (`refresh.md` §4); proposals are applied only after the user accepts them.
 
+## 2026-10-20 — one finding taken from the docs-maintainer refresh (not a full refresh)
+
+- Source: `claude-code-memory-docs`, read during the docs-maintainer refresh of the same day (its changelog has the full entry). Fingerprints and `last-refresh` here are unchanged; this skill's own gate is still due and its other sources were not read.
+- Finding: Claude Code ≥ v2.1.277 reads `AGENTS.md` directly when no `CLAUDE.md` or `CLAUDE.local.md` is at or above the working directory; any such file turns the direct read off, so a personal `CLAUDE.local.md` without a `CLAUDE.md` hides `AGENTS.md` from its owner.
+- Applied (accepted by the user): `harness/claude-code.md` loading row; principle 2 and the Create and Update paths in `SKILL.md` (the bridge is needed only for Claude-only lines, a `CLAUDE.local.md`, or older versions); `review-checklist.md` item 3. `templates/CLAUDE.md` unchanged: it is still the bridge when one is needed.
+
 ## 2026-09-15 — baseline
 
 - Sources: 20 registered, fingerprints computed for the first time; 0 changed by definition.

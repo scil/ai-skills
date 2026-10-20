@@ -6,7 +6,7 @@ Run top to bottom. Each item names what to check and what a hit becomes in the f
 
 1. **Chain bytes per start directory**: root + each nested file on the path + the user-level global file. Codex cap is 32 KiB combined. Over → *ai-docs-organizing* diet, not a rewrite here.
 2. **Lines per file** against the 200-line Claude Code target. Over → split by scope (nested file, `.claude/rules/` with `paths:`), not by section.
-3. **Bridge integrity**: `CLAUDE.md` is `@AGENTS.md` plus Claude-only lines; no shared rule lives only in the bridge. `Test-Path` the imported file.
+3. **Bridge integrity**: `CLAUDE.md`, if present, is `@AGENTS.md` plus Claude-only lines; no shared rule lives only in the bridge. `Test-Path` the imported file. An absent `CLAUDE.md` is fine only when nobody keeps a `CLAUDE.local.md` or runs Claude Code before v2.1.277 ([`harness/claude-code.md`](harness/claude-code.md)).
 4. **Nested files only point upward** and only carry rules that differ from the root.
 
 ## B. Every line: admission

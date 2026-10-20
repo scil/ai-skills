@@ -4,7 +4,7 @@ Verified 2026-09-15 against [code.claude.com/docs/en/memory](https://code.claude
 
 | Fact | Consequence for the file |
 |---|---|
-| Reads `CLAUDE.md`, not `AGENTS.md`; `@AGENTS.md` import is the documented bridge; a symlink also works (Windows symlinks need Developer Mode or admin — use the import) | `CLAUDE.md` = `@AGENTS.md` + Claude-only lines |
+| Since v2.1.277, with an `AGENTS.md` and no `CLAUDE.md` **or `CLAUDE.local.md`** at or above the working directory, reads `AGENTS.md` directly (verified 2026-10-20); a setting loads both. Any `CLAUDE.md` or `CLAUDE.local.md` turns the direct read off, and then the `@AGENTS.md` import is the bridge (on Windows the import, not a symlink) | no `CLAUDE.md` when there are no Claude-only lines and nobody runs an older version; otherwise `CLAUDE.md` = `@AGENTS.md` + Claude-only lines. A personal `CLAUDE.local.md` without a `CLAUDE.md` hides `AGENTS.md` from its owner: keep the bridge where anyone uses one |
 | Imported files are expanded at launch and consume context in full | `@import` organizes; it does not save tokens |
 | Nested `CLAUDE.md` in subdirectories load on demand when files there are read | scope-specific rules go nested; the root stays small |
 | `.claude/rules/*.md`: with a `paths:` frontmatter, loaded only when matching files are touched; without it, always loaded. `~/.claude/rules/` for user-level | the real context saver for path-scoped rules; always-loaded rule files are just more root |
