@@ -33,7 +33,7 @@ Add to each change, as short sections, so the change folder is a full ExecPlan:
 
 1. **Specs are written from shipped behaviour and its tests, never from the contract's prose.** When the two disagree, the prose is the stale party. (ThanksPorch, 2026-09-13; `ai-docs-organizing/readme.md`.)
 2. **One scenario, one test.** A `#### Scenario:` names the situation so it maps to a test name; the ownership map's *Enforced by* column for a spec row is that test.
-3. **Hot specs get a map.** A capability that skills route to by name is read whole on every task of its kind; above ~20 KB, add a question-first map at the top of `spec.md` and put the reading rule (map → requirement → test) in the skill that names it.
+3. **Hot specs get a map** (`structure.md` → Hot documents): here the reading rule is map → requirement → test.
 4. **The managed block is the contract's, not yours.** Do not hand-edit inside the markers; `openspec update` overwrites them. Rules you add to the contract go outside the block.
 5. **Promote before archiving.** A term, state or grouping introduced by a change goes to its layer-2 owner (vocabulary, data-model meaning, config doc) in the same change; archive moves the deltas into specs but nothing else.
 6. **Deltas are facts of record in transit.** A `MODIFIED Requirements` block that contradicts a test is a defect in the delta, and the change is not applied until they agree.

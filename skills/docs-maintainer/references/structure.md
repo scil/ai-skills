@@ -1,19 +1,19 @@
 # Annotated Structure — by loading layer
 
-An information architecture, not a required file tree. Every durable project fact is routed to one owning node; a node may be a section, a file, or a directory (File-First Split Rule). Since 2026-09-15 the nodes are grouped by **loading layer**: how the fact reaches an agent and what it costs on each read. The layer decides the writing rules for the node. Node labels omit `.md`; comments explain ownership and update triggers and are not part of names. Sources for each rule: [`sources.md`](sources.md); reasoning: [`../readme.md`](../readme.md).
+An information architecture, not a required file tree. Every durable project fact is routed to one owning node; a node may be a section, a file, or a directory (File-First Split Rule). Nodes are grouped by **loading layer**: how the fact reaches an agent and what it costs on each read. The layer decides the writing rules for the node. Node labels omit `.md`; comments explain ownership and update triggers and are not part of names. Sources for each rule: [`sources.md`](sources.md); reasoning: [`../readme.md`](../readme.md).
 
 ```text
 # Layer 0 — always loaded: paid on every turn by every agent
 AGENTS.md / CLAUDE.md                 # The map. Boundaries, non-obvious commands, scoped verification, architecture rules, traps, and POINTERS into layers 1–6. No overview, no directory listing, no skill list, no procedure. Content rules: the ai-agents-md skill. Budget: ai-docs-organizing.
 
-# Layer 1 — working notes: what agents read most (60.5% of documentation interactions are instruction files and working notes)
+# Layer 1 — working notes: what agents read most
 docs/plans                            # Execution plans as living documents. One file per piece of work that outlives a session.
   active/<yyyy-mm-dd>-<slug>          # Purpose & big picture · Progress (checkboxes, timestamps) · Surprises & discoveries · Decision log (every decision, rationale, date) · Outcomes & retrospective. Update on every working step.
   completed/                          # Moved here on completion with the retrospective written; stable facts promoted to layer 2 first; historical context stays here.
   tech-debt                           # Known debt: item · owner · grade · trigger that would make it worth paying. Update when debt is found or paid.
 
 # Layer 2 — system of record: hand-maintained, reached by pointer, code-wins
-docs/product                          # Goals, users, vocabulary, accepted requirements with decision state (Candidate · Proposed · Accepted · Rejected · Implemented), boundaries, non-goals. Update when product behaviour, naming, UX contracts or accepted scope change.
+docs/product                          # Goals, users, vocabulary, accepted requirements with decision state (`cross-cutting.md` → Future Work), boundaries, non-goals. Update when product behaviour, naming, UX contracts or accepted scope change.
 docs/architecture                     # The overview the contract must not carry, plus the structural facts.
   overview                            # Modules, dependencies, boundaries, responsibility splits, design principles. Update when boundaries or responsibilities change.
   c4-context                          # C4 L1: users, external systems, system and trust boundary; one diagram. Update when actors or boundaries change.
@@ -22,14 +22,14 @@ docs/architecture                     # The overview the contract must not carry
   config                              # Config roots, profiles, schema, path rules, environment expansion, removed names. Update when fields, defaults, paths or migrations change.
   flows/<name>                        # One important runtime sequence or state transition each, with a sequence or activity diagram. Update when that flow changes.
   deployment                          # Hosted environments, networks, runtime topology, deployment trust boundaries. Update when topology changes.
-  quality-attributes                  # The least-documented and least-inferable facts (security 14.8%, performance 14.5% of 2,303 context files). One owner each:
+  quality-attributes                  # The least-documented and least-inferable facts. One owner each:
     security                          #   authn, authz, secrets, data protection, destructive-operation safety, permissions, threat model. Update when trust or safety behaviour changes.
     reliability                       #   SLOs, failure modes, retries, backups, rollback and recovery facts. Update when recovery or partial-failure behaviour changes.
     performance                       #   budgets (latency, bundle, memory), the measurements that back them, and where profiling lives. Update when a budget or its check changes.
 docs/decisions                        # ADRs in MADR shape: Context · Decision drivers · Considered options · Decision outcome · Consequences · Confirmation. Status: proposed · accepted · deprecated · superseded by N. Add when a decision is architecturally significant; never edit an accepted ADR — supersede it.
 docs/engineering                      # Navigation and conventions. Facts, never steps (steps are layer 5).
   repo-map                            # System map: what each directory or module is and owns, entry points. Update when structure or boundaries move.
-  code-locator                        # Problem → start files → invariant/trap → smallest verifying check. Add after a recurring or subtle problem; refresh with fixes that touch a named path; delete stale entries. Read by search (grep the symptom or term), never whole; write entries in the words the user used to report the problem. Navigation is where measured guidance gains come from.
+  code-locator                        # Problem → start files → invariant/trap → smallest verifying check. Entry discipline and reading rule: Repo map and code locator, below.
   conventions                         # Only conventions that differ from tool defaults and that no linter encodes; each names its enforcement or `advisory`. Update when a convention or its enforcer changes.
   testing                             # Strategy facts: layers, fixtures, what is never mocked, coverage boundaries, regression themes. Commands live in the manifest; the run recipe is a skill.
   versioning                          # Versioning and compatibility policy, release channels. The release procedure is a skill.
@@ -39,9 +39,9 @@ docs/changelog                        # User-visible changes, migrations, breaki
 # Layer 3 — generated: regenerate, never hand-edit; a CI diff check proves it
 docs/generated                        # Each artefact records its generator command and source. Hand edits are a defect.
   db-schema                           #   from the schema package or migrations.
-  api                                 #   route/command/event index from routers, handlers, validators; openapi.yaml / asyncapi.yaml when an external consumer needs a machine-readable contract and the framework can emit it. Hand-written API prose is the least-read documentation type (1.3%) and is not created by default.
+  api                                 #   route/command/event index from routers, handlers, validators; openapi.yaml / asyncapi.yaml when an external consumer needs a machine-readable contract and the framework can emit it. Hand-written API prose is not created by default.
   dependency-graph                    #   module or package graph, when the architecture rules are enforced by a tool that can print it.
-  components                          #   C4 L3 views, only if generated ("only create component diagrams if you feel they add value, and consider automating their creation"); C4 L4 never ("most IDEs can generate this level of detail on demand").
+  components                          #   C4 L3 views, only if generated; C4 L4 never (diagramming.md).
 
 # Layer 4 — vendored references: third-party knowledge the agent needs offline
 docs/references/<library>-llms.txt    # A library's llms.txt or a pinned excerpt of its docs, with version, source URL and fetch date. Update when the dependency version changes.

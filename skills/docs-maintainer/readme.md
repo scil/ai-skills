@@ -77,3 +77,20 @@ Same tiering as `ai-agents-md`: vendor and standard sites decide; research corro
 | `structure.md` "What moved, and why (2026-09-15)" | Old node names, above; the reasons were already the bold-changes table |
 | Refresh path's tier sentence | `references/refresh.md` admission by tier (already there) |
 | Description triggers: owner list, C4, "whether an API needs a document", the 30-day gate | body: principle 3 (layers, API), Creating step 4 (C4), the refresh gate section; the skill is slash-command only, so description triggers do not route it |
+
+## No-op pass, 2026-10-19 / 空指令清理
+
+Each reference sentence was asked whether a current model (Opus 5.5, GPT-5.x) would do it unprompted; those were cut, and each rule repeated across files kept one full copy. `cross-cutting.md` 4,044 → 2,026 B, `diagramming.md` 1,790 → 1,025 B, `structure.md` 12,612 → 12,024 B, `adopting-openspec.md` 6,145 → 6,005 B; 3.5 KB in all. PlantUML kept.
+逐句问：当前模型（Opus 5.5、GPT-5.x）不提示也会这么做吗？会的删掉；跨文件重复的规则只留一份完整版本。共减 3.5 KB，保留 PlantUML。
+
+| Old | New home |
+|---|---|
+| `diagramming.md` "do not diagram trivial structures", "keep each diagram small, split", "update the diagram in the same change" | deleted as no-ops; the same-change rule is also `SKILL.md` Updating step 3 |
+| `cross-cutting.md` bullets for config, architecture boundary, setup workflow, schema, new terms, decisions, repeated AI mistakes | the ownership-map template rows for config, architecture, data model, generated schema and repeated mistakes; `SKILL.md` Updating steps 2–4 (terms, decision log, ADR, diagram, regenerate layer 3, promote and complete); `structure.md` layers 0 and 5 (setup lives in the manifest and a skill) |
+| `cross-cutting.md` API, safety, dependency-version, framework-bridge bullets | kept, as the four cases the map does not make obvious |
+| `cross-cutting.md` → Links "relative links, `#anchors`, validate after moving" | one line: relative, not root-relative; validating links is `SKILL.md` Creating step 5 and gardening |
+| `structure.md` statistics (60.5%, 14.8% / 14.5% of 2,303, 1.3%) and "since 2026-09-15" | this readme, Why restructure and the bold-changes table (already there) |
+| `structure.md` C4 L3/L4 quotes | `diagramming.md` only |
+| `structure.md` tree comment on the code locator (entry discipline, read by search, the user's words) | `structure.md` → Repo map and code locator only; the template keeps its reading-rule cell |
+| `structure.md` decision-state list in the `product` comment | `cross-cutting.md` → Future Work; the template keeps its cell |
+| `adopting-openspec.md` rule 3 hot-spec text | pointer to `structure.md` → Hot documents, with the OpenSpec reading rule (map → requirement → test) |
