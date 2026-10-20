@@ -5,7 +5,7 @@ The procedure is [`ai-agents-md/references/refresh.md`](../../ai-agents-md/refer
 ## 1. Fingerprint
 
 ```powershell
-pwsh -File skills/ai-agents-md/scripts/check-sources.ps1 -Path skills/ai-skills-manager/references/sources.md
+pwsh -File skills/ai-agents-md/scripts/check-sources.ps1 -Path skills/ai-skill-audit/references/sources.md
 ```
 
 `-GateOnly` prints the days since `last-refresh`; `-Update` rewrites fingerprints and the date — only after step 4.

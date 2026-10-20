@@ -54,8 +54,8 @@ Keep `SKILL.md` a router with the principles and the process; put per-harness fa
 Since 2026-09-15 the *content* of one instruction file — which rules earn a line, wording, enforcement layer, templates, and the vendor and research sources behind them — is owned by the sibling skill `ai-agents-md`, which links to `references/harness-loading.md` here rather than restating it. This skill keeps the system: which files load, chain budgets, layers, the diet, memory triage.
 自 2026-09-15 起，单份指令文件的*内容*（哪行有资格、措辞、执行层、模板、背后的厂商与研究来源）归相邻 skill `ai-agents-md`，它引用这里的 `harness-loading.md` 而不重述。本 skill 保留系统层：加载哪些文件、链预算、分层、瘦身、记忆分类。
 
-Since 2026-09-16 the *content* of one skill's `SKILL.md` — the description as trigger, the router body and its references, the slim (formerly process.md §9), folding a fork back — is owned by the sibling skill `ai-skills-manager`, on the same line. The roster stays here: which directories load, provenance classes, the roster budget (§11), "the contract lists no skills". Items 7 and 8 above remain as the incidents that produced both halves.
-自 2026-09-16 起，单个 skill 的 `SKILL.md` *内容*——作为触发条件的 description、路由器正文与 references、瘦身（原 process.md §9）、fork 并回——按同一条切线归相邻 skill `ai-skills-manager`。花名册留在这里：加载哪些目录、来源类别、花名册预算（§11）、"契约不列 skill"。上文第 7、8 条作为产生这两半的事故保留。
+Since 2026-09-16 the *content* of one skill's `SKILL.md` — the description as trigger, the router body and its references, the slim (formerly process.md §9), folding a fork back — is owned by the sibling skill `ai-skill-audit`, on the same line. The roster stays here: which directories load, provenance classes, the roster budget (§11), "the contract lists no skills". Items 7 and 8 above remain as the incidents that produced both halves.
+自 2026-09-16 起，单个 skill 的 `SKILL.md` *内容*——作为触发条件的 description、路由器正文与 references、瘦身（原 process.md §9）、fork 并回——按同一条切线归相邻 skill `ai-skill-audit`。花名册留在这里：加载哪些目录、来源类别、花名册预算（§11）、"契约不列 skill"。上文第 7、8 条作为产生这两半的事故保留。
 
 ## Slimmed to a router, 2026-10-19 / 瘦身为路由器
 
@@ -72,7 +72,7 @@ Since 2026-09-16 the *content* of one skill's `SKILL.md` — the description as 
 | Process step 4, the `codex exec` flags | `process.md` §8 (already there) |
 | Source and symptom, five numbered steps | one paragraph with the five verbs; "meeting it again in a month", the guard examples → `process.md` §7 lead; the producer commands were already §7's table |
 | "Do not replace it with 'skills are not listed here': a self-referential sentence is another always-loaded line" | the rule stays in Skills; the reason → `process.md` §7, meta-rule bullet |
-| "A description carries its trigger and nothing else" | the hand-off line to `ai-skills-manager` |
+| "A description carries its trigger and nothing else" | the hand-off line to `ai-skill-audit` |
 | Four provenance classes and their policies | `process.md` §1, "Skill provenance classes" |
 | The roster budget's cost order | `process.md` §11 (already there) |
 | Memory triage bin definitions | `process.md` §6, "Bins" line |

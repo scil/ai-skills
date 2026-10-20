@@ -1,6 +1,6 @@
-# ai-skills-manager — where this came from
+# ai-skill-audit — where this came from
 
-A procedural skill for the content of one skill: what its description carries, what its body keeps, what moves behind a pointer, and how a drifted fork is folded back. It was split out of `ai-docs-organizing` on 2026-09-16 along the line that already separated `ai-agents-md` from it: one skill owns the *content of one file*, the other owns the *loading model and the budget across files*.
+A procedural skill for the content of one skill: what its description carries, what its body keeps, what moves behind a pointer, and how a drifted fork is folded back. It was split out of `ai-docs-organizing` on 2026-09-16 along the line that already separated `ai-agents-md` from it: one skill owns the *content of one file*, the other owns the *loading model and the budget across files*. Named `ai-skills-manager` until 2026-10-19; older commits and changelog entries use that name.
 一个流程型 skill，管单个 skill 的内容：description 装什么、正文留什么、什么下沉到指针后面、漂移的 fork 怎么并回。2026-09-16 从 `ai-docs-organizing` 拆出，切线与 `ai-agents-md` 和它之间的切线相同：一个管*单个文件的内容*，另一个管*跨文件的加载模型与预算*。
 
 ## Why split / 为什么拆

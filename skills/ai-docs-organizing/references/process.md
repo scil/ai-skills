@@ -112,7 +112,7 @@ Round 2 asks it to mark each round-1 finding ADDRESSED / PARTLY / NOT and hunt n
 
 ## 9. Slimming a skill into a router plus references
 
-Moved verbatim to [`ai-skills-manager/references/slimming.md`](../../ai-skills-manager/references/slimming.md) on 2026-09-16, with the fold-back paragraph. This stub keeps §10 and §11 at their numbers.
+Moved verbatim to [`ai-skill-audit/references/slimming.md`](../../ai-skill-audit/references/slimming.md) on 2026-09-16, with the fold-back paragraph. This stub keeps §10 and §11 at their numbers.
 
 ## 10. Dieting a hot pointer doc
 

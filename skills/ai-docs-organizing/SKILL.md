@@ -6,7 +6,7 @@ description: Organize the docs AI agents load — AGENTS.md / CLAUDE.md, skills,
 
 # Organizing the documents agents read
 
-Hand-offs: the content of one instruction file, including how a guard is phrased and why prose is not the brake → ai-agents-md; one skill's `SKILL.md` → ai-skills-manager; where any other project fact lives → docs-maintainer or the project's own docs skill.
+Hand-offs: the content of one instruction file, including how a guard is phrased and why prose is not the brake → ai-agents-md; one skill's `SKILL.md` → ai-skill-audit; where any other project fact lives → docs-maintainer or the project's own docs skill.
 
 A **harness** is the program that runs a model (Claude Code, Codex CLI). Each decides on its own what it loads, what it truncates and which stores it can see — and none tells you when it drops something. Origin: [`readme.md`](readme.md). `§n` points into [`references/process.md`](references/process.md).
 
