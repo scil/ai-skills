@@ -1,6 +1,6 @@
 # docs-maintainer — how it got its current shape
 
-A procedural skill for the documentation system of a repository whose first reader is an agent. Created 2026-05; slimmed to a router with three references 2026-09-13 (see `for-human/ref.md` for the earlier history); restructured by loading layer and given tiered sources and a refresh gate on 2026-09-15. This file records the 2026-09-15 decisions and what they rest on.
+A procedural skill for the documentation system of a repository whose first reader is an agent. Created 2026-05; slimmed to a router with three references 2026-09-13; restructured by loading layer and given tiered sources and a refresh gate on 2026-09-15. This file records the 2026-09-15 decisions and what they rest on.
 面向"第一读者是代理"的仓库文档系统的流程型 skill。2026-05 创建；2026-09-13 瘦身为路由器；2026-09-15 按加载层重构，并加入分层来源与刷新门控。本文记录 2026-09-15 的决定及其依据。
 
 ## Why restructure by loading layer / 为什么按加载层重构
@@ -23,6 +23,22 @@ The old Annotated Structure was a `docs/` tree by topic (product, architecture, 
 | **`templates/docs-ai.md` removed** | one owner per fact: the instruction file's content is `ai-agents-md`'s |
 | **Skills keep project bindings in one place** | Gao et al.: 53% of reused skills are never modified; when they are, it is the bindings |
 
+## Old node names / 旧节点名
+
+For a project laid out by the pre-2026-09-15 topic tree. The reasons are the table above. Moved here from `references/structure.md` on 2026-10-19.
+给按 2026-09-15 之前主题树布局的项目用；原因见上表。2026-10-19 从 `references/structure.md` 移来。
+
+| Before | After |
+|---|---|
+| `ai` node, `templates/docs-ai.md` | layer 0, content owned by `ai-agents-md` |
+| `product/feature-roadmap`, scattered "future work" | `plans/`, layer 1, ExecPlan shape |
+| `api/provided`, `api/consumed`, hand-maintained `openapi.yaml` / `asyncapi.yaml` | `generated/api`, machine-readable only when a consumer needs it; consumed-API facts in adapters, fixtures and `references/` |
+| `c4-components`, hand-drawn | `generated/components`, or skipped |
+| `engineering/setup`, `release`, `migrations`, `operations/runbook-*`, `ai/prompts` | layer 5 skills; the facts they need stay in layers 2–4 |
+| `architecture/security` alone | `quality-attributes/{security, reliability, performance}` |
+| `ownership` node | layer 6 `ownership-map` + `quality` + optional `evals` |
+| `architecture/dynamic-login-flow` | `architecture/flows/<name>` |
+
 ## What was kept / 保留了什么
 
 Code-wins; one owner per fact; the File-First Split Rule; the Adopting path (route, do not scaffold) and its "skipped — reason" convention; the locator entry discipline; C4 L1/L2 by hand with PlantUML; the cross-cutting checklist.
@@ -43,5 +59,21 @@ Same tiering as `ai-agents-md`: vendor and standard sites decide; research corro
 
 ## How to maintain / 怎么维护
 
-`SKILL.md` stays a router. Layer rules and the mapping table live in `references/structure.md`; the template in `templates/ownership-map.md`; every rule's source in `references/sources.md` with a `purpose` that says what is taken and what is not. A restructure found necessary by a refresh is proposed in `changelog.md` first. The Chinese mirror `for-human/SKILL.zh.md` lags this version and says so in its header.
-`SKILL.md` 只做路由；层规则与映射表在 `structure.md`；模板在 `templates/`；每条规则的来源在 `sources.md`。刷新发现需要重构时先在 `changelog.md` 提议。中文镜像滞后并在头部注明。
+`SKILL.md` stays a router. Layer rules and the mapping table live in `references/structure.md`; the template in `templates/ownership-map.md`; every rule's source in `references/sources.md` with a `purpose` that says what is taken and what is not. A restructure found necessary by a refresh is proposed in `changelog.md` first. There is no Chinese mirror (removed 2026-10-19, below).
+`SKILL.md` 只做路由；层规则与映射表在 `structure.md`；模板在 `templates/`；每条规则的来源在 `sources.md`。刷新发现需要重构时先在 `changelog.md` 提议。不再有中文镜像（2026-10-19 删除，见下文）。
+
+## Cleanup, 2026-10-19 / 清理
+
+`SKILL.md` 1,070 → 1,001 words; description 640 → 395 characters; `for-human/` (38 KB) deleted. No rule was dropped.
+`SKILL.md` 1,070 → 1,001 词；description 640 → 395 字符；删除 `for-human/`（38 KB）。没有丢规则。
+
+| Old | New home |
+|---|---|
+| `for-human/SKILL.zh.md` — Chinese mirror, lagging since 2026-09-13 and describing the old topic tree | deleted at the user's request; git history before this commit holds it |
+| `for-human/SKILL.zh 20260505.md` — dated copy | deleted; git holds the history |
+| `for-human/ref.md` — 2026-05 survey of neighbour skills on skills.sh, plus guidance to keep prompts under `docs/ai/prompts/` | deleted; the prompts guidance contradicted layer 5 (prompts are skills); Diátaxis is in `references/sources.md`; the survey is in git history |
+| `SKILL.md` hot-doc sentence (~20 KB threshold) | `structure.md` → Hot documents; `SKILL.md` keeps one pointer clause |
+| ~20 KB here vs ~40 KB in `ai-docs-organizing`, unexplained | `structure.md` names both: the map from ~20 KB is this skill's, the diet from ~40 KB is `ai-docs-organizing`'s |
+| `structure.md` "What moved, and why (2026-09-15)" | Old node names, above; the reasons were already the bold-changes table |
+| Refresh path's tier sentence | `references/refresh.md` admission by tier (already there) |
+| Description triggers: owner list, C4, "whether an API needs a document", the 30-day gate | body: principle 3 (layers, API), Creating step 4 (C4), the refresh gate section; the skill is slash-command only, so description triggers do not route it |

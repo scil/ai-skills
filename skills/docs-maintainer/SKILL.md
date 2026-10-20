@@ -1,7 +1,7 @@
 ---
 name: docs-maintainer
 disable-model-invocation: true
-description: Create, organize, audit or maintain the documentation system of a project whose first reader is an AI coding agent. Use when deciding where a durable fact belongs (contract line, plan, system-of-record doc, generated artefact, vendored reference, skill, governance), routing facts into a system the project already has instead of a parallel tree, scaffolding docs/ from nothing, setting up execution plans, adding C4 architecture docs or ADRs, deciding whether an API needs a document at all, reviewing a code change for documentation impact, auditing docs for staleness (gardening), or checking this skill's sources (30-day refresh gate).
+description: Create, organize, audit or maintain the documentation system of a project whose first reader is an AI coding agent. Use when deciding where a durable fact belongs, routing facts into a system the project already has instead of a parallel tree, scaffolding docs/ from nothing, setting up plans or ADRs, reviewing a code change for documentation impact, or auditing docs for staleness (gardening).
 ---
 
 # Documentation for a repository whose first reader is an agent
@@ -23,9 +23,9 @@ Facts must be discoverable, stable, linkable, and safe for an agent to act on. T
 
 Read `last-refresh` and `gate-days` at the top of [`references/sources.md`](references/sources.md). If the gate is due, run the Refresh path first, then continue. If the network is unavailable, say so and continue with the sources as they stand.
 
-## File-First Split Rule, and hot docs
+## File-First Split Rule
 
-Choose the owning node, then decide section, file, or directory. One file per topic; split only when the topic is large, high-risk, independently owned, heavily linked, machine-readable, or a real source of edit conflicts. A layer-2 doc that the map or two or more skills route to is *hot*: above ~20 KB it gets a question-first map at the top and a reading rule in every skill that names it (`structure.md` → Hot documents).
+Choose the owning node, then decide section, file, or directory. One file per topic; split only when the topic is large, high-risk, independently owned, heavily linked, machine-readable, or a real source of edit conflicts. A doc every task of a kind is routed through is *hot* and gets a map before any split (`structure.md` → Hot documents).
 
 ## Paths
 
@@ -63,5 +63,5 @@ Choose the owning node, then decide section, file, or directory. One file per to
 
 ### Refresh (standards, vendor guidance, research)
 
-Procedure in [`references/refresh.md`](references/refresh.md): run the shared checker (`ai-agents-md/scripts/check-sources.ps1 -Path … -GateDays 30`), read only what moved, search with the domain allowlist, write the dated entry in [`references/changelog.md`](references/changelog.md), and *propose* edits. Tier 1 (vendor, standard) decides alone; Tier 2 (research) corroborates in pairs; exemplars illustrate; reports point.
+Procedure in [`references/refresh.md`](references/refresh.md): run the shared checker (`ai-agents-md/scripts/check-sources.ps1 -Path … -GateDays 30`), read only what moved, admit findings by tier, write the dated entry in [`references/changelog.md`](references/changelog.md), and *propose* edits.
 

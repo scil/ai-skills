@@ -55,22 +55,9 @@ docs/quality                          # Per-domain and per-layer quality grade, 
 docs/evals                            # Optional: questions an agent must answer from current docs and code, with the expected owner per question. Keep only while run.
 ```
 
-## What moved, and why (2026-09-15)
-
-| Before | After | Reason (source) |
-|---|---|---|
-| `ai` node with `templates/docs-ai.md` | Layer 0, content owned by `ai-agents-md` | one owner per fact; the instruction file's content has its own skill |
-| `product/feature-roadmap` and "future work" scattered | `plans/` as layer 1 with the ExecPlan shape | agents read working notes far more than classical docs (Gao & Chen); plans as first-class artefacts (OpenAI harness post; Codex ExecPlans) |
-| `api/provided`, `api/consumed`, `openapi.yaml`, `asyncapi.yaml` as hand-maintained docs | `generated/api`, machine-readable only when a consumer needs it; consumed-API facts live in adapters, fixtures and `references/` | code is the contract; API references are 1.3% of agent documentation reads |
-| `c4-components` hand-drawn | `generated/components`, or skipped | C4's own guidance on component and code diagrams |
-| `engineering/setup`, `release`, `migrations`, `operations/runbook-*`, `ai/prompts` | Layer 5 skills; facts they need stay in layers 2–4 | "a section that has grown into a procedure rather than a fact" is a skill (Anthropic); reference task files rather than grow the main file (OpenAI) |
-| `architecture/security` alone | `quality-attributes/{security, reliability, performance}` | the two least-covered categories in 2,303 files; least inferable from code |
-| `ownership` node | Layer 6 `ownership-map` + `quality` + optional `evals` | mechanical enforcement and doc-gardening (OpenAI harness post); freshness as data, not a comment |
-| `architecture/dynamic-login-flow` | `architecture/flows/<name>` | same content, named for what it is |
-
 ## Mapping the structure onto a system the project already has
 
-When adopting, each node maps to an existing owner or is skipped with a reason. Typical mappings:
+When adopting, each node maps to an existing owner or is skipped with a reason. A project laid out by this skill's pre-2026-09-15 topic tree (`api/provided`, `engineering/setup`, `ai/`…) finds old node → new node in [`../readme.md`](../readme.md) → Old node names. Typical mappings:
 
 | Node | Existing owner | Note |
 | --- | --- | --- |
@@ -100,4 +87,4 @@ Two rules that follow from the locator being a lookup table, not a narrative:
 
 ## Hot documents: the reading rule
 
-A layer-2 doc that the contract or two or more skills name as *the* place for a kind of question is read whole by every task of that kind. Above ~20 KB, give it a question-first map at the top (section → question it answers → owner of the shipped behaviour) and put the reading rule — *map, then section, then the owner it names* — in every skill that routes to it. Diet before splitting: `ai-docs-organizing` → Hot pointer docs.
+A layer-2 doc that the contract or two or more skills name as *the* place for a kind of question is read whole by every task of that kind. Above ~20 KB, give it a question-first map at the top (section → question it answers → owner of the shipped behaviour) and put the reading rule — *map, then section, then the owner it names* — in every skill that routes to it. The map is this skill's threshold; the diet — handing shipped behaviour to its owner, history out, split last — is `ai-docs-organizing`'s (Hot pointer docs, from ~40 KB). Diet before splitting.
