@@ -26,6 +26,7 @@ Walk it in order: description, body, references, mirror. Each line is a question
 | Is every block that only some paths need, or that exceeds a screen, behind a pointer? | Move it verbatim to `references/<topic>.md`, one level deep. |
 | Does the body restate anything an owner already holds — the instruction file's rules, a spec, conventions readable from the code? | Delete the copy; keep the owner's name and the facts with no other owner. |
 | Does the body restate the description's triggers? | Delete; the description already fired. |
+| Does a list re-apply one principle case by case ("config changes update their owners", "schema changes update their owners", …)? | Keep the principle once and only the cases where applying it is not obvious; each bullet looks reasonable alone, which is why the list survives reviews. |
 | Is a word count stated as a goal anywhere? | Replace with the landed number and the rule that stopped the cut. |
 
 ## References (loaded when a path names them)
@@ -34,6 +35,8 @@ Walk it in order: description, body, references, mirror. Each line is a question
 |---|---|
 | Does every relative link in the router and the references resolve? | Fix or drop the pointer; a stale pointer misleads and never saved a token. |
 | Is each reference one topic, one level deep, named for its topic? | Split or merge; a reference named `misc.md` is the body's overflow, not a reference. |
+| Does each reference pass the body's content questions — no-op, unneeded justification, the same content twice, a list re-applying one principle? | Apply the same dispositions; a reference is loaded less often, not exempt. |
+| Is any rule stated in full in two files of this skill (router, references, templates)? | Keep one full copy where the rule is used most and replace the others with a pointer; a template cell that is copied into a project may keep its short form. |
 | Is any reference read whole by every path — a hot reference? | Put a question-first map at its top and the reading rule in the path that routes to it (ai-docs-organizing → Hot pointer docs). |
 | Was a block moved verbatim, or rewritten in transit? | Diff against the previous body; rewrite in a separate change so the move stays reviewable. |
 | Does `readme.md` hold the origin and the incidents behind the rules, so the body can state each rule without its story? | Create it from the sentences the body sheds; one line per incident is enough. |

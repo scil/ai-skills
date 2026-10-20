@@ -25,6 +25,11 @@ Nothing was deliberately dropped. The instance the slimming ladder was harvested
 A review of all fourteen skills in the collection found the same four kinds of non-rule text in thirteen of them: self-description (Scope essays, origin stories, dates), justification beside rules that stood alone (round counts, token figures, incident narratives), the same content twice in one file (closing reference lists, anti-pattern tables, a rule at three steps), and project or machine names in shared skills. Nine skills were slimmed in nine commits (`fix-bugs` 1,249 → ~600 words; `codex-review` 1,900 → ~1,050; the rest 10–30 %); no rule was dropped. The kinds, dispositions and a detector are principle 7 and `references/filler.md`; the checklist rows that had prescribed a **Scope.** paragraph and a closing references list were corrected in the same change.
 对集合里全部十四个 skill 的一次评审，在十三个里发现了同样四类非规则文字：自我描述（Scope 长段、起源故事、日期）、给本已成立的规则附加的理由（轮数、token 数、事故叙事）、同一文件里的重复（结尾引用列表、反模式表、一条规则出现在三步里）、以及共享 skill 里的项目或机器名。九个 skill 在九个提交里瘦身，没有丢任何规则。四类、处置方式和检测脚本成为原则 7 和 `references/filler.md`；此前要求写 **Scope.** 段和结尾引用列表的清单行同步改正。
 
+## The references pass (2026-10-19) / references 检查
+
+A no-op pass on `docs-maintainer` (commit `91377fd`) found every defect outside the body the checklist asked about: rules a current model follows unprompted in `diagramming.md`, research statistics beside rules in `structure.md`, one principle re-applied in eleven bullets in `cross-cutting.md`, and one rule written in full in three or four files of the same skill. Three checklist rows came from it: the body's content questions apply to each reference; a rule stated in full in two files keeps one copy; a list re-applying one principle keeps only its non-obvious cases.
+对 `docs-maintainer` 的一次空指令清理（提交 `91377fd`）发现，所有缺陷都在清单只检查的正文之外：`diagramming.md` 里当前模型本来就会遵守的规则、`structure.md` 规则旁的研究数据、`cross-cutting.md` 把一条原则拆成十一条重述、同一规则在同一 skill 的三四个文件里都写了完整版本。由此新增三行清单：正文的内容问题同样适用于每个 reference；一条规则在两个文件里写全时只留一份；逐例重述一条原则的列表只留不显然的情形。
+
 ## Boundaries / 边界
 
 | Question | Owner |
