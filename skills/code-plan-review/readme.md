@@ -64,6 +64,7 @@ The machinery had grown past its findings. A plan could not be reviewed until it
 | New on 2026-10-03, from what the repost and porch-browsing reviews missed | A3.11, D3.4, G4.2 |
 | New on 2026-10-05, against over-defence | C4.3; outsider line in step 1; the proportionality rule in "What to report" |
 | New on 2026-10-20, from the Leafi design reviews | G5.1, I2.3, K1.1, K2.1, K3.1 |
+| New on 2026-10-20 (later), from the Leafi hardware day | K2.2, K3.2, K4.1–K4.3, I1.3; K3.1 extended with the per-utterance handshake |
 
 ## Rule 1 — the `useBlocker` incident (2026-09-11, ThanksPorch) / 事故一
 
@@ -325,6 +326,35 @@ The design was a household agent that listens to a child read a printed page alo
 
 All five were found by a reviewer that had not written the design, which the skill already advises. Sorting: a new lettered scenario K for decisions made by a pipeline over sensed or recognized input, because none of A–J holds a recognizer; identity from content is a domain-model question (G); the boundary is one truth in several copies (I).
 五条都是没写设计的评审者发现的，skill 本来就这样建议。归类：新开字母场景 K，管由流水线对感知或识别输入做出的决定，因为 A–J 里没有一个装得下识别器；由内容推出身份是领域模型问题（G）；边界是同一事实的多份副本（I）。
+
+## K2.2, K3.2, K4, I1.3 — the hardware day (2026-10-20, Leafi first session on the desk) / K2.2、K3.2、K4、I1.3——硬件日
+
+The same reading tutor, one day later: the design had been implemented against mocks and rendered pages, and the first day on the real camera, microphone and models broke in five places that no row of the design reviews had named. Each one was a question the plan could have been asked.
+还是那个伴读程序，一天之后：设计已对着 mock 和渲染出来的页面实现完毕，第一天上真摄像头、真麦克风、真模型，在五个地方折了，而设计评审没有一行点到过它们。每一处都是方案本可以被问到的问题。
+
+**K4.1 — a threshold tuned on renders.** The page-turn watcher compared two frames by mean grey difference, and an earlier review had lowered its threshold from 6 to 1 because two rendered text pages differed by only 1.7. On the desk camera two stills 0.8 s apart differ by 2.3–3.0 (sensor noise and JPEG), so the watcher would never have settled; a hand differs by 37–66. The reviews had checked the constant against the test fixtures and never asked what quiet looks like on the device.
+**K4.1——在渲染页上调出的阈值。** 翻页监视用两帧的平均灰度差判断，前一轮评审把阈值从 6 降到 1，因为两页渲染文字只差 1.7。真机上相隔 0.8 秒的两张静帧差 2.3–3.0（传感器噪声加 JPEG），监视器永远不会"静止"；一只手差 37–66。评审对着测试夹具核过这个常数，却从没问过"这台设备上安静长什么样"。
+
+**K4.2 — the page lay sideways.** OCR was accepted at 100 % on rendered pages; on the desk the book lay at 270° to the camera and filled a fifth of the frame, and at 0° both OCR pipelines read only the timestamp overlay and a logo. Rotation had to be tried at run time, and even then a hand-lettered book read at about half its lines. No accuracy figure in the plan said what framing it assumed.
+**K4.2——书是横着放的。** OCR 在渲染页上以 100 % 过关；真机上书与摄像头成 270°，只占画面五分之一，0° 下两套 OCR 都只读出时间戳水印和一个商标。只能在运行时试旋转，即便如此一本手写体风格的书也只读出一半的行。方案里没有任何一个准确率数字说明它假定的取景。
+
+**K2.2 — two silent pulls.** The camera's microphone track was pulled twice and transcribed to nothing; the packet counters showed audio flowing at a constant 60 kbit/s, and the conclusion written down was "the camera encodes a muted input, blocked on its audio setting". The owner had not started reading. The third pull, with the owner reading, peaked at −13 dBFS and transcribed half the words. The encoder never stops (no discontinuous transmission), so the counters prove transport and nothing else; the measurement had no positive control.
+**K2.2——两次无声的拉流。** 摄像头麦克风轨道拉了两次，转写为空；包计数显示音频以恒定 60 kbit/s 在流动，于是写下的结论是"摄像头在编码一个被静音的输入，卡在它的音频设置上"。其实是主人还没开始读。第三次拉流、主人在读，峰值 −13 dBFS，转写出一半的词。编码器从不停（没有间断传输），所以计数只能证明传输，证明不了内容；这次测量没有正向对照。
+
+**K3.2 — the camera timing its own speaker.** To measure end-to-audible latency without asking a person with weak hearing to press a key, the script recorded the camera's own microphone while pushing a clip. The camera is half-duplex: its microphone goes silent while its speaker plays, so every onset was void. A Bluetooth headset placed next to the camera then gave numbers, but its own start-up (about a second) and a drop-out mid-measurement shifted two of them until the floor was taken from the second before the push and the device was named.
+**K3.2——让摄像头给自己的喇叭计时。** 为了不让听力弱的人按键计时，脚本在推送片段的同时录下摄像头自己的麦克风。摄像头是半双工：喇叭响时麦克风静音，所以每个起点都是空的。放在摄像头旁边的蓝牙耳机随后给出了数字，但它自己约一秒的启动和一次测量中途掉线又让其中两个数偏了，直到把底噪取自推送前那一秒、并把设备点名。
+
+**K3.1, extended — the handshake per line.** The plan budgeted 2.5 s end-to-audible on the camera with a fixed 0.9 s leading silence; measured, the device-side handshake go2rtc performs on every push (spawn a transcoder, open the camera's talk channel) took 1.2–2.2 s and varied, before the pad and the clip. The budget had summed every stage but the one paid per line, and a per-line handshake is the stage that moves off the path by being paid once per turn.
+**K3.1 补充——每句话一次握手。** 方案给摄像头 2.5 秒的"到可听见"预算，含固定 0.9 秒前导静音；实测 go2rtc 每次推送都要做的设备侧握手（拉起转码器、打开摄像头对讲通道）花 1.2–2.2 秒且不稳定，还在静音垫和片段之前。预算加总了所有阶段，唯独漏了按句付费的这一个，而按句付费的握手正是该改成按回合付一次、从而离开这条路径的阶段。
+
+**K4.3 — the default that became a virtual device.** The PC microphone was "the default input"; when the Bluetooth headset dropped, the operating system's default became a virtual audio device that delivers zeros, and the capture kept running, hearing nothing, reporting nothing wrong.
+**K4.3——变成虚拟设备的"默认"。** PC 麦克风配置为"默认输入"；蓝牙耳机掉线后，操作系统的默认变成一个只输出零的虚拟音频设备，采集照常运行，什么也听不见，也不报错。
+
+**I1.3 — one directory, two names.** The speaker adapter wrote padded clips under `cache/tts/camera` and told the streaming server to read them from `cache/tts/<file>`, because the device template took the second path from the older habit track's variable and the first from its own default. Nothing compared them; the first real push answered 500 with the server's generic message, and the clip was simply not there from the server's point of view.
+**I1.3——一个目录，两个名字。** 喇叭适配器把垫过静音的片段写到 `cache/tts/camera`，却告诉流媒体服务去 `cache/tts/<文件>` 读，因为设备模板的第二个路径取自旧习惯轨道的变量，第一个取自自己的默认值。没有任何东西比对两者；第一次真实推送回了 500 和服务端的笼统报错，而在服务端看来那个文件根本不存在。
+
+Sorting: the sensor's thresholds, framing and identity belong to the pipeline over sensed input, so K gains a sub-scenario K4 for the sensor itself; the silent pulls are what an observation may conclude (K2); the probe sharing the channel is how long it may take (K3); the two names for one directory are one truth in two copies (I1). What stays with the project: the numbers, in its plan's Surprises.
+归类：传感器的阈值、取景和身份属于对感知输入做决定的流水线，所以 K 新增子场景 K4 管传感器本身；无声拉流是"观察能下什么结论"（K2）；探针与被测共用通道是"要花多久"（K3）；一个目录两个名字是"同一事实两份副本"（I1）。留给项目的是那些数字，在它方案的 Surprises 里。
 
 ## The acceptance run (2026-09-16) / 验收运行
 
