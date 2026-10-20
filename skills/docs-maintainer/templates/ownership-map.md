@@ -11,7 +11,7 @@ A node of the Annotated Structure that maps to nothing is written down as **skip
 
 | Fact / change type | Owner | Layer | Enforced by | Reading rule / notes |
 | --- | --- | --- | --- | --- |
-| Destructive-action boundaries, non-obvious commands, scoped verification, architecture rules, traps, pointers | `AGENTS.md` (+ `CLAUDE.md` = `@AGENTS.md`) | 0 | chain byte-budget test; `PreToolUse` / Codex hook for the forbidden paths | content per `ai-agents-md`; lists no skills, no overview, no directory listing |
+| Destructive-action boundaries, non-obvious commands, scoped verification, architecture rules, traps, pointers | `AGENTS.md` (+ `CLAUDE.md` starting with `@AGENTS.md`, only when there are Claude-only lines) | 0 | chain byte-budget test; `PreToolUse` / Codex hook for the forbidden paths | content per `ai-agents-md`; lists no skills, no overview, no directory listing |
 | Work in progress: purpose, progress, surprises, decisions, retrospective | `docs/plans/active/<date>-<slug>.md` → `completed/` | 1 | plan lint: required sections present; a completed plan has a retrospective | one plan per piece of work that outlives a session; promote stable facts to layer 2 before moving to `completed/` |
 | Known technical debt | `docs/plans/tech-debt.md` | 1 | gardening run updates grade and owner | item · owner · grade · paying trigger |
 | Product goals, users, vocabulary, accepted requirements with decision state, non-goals | `docs/product.md` or the spec system | 2 | spec scenarios → tests | decision states: Candidate · Proposed · Accepted · Rejected · Implemented |

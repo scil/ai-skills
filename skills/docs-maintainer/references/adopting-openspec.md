@@ -1,6 +1,6 @@
 # Adopting the structure in a project that uses OpenSpec
 
-OpenSpec (`@fission-ai/openspec`) is a spec-driven change system: accepted behaviour lives in `openspec/specs/<capability>/spec.md`; work in progress is a change folder under `openspec/changes/<id>/` with `proposal.md`, `design.md`, `tasks.md` and `specs/` deltas (`ADDED / MODIFIED / REMOVED Requirements`); completed changes move to `openspec/archive/` (older layouts: `openspec/changes/archive/`) and the deltas are merged into the specs. `openspec init` writes a managed instruction block into `AGENTS.md` and `CLAUDE.md`; `openspec update` regenerates it. Layout verified against the project README on 2026-09-15 ([`sources.md`](sources.md) → `openspec-readme`).
+OpenSpec (`@fission-ai/openspec`) is a spec-driven change system: accepted behaviour lives in `openspec/specs/<capability>/spec.md`; work in progress is a change folder under `openspec/changes/<id>/` with `proposal.md`, `design.md`, `tasks.md` and `specs/` deltas (`ADDED / MODIFIED / REMOVED Requirements`); completed changes move to `openspec/changes/archive/` and the deltas are merged into the specs (`RENAMED` joins the three delta headers). `openspec init` installs skills and commands (Claude Code: `.claude/skills/openspec-*/`, `.claude/commands/opsx/`; Codex: skills only) plus `openspec/config.yaml`, project context for the AI that replaces the legacy `project.md`, and "changes nothing else in your repo"; `openspec update` regenerates those files, and `openspec config profile` picks the workflow set. Layout verified against openspec.dev on 2026-10-20 ([`sources.md`](sources.md) → `openspec-docs-setup`); releases before that wrote a managed block into `AGENTS.md` and `CLAUDE.md`.
 
 OpenSpec already owns most of layers 1 and 2. Follow the Adopting path: route onto it, add only what it has no home for.
 
@@ -8,9 +8,9 @@ OpenSpec already owns most of layers 1 and 2. Follow the Adopting path: route on
 
 | Layer / node | OpenSpec owner | Note |
 |---|---|---|
-| 0 map | `AGENTS.md`, with OpenSpec's managed block inside it | the block is always loaded and counts against the Codex 32 KiB chain; keep it, budget for it. Let OpenSpec write **one** file: `AGENTS.md`. `CLAUDE.md` stays the one-line `@AGENTS.md` bridge; a second managed block there is a duplicate paid twice by Claude Code. |
+| 0 map | `AGENTS.md` | current OpenSpec writes nothing here; one line pointing to `openspec/` and the `/opsx:*` workflow is the contract's own. A managed block left by an older release is always loaded and counts against the Codex 32 KiB chain: remove it when upgrading, and never keep a second copy in `CLAUDE.md`. `CLAUDE.md` exists only for Claude-only lines and starts with `@AGENTS.md`. |
 | 1 `plans/active/<slug>` | `openspec/changes/<id>/` | `proposal.md` = purpose and scope; `tasks.md` = progress (checkboxes); `design.md` = technical approach and decision log. The change folder *is* the plan; no `docs/plans/active/`. |
-| 1 `plans/completed` | `openspec/archive/<id>/` | archive only after the retrospective section exists (below) and stable facts were promoted. |
+| 1 `plans/completed` | `openspec/changes/archive/<id>/` | archive only after the retrospective section exists (below) and stable facts were promoted. |
 | 1 `plans/tech-debt` | **gap** → `docs/plans/tech-debt.md` | OpenSpec tracks changes, not debt. |
 | 2 `product` requirements and decision states | `openspec/specs/<capability>/spec.md` (accepted) and a change's `specs/` deltas (proposed) | OpenSpec's lifecycle replaces Candidate · Proposed · Accepted · Implemented; a rejected proposal is archived with a one-line reason in `proposal.md`. |
 | 2 `product` vocabulary, goals, non-goals | the plan or product doc the project already keeps, or `docs/product.md` | specs describe behaviour, not vocabulary; a term used across capabilities needs one owner. |
@@ -18,7 +18,7 @@ OpenSpec already owns most of layers 1 and 2. Follow the Adopting path: route on
 | 2 `architecture/*`, `quality-attributes/*`, `engineering/*` | **gap** → `docs/architecture/`, `docs/engineering/` | specs say what the system does; these say how it is shaped. Create only nodes with facts in hand. |
 | 3 `generated/*` | **gap** → `docs/generated/` | schema, API index, dependency graph; OpenSpec has no generated layer. |
 | 4 `references/*` | **gap** → `docs/references/` | vendored `llms.txt`; only when a dependency is needed offline. |
-| 5 skills | `.agents/skills/` + the `/opsx:*` commands | the OpenSpec commands are the change procedure; project skills that route to specs name the capability, not a path they copy. |
+| 5 skills | `.agents/skills/` + OpenSpec's generated skills and `/opsx:*` commands | the OpenSpec workflows are the change procedure; their skills join the layer-5 roster and Codex's skill-discovery budget. Project skills that route to specs name the capability, not a path they copy. |
 | 6 `ownership-map`, `quality` | **gap** → `docs/ownership-map.md`, `docs/quality.md` | the map is this table filled in with real ids. |
 
 ## Three sections OpenSpec's templates stop short of
@@ -34,7 +34,7 @@ Add to each change, as short sections, so the change folder is a full ExecPlan:
 1. **Specs are written from shipped behaviour and its tests, never from the contract's prose.** When the two disagree, the prose is the stale party. (ThanksPorch, 2026-09-13; `ai-docs-organizing/readme.md`.)
 2. **One scenario, one test.** A `#### Scenario:` names the situation so it maps to a test name; the ownership map's *Enforced by* column for a spec row is that test.
 3. **Hot specs get a map** (`structure.md` → Hot documents): here the reading rule is map → requirement → test.
-4. **The managed block is the contract's, not yours.** Do not hand-edit inside the markers; `openspec update` overwrites them. Rules you add to the contract go outside the block.
+4. **OpenSpec's generated files are not yours.** Do not hand-edit its skills or commands; `openspec update` overwrites them. Project context for OpenSpec goes in `openspec/config.yaml`; a project rule for every agent goes in the contract.
 5. **Promote before archiving.** A term, state or grouping introduced by a change goes to its layer-2 owner (vocabulary, data-model meaning, config doc) in the same change; archive moves the deltas into specs but nothing else.
 6. **Deltas are facts of record in transit.** A `MODIFIED Requirements` block that contradicts a test is a defect in the delta, and the change is not applied until they agree.
 
@@ -46,7 +46,8 @@ Add to each change, as short sections, so the change folder is a full ExecPlan:
 | Proposed behaviour change | openspec/changes/<id>/specs/ | 1 | openspec validate; apply blocked until tests agree | |
 | Work in progress, decisions, retrospective | openspec/changes/<id>/{proposal,design,tasks}.md | 1 | template sections present before archive | three added sections above |
 | Consequential decision | openspec/changes/<id>/design.md (MADR sections) | 2 | superseded by a later change, never edited after archive | no docs/decisions/ |
-| Completed work | openspec/archive/<id>/ | 1 | archive lint: retrospective present | |
-| Contract lines | AGENTS.md (managed block + project lines) | 0 | chain byte-budget test; block written once | CLAUDE.md = @AGENTS.md |
+| Completed work | openspec/changes/archive/<id>/ | 1 | archive lint: retrospective present | |
+| Contract lines | AGENTS.md (project lines; no OpenSpec block) | 0 | chain byte-budget test | CLAUDE.md only for Claude-only lines, starting with @AGENTS.md |
+| OpenSpec project context | openspec/config.yaml | 1 | openspec validate | legacy project.md migrated here, then deleted |
 | Known debt | docs/plans/tech-debt.md | 1 | gardening run | gap OpenSpec does not fill |
 ```
