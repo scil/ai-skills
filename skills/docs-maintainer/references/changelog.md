@@ -2,6 +2,26 @@
 
 Newest first. Written by the Refresh path (`refresh.md` §4); proposals apply only after the user accepts them.
 
+## 2026-10-20 — first scheduled refresh (gate due at 35 days)
+
+- Sources: 24 checked; 15 CHANGED, 8 UNCHANGED, 1 MANUAL (`openai-harness-engineering`: 403 to scripts and to the fetch tool, not re-read — open it in a browser on the next run). A quick read on 2026-10-19, from the Leafi project, counted 10 changed; by today 15 fingerprints had moved. Fingerprints and `last-refresh` updated after this entry. Four rows added with `-` fingerprints: `openspec-docs-setup` (T1) and three unread T2 candidates.
+- Per changed source:
+  - `claude-code-memory-docs` — quotes hold. New: with an `AGENTS.md` and no `CLAUDE.md` or `CLAUDE.local.md` at or above the working directory, Claude Code reads `AGENTS.md` directly ("requires Claude Code v2.1.277 or later"; a setting loads both). Also "target under 200 lines per CLAUDE.md file"; files over 4 MiB skipped; imports "don't reduce its context cost". Effect: the `CLAUDE.md = @AGENTS.md` bridge is no longer required where there are no Claude-only lines (proposal 1).
+  - `claude-code-skills-docs` — quotes hold. New: "Keep `SKILL.md` under 500 lines"; description plus `when_to_use` truncated at 1,536 characters. Effect: none on this skill's layers; a size rule for `ai-skill-audit`.
+  - `claude-code-best-practices` — Exclude rows hold verbatim; `/doctor` now "proposes cuts for content it can derive from the codebase". No effect.
+  - `codex-best-practices` — holds; "A short, accurate `AGENTS.md` is more useful than a long file full of vague rules." Corroborates a short layer 0; no byte limit stated.
+  - `codex-build-skills` — the discovery cap was recorded too strongly: it is "at most 2% of the model's context window", with 8,000 characters only "when the context window is unknown", and `skills.max_context_tokens` raises it to 10,000 tokens. Row corrected; budget wording for `ai-docs-organizing`.
+  - `codex-exec-plans` — our five sections hold (Progress, Surprises & Discoveries, Decision Log, Outcomes & Retrospective mandatory; checkboxes only in Progress); the full outline has seven more sections. Not known whether new. No change: `structure.md`'s plan line is the minimum.
+  - `adr-home` — cosmetic (news item).
+  - `asyncapi-spec` — 3.0.0 → 3.1.0; version only.
+  - `openspec-readme` — **no longer supports its row.** README cut down on 2026-10-14 (#2062) and points to openspec.dev/docs. Per openspec.dev: archive is `openspec/changes/archive/`, `openspec init` writes skills and commands into `.claude/` plus `openspec/config.yaml` (no managed blocks in `AGENTS.md`/`CLAUDE.md`), `RENAMED` is a delta header, commands come in profiles. Effect: `adopting-openspec.md` is stale in four places (proposal 2).
+  - arXiv rows (`paper-agent-docs-behaviour`, `paper-agent-readmes`, `paper-skills-registry`, `paper-probe-refine`, `paper-harness-config`) — numbers unchanged; version metadata only (recorded in `source-date`). `paper-eth-agentsmd` — v3 2026-09-29; conclusion unchanged (cost "over 20%"; helpful for "non-standard coding practices").
+- New findings (dated searches, `refresh.md` §3): vendor searches found no change to when to create a skill, progressive disclosure, or what to exclude from the instruction file beyond the limits above; a search snippet of Claude Code's changelog caps the `MEMORY.md` index at 200 lines or 25 KB (reported, not opened; agent memory, not a docs layer). Three 2026 studies registered as candidates, unread and unadmitted: skill revisions (2610.04832), a two-agent context-file ablation (2607.27250), stale references in configuration files (2606.09090).
+- Proposals (none applied; each needs the user's yes):
+  1. **Bridge only when needed.** `templates/ownership-map.md` (layer-0 row), `structure.md` (Layer 0 row) and `adopting-openspec.md` (layer-0 row, contract row) say `CLAUDE.md` = `@AGENTS.md`. Change to: "`CLAUDE.md` only when there are Claude-only lines, and then it starts with `@AGENTS.md`; Claude Code ≥ v2.1.277 reads `AGENTS.md` directly when no `CLAUDE.md` or `CLAUDE.local.md` exists." Source: `claude-code-memory-docs`. Wording of the contract itself goes through `ai-agents-md`, whose own sources should take the same finding.
+  2. **Re-home OpenSpec facts.** In `adopting-openspec.md`: `openspec/archive/<id>/` → `openspec/changes/archive/<id>/` (two rows); delete the managed-block rule (rule 4) and the "let OpenSpec write one file" sentence, replacing them with "`openspec init` installs skills and commands under `.claude/`; check the Codex side and the layer-5 roster"; add `RENAMED` to the delta headers; name `openspec/config.yaml`. Re-check each against `openspec-docs-setup` when applying. Source: `openspec-docs-setup`.
+  3. **Hand-offs, no edit here.** Skill size limits (500 lines, 1,536 characters; Codex 2% of context) → `ai-skill-audit` and `ai-docs-organizing`; "under 200 lines per CLAUDE.md" and the direct `AGENTS.md` read → `ai-agents-md`.
+
 ## 2026-09-15 — baseline and restructure
 
 - Sources: 23 registered (16 Tier 1, 6 Tier 2, 1 Tier 4); fingerprints computed for the first time. No Tier 3 exemplar yet.
