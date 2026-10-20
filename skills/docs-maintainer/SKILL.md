@@ -27,6 +27,16 @@ Read `last-refresh` and `gate-days` at the top of [`references/sources.md`](refe
 
 Choose the owning node, then decide section, file, or directory. One file per topic; split only when the topic is large, high-risk, independently owned, heavily linked, machine-readable, or a real source of edit conflicts. A doc every task of a kind is routed through is *hot* and gets a map before any split (`structure.md` → Hot documents).
 
+## Alongside Matt Pocock's skills
+
+When the project also uses `mattpocock-skills` (plugin or vendored), its skills read fixed paths; map them as owners, never move or duplicate them:
+
+- Vocabulary → `GLOSSARY.md` at the root; decisions → `docs/adr/`.
+- `docs/agents/issue-tracker.md` and `docs/agents/domain.md` are layer-5 project bindings for those skills; one ownership-map row, `advisory`. A pointer they repeat from the contract stays: the skills read only that path.
+- The issue tracker (`.scratch/` when local and gitignored) is layer-1 scratch, not a record; give it a row saying where its decisions move (the plan's decision log or an ADR) before the work closes.
+
+Where the two rule sets disagree — ADR shape (MADR here; one paragraph with optional `status` there), where planned work lives (plans here; tracker there), or any new case — the owner decides. Do not pick silently: list each conflict with both rules and a recommendation, ask once, then record the choice in the plan's decision log and `conventions`, or as an ADR when it changes an accepted one.
+
 ## Paths
 
 ### Adopting a system the project already has (route, do not scaffold)
