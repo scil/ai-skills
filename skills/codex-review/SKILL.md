@@ -14,8 +14,10 @@ description: Review a change with the codex CLI and iterate until it reports not
 - **The cheapest round reviews the design.** When the change has a written design (a design doc, an ADR, a plan), review it *before* implementing; at that point the fix is a paragraph, not a refactor with tests to re-prove:
 
   ```bash
-  codex exec -s read-only -c model="gpt-5.5" "Review <design file> as a design, not as prose. What will be hard to get right, and what will keep going wrong?"
+  codex exec -s read-only -c model="gpt-6-astra" -c model_reasoning_effort="high" "Review <design file> as a design, not as prose. What will be hard to get right, and what will keep going wrong?"
   ```
+
+  Keep each round's prompt in a file beside the review record, so a round can be rerun — by codex or by the fallback reviewer ([below](#invoking-it)).
 
 ## Before the first round
 
@@ -36,12 +38,14 @@ codex review --uncommitted \
   -c approval_policy="never"
 ```
 
-- **Always pass `-c model="gpt-5.5"`** (also on `codex exec`). The config default is `gpt-6-astra`, which is left for interactive work: a review round is a token-heavy read, and the GPT-6 tier spends far more per round for findings the 5.5 tier reaches. Since 2026-09-18 the installed CLI also rejects `gpt-6-astra` outright, so a round without the override is wasted. `codex review` has no `-m` flag; the model goes through `-c`.
+- **Always pass the model with `-c model=…`** (also on `codex exec`); `codex review` has no `-m` flag, and the config default is a GPT-6-tier model left for interactive work. **Code rounds use `gpt-5.5`:** a round over a diff is a token-heavy read, and the GPT-6 tier spends far more per round for findings the 5.5 tier reaches. **Design rounds use the newest model, `gpt-6-astra`:** the input is a few documents, and a decision missed there costs a refactor later. The CLI rejected `gpt-6-astra` from 2026-09-18; codex-cli 0.155.0 accepts it (checked 2026-10-19). When a model is rejected, check `codex --version` and upgrade before falling back to another model.
+- **The sandbox reads only inside the repository.** A diff written to the OS temp directory is unreadable, and the round reviews nothing. Write it to a gitignored folder inside the repository (`.scratch/review/`); ignored, so it never enters `--uncommitted` or a commit.
+- **Plan a fallback reviewer before a long loop.** The ChatGPT plan's quota can run out mid-loop. The fallback is a fresh session of another agent that did not write the change, given the same prompt file. Record in the review file which reviewer and model ran each round.
 - `sandbox_mode=read-only` is what blocks writes and git. Keep `approval_policy=never` rather than `on-request`: a non-interactive run auto-denies escalation instead of stalling on a prompt nobody can answer.
 - **After every run, check `git log --oneline -3` and `git status`** before trusting either.
 - Review a specific commit with `--commit <sha>` (works on a dangling commit, e.g. after `git reset --soft`). `--uncommitted` and a `[PROMPT]` argument are **mutually exclusive** — use `codex exec` for a scoped review with custom instructions.
 - An invalid `-c` value aborts at config load in about a second, so trying a setting is cheap. `windows.sandbox` accepts only `elevated`/`unelevated`.
-- Stay on `gpt-5.5` unless the user names another model; effort is the lever that pays, and swapping models mid-loop changes what "the last round said" means.
+- Keep one model (and one reviewer) for a whole loop unless the user names another; effort is the lever that pays, and swapping models mid-loop changes what "the last round said" means.
 
 ## Making rounds faster
 
@@ -58,8 +62,8 @@ Effort and scope are the two levers.
 - **Feed the diff rather than letting it explore** — much of a round otherwise goes into `git status`, greps and line dumps:
 
   ```bash
-  git diff --cached > review.diff
-  codex exec -s read-only -c model="gpt-5.5" "Review review.diff. Read only the files it touches; do not explore the rest of the repo."
+  git diff --cached > .scratch/review/review.diff
+  codex exec -s read-only -c model="gpt-5.5" "Review .scratch/review/review.diff. Read only the files it touches; do not explore the rest of the repo."
   ```
 
 - **Middle rounds review the increment** (`git diff <last-reviewed-sha>`); one full pass at the end.
@@ -90,5 +94,6 @@ Outside the change: **report it with what you verified, and leave it alone.** Wi
 
 A review names the **instance** it can see. Fixing exactly the region named, round after round, turns three rounds into nine. The full rule is `fix-bugs` §2; what the loop adds:
 
-- **The class wears a different costume every round** ("stale after sign-in", "stale after navigating away", "stale across variants"), so the shape is easier to see in your own notes than in the findings. Keep a one-line tally of what each round was *about*; when two lines rhyme, the next round is structural.
+- **The class wears a different costume every round** ("stale after sign-in", "stale after navigating away", "stale across variants"), so the shape is easier to see in your own notes than in the findings. Keep a one-line tally of what each round was *about*; when two lines rhyme, the next round is structural — the very next one, not the one after a third instance confirms it.
+- **In a design loop the structural move is usually a restatement**: rules that must be read together become one executable statement (pseudocode with its costs, tie-breaks and boundary conditions), and the next round hand-executes it on named inputs (`code-plan-review` K1.1).
 - **When the structural move lands, spend that round on it alone.** Mixed with two more instance patches, the next round's findings are unattributable.
