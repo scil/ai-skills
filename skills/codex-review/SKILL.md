@@ -32,13 +32,13 @@ Run the project's local gate (typecheck, lint, unit tests) over **every package 
 
 ```bash
 codex review --uncommitted \
-  -c model="gpt-5.5" \
+  -c model="gpt-6.1-sol" \
   -c model_reasoning_effort="medium" \
   -c sandbox_mode="read-only" \
   -c approval_policy="never"
 ```
 
-- **Always pass the model with `-c model=…`** (also on `codex exec`); `codex review` has no `-m` flag, and the config default is a GPT-6-tier model left for interactive work. **Code rounds use `gpt-5.5`:** a round over a diff is a token-heavy read, and the GPT-6 tier spends far more per round for findings the 5.5 tier reaches. **Design rounds use the newest model, `gpt-6-astra`:** the input is a few documents, and a decision missed there costs a refactor later. The CLI rejected `gpt-6-astra` from 2026-09-18; codex-cli 0.155.0 accepts it (checked 2026-10-19). When a model is rejected, check `codex --version` and upgrade before falling back to another model.
+- **Always pass the model with `-c model=…`** (also on `codex exec`); `codex review` has no `-m` flag. Pass it even when it equals the config default, so a changed default never changes a loop silently. **Code rounds use `gpt-6.1-sol`** (the owner's choice on 2026-10-20, replacing `gpt-5.5`); a round over a diff is a token-heavy read, so effort, not the model, is the cost lever ([below](#making-rounds-faster)). **Design rounds use the newest model, `gpt-6-astra`:** the input is a few documents, and a decision missed there costs a refactor later. The CLI rejected `gpt-6-astra` from 2026-09-18; codex-cli 0.155.0 accepts it (checked 2026-10-19). When a model is rejected, check `codex --version` and upgrade before falling back to another model.
 - **The sandbox reads only inside the repository.** A diff written to the OS temp directory is unreadable, and the round reviews nothing. Write it to a gitignored folder inside the repository (`.scratch/review/`); ignored, so it never enters `--uncommitted` or a commit.
 - **Plan a fallback reviewer before a long loop.** The ChatGPT plan's quota can run out mid-loop. The fallback is a fresh session of another agent that did not write the change, given the same prompt file. Record in the review file which reviewer and model ran each round.
 - `sandbox_mode=read-only` is what blocks writes and git. Keep `approval_policy=never` rather than `on-request`: a non-interactive run auto-denies escalation instead of stalling on a prompt nobody can answer.
@@ -63,7 +63,7 @@ Effort and scope are the two levers.
 
   ```bash
   git diff --cached > .scratch/review/review.diff
-  codex exec -s read-only -c model="gpt-5.5" "Review .scratch/review/review.diff. Read only the files it touches; do not explore the rest of the repo."
+  codex exec -s read-only -c model="gpt-6.1-sol" "Review .scratch/review/review.diff. Read only the files it touches; do not explore the rest of the repo."
   ```
 
 - **Middle rounds review the increment** (`git diff <last-reviewed-sha>`); one full pass at the end.
