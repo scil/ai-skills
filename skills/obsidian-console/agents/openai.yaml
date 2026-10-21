@@ -1,0 +1,4 @@
+interface:
+  display_name: "Obsidian Console"
+  short_description: "Build a tabbed button-grid console note in an Obsidian vault"
+  default_prompt: "Use $obsidian-console to build or extend a console note whose tabbed button grid runs project scripts through Shell commands."

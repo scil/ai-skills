@@ -152,15 +152,10 @@ Design rules that come from real breakage:
 - **Route output by size**: `notification` for a line or two, `modal` for a report.
 
 The usual shape of this work is a **project console** — one note grouping every recurring operation.
-`references/project-console.md` is the end-to-end recipe: deriving the button set from the project's
-own docs, grouping by intent, the per-button checklist, a note skeleton, the "scratch note as input"
-pattern, and what to re-verify when adding a button later.
-
-Its layout rule, in one line: **buttons out, everything else folded.** Only three things stay
-unfolded — the button block, one grey line under it saying what it really runs, and the plain-prose
-scratch section a `{{selection}}` button reads from. Every paragraph, table, warning and link list
-goes into a `-` callout whose title carries the headline. Headings stay verbatim (other notes link
-to them). Verify with the alias check plus "zero open callouts".
+`references/project-console.md` covers what goes on it: deriving the button set from the project's
+own docs, grouping by intent, the per-button checklist, the "scratch note as input" pattern. The
+note itself (a tabbed Dataview button grid fed by one table per group) is the `obsidian-console`
+skill's.
 
 Order the work so nothing waits on the user: **scripts → run each once → register commands →
 note → verify.** Scripts and their test runs need nothing from Obsidian; registration is the one
