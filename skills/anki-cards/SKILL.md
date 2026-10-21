@@ -260,6 +260,9 @@ Presets: `realtime_0` = 填空题 (both profiles), `realtime_1` = Yuan 问答题
   same script or the very next call — can still return the *pre-write* state, making a write that
   actually succeeded look like it failed. Do not retry on that basis (you will double-apply); verify
   in a **separate, later** call. The scripts print the AnkiConnect result; `null` error = success.
+- **`anki_info.py --json` keys a note by `"id"`**, not AnkiConnect's `noteId`. Counting `"noteId"` in its
+  output returns 0 and makes a successful add look lost (2026-10-20); count `"id": <id prefix>` or parse
+  the JSON. Look at one note's raw output before writing a check against it.
 - **Match notes by their own text, not by tag**, when updating in bulk
   (`--query '"a distinctive phrase"'`) — a tag query can sweep in unrelated cards, and `added:1`
   also catches notes the user added by hand today. Prefer `--ids` from the add step's output.
