@@ -40,7 +40,7 @@ Convert a gathered reference collection into project-specific choices. The goal 
 
 ## Output
 
-Produce a concise but decision-complete Markdown plan or rules document. The implementer should not need to decide between unresolved options.
+Produce a concise but decision-complete Markdown plan or rules document. The implementer should not need to decide between unresolved options. Run this skill **before** the ADR or design doc is written, not after a review asks for provenance: the ADR cites this output (its decisions and the provenance table below) instead of re-deriving mechanisms, and the reviews (`code-plan-review` H7) check that table.
 
 Every important rule or architectural choice should show its basis:
 

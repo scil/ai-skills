@@ -19,6 +19,18 @@ description: Review a change with the codex CLI and iterate until it reports not
 
   Keep each round's prompt in a file beside the review record, so a round can be rerun — by codex or by the fallback reviewer ([below](#invoking-it)).
 
+## Three reviewers for a risky design
+
+A design that touches privacy, egress, concurrency, migrations or money gets three independent reviewers in the same round, run in parallel, none reading another's output, then compared (overlap, findings only one found, severity, false positives):
+
+- **codex** on the round's prompt file — a different model; strongest at hand-executing failure paths and at checking claims against the code.
+- **a fresh Claude session on the same prompt file** — a session that did not write the design. The same prompt makes the two comparable; the fresh context is the point, since the author's own model shares the author's blind spots.
+- **`code-plan-review`**, run by a fresh agent — the catalog walk; strongest at coverage (missed destinations, two copies of one rule, provenance, decisions only the owner can make).
+
+In Leafi's AI-led study design (2026-10-22) codex and `code-plan-review` overlapped on about 4 of some 40 findings, and the Claude session on the codex prompt found a High in an increment that no earlier round had. Ordinary designs take codex plus `code-plan-review`; an increment round takes one reviewer, codex first.
+
+**Design versus code.** Before code exists, all three read a design document, so the Claude reviewer uses the design prompt file, not a code-review skill. After implementation the reviewers change with the object: codex runs `codex review --uncommitted` (or on a commit), Claude runs the host's own code-review skill on the same diff, and `code-plan-review` is not used (it reviews plans).
+
 ## Before the first round
 
 Run the project's local gate (typecheck, lint, unit tests) over **every package the change touches**, **unfiltered**. A round costs minutes; a failing suite costs seconds to find yourself. Piping the gate through a tail or a `Select-String "passed"` hides a non-zero exit behind the tests that passed — tee the whole output to a file and search that:
@@ -40,7 +52,7 @@ codex review --uncommitted \
 
 - **Always pass the model with `-c model=…`** (also on `codex exec`); `codex review` has no `-m` flag. Pass it even when it equals the config default: a default can change, or name a model the account cannot use. **Every round, code and design, uses `gpt-6-astra`** (the owner's choice on 2026-10-20, replacing `gpt-5.5` for code). Effort, not the model, is the cost lever ([below](#making-rounds-faster)); a design round starts at `high`, because a decision missed there costs a refactor later. Before a loop on a model not used here before, check it with a one-line round (`codex exec -s read-only -c model="<model>" "reply ok"`): `gpt-6.1-sol` fails on a ChatGPT account (checked 2026-10-20), and the CLI rejected `gpt-6-astra` from 2026-09-18 until codex-cli 0.155.0. When a model is rejected, read the error: a version message means upgrade the CLI; an account message means pick another model.
 - **The sandbox reads only inside the repository.** A diff written to the OS temp directory is unreadable, and the round reviews nothing. Write it to a gitignored folder inside the repository (`.scratch/review/`); ignored, so it never enters `--uncommitted` or a commit.
-- **Plan a fallback reviewer before a long loop.** The ChatGPT plan's quota can run out mid-loop. The fallback is a fresh session of another agent that did not write the change, given the same prompt file. Record in the review file which reviewer and model ran each round.
+- **Plan a fallback reviewer before a long loop.** The ChatGPT plan's quota can run out mid-loop. The fallback is a fresh session of another agent that did not write the change, given the same prompt file (for a risky design that agent is already one of the three reviewers, [above](#three-reviewers-for-a-risky-design)). Record in the review file which reviewer and model ran each round.
 - `sandbox_mode=read-only` is what blocks writes and git. Keep `approval_policy=never` rather than `on-request`: a non-interactive run auto-denies escalation instead of stalling on a prompt nobody can answer.
 - **After every run, check `git log --oneline -3` and `git status`** before trusting either.
 - Review a specific commit with `--commit <sha>` (works on a dangling commit, e.g. after `git reset --soft`). `--uncommitted` and a `[PROMPT]` argument are **mutually exclusive** — use `codex exec` for a scoped review with custom instructions.
