@@ -49,6 +49,8 @@ Every important rule or architectural choice should show its basis:
 - `Reference`: derived from one or more resource dossiers.
 - `Assumption`: chosen because the user did not decide and a default was safe.
 
+Every mechanism the plan introduces, at any size and in any layer (a data shape, a migration runner, a retry or deadline policy, a state machine, a domain algorithm, a policy, a prompt, a script, a UI behaviour), also carries one provenance line: `adopted` (from which library, project, paper, product or standard, at which version), `adapted` (from where, what changed and why) or `original` (what was searched and why nothing fit). Borrow first; start from zero least. A finding in the reference collection that no decision uses is either adopted or rejected with its reason. `code-plan-review` H7 checks this table.
+
 ## Guardrails
 
 - Do not mechanically copy external architectures into the project.
