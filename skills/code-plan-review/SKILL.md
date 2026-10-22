@@ -275,6 +275,14 @@ Hand-made content is not the defect; hand-made content nobody chose is. An item 
 
 1. The plan adds or changes something the owner will run or open more than once (a script, a command, a web page or tab, a health or configuration check) in a project that keeps a console of such operations, and no step updates it; the plan's own definition of done (tests, review) passes without it, so the operation ships reachable only from a reply that scrolls away. Suggest: a step "update the console": a button for each new recurring operation, the help line or card of each changed one, and the console's own check run; a one-off command stays in the reply and is not a button.
 
+#### H6. A dependency that will move
+
+A third-party library or SDK is owned by someone else, who releases on their own schedule: a new major, a changed transport, a dropped parameter. These questions ask whether the plan can absorb that change in one place and judge it before taking it.
+
+1. A third-party library or SDK (a model provider's client, an HTTP client, an ORM, a workflow engine) is imported from more than one module, or its types (its client, its request and response objects, its exceptions) cross into domain code, so replacing or upgrading it touches many files and every one of them must be re-reviewed. Suggest: one adapter module owns the import behind an interface the project owns, and library types do not cross that interface (the adapter translates them into the project's own); an architecture test fails the build when the import appears anywhere else.
+2. The plan puts an implementation behind an interface so it can be swapped (a second provider, a newer major of the same library, a local fallback), but its tests exercise only the current implementation, so a candidate is judged by reading its code and the swap is a leap. Suggest: one contract test suite, written against the interface, that runs against every adapter, current and candidate alike; a candidate is adoptable when it passes the same suite, and a behaviour the suite does not pin is named as untested.
+3. A dependency is pinned (an exact version, or held below a major) with no reason naming what breaks without the pin, no condition that lifts it and no date to look again, so it silently ages: the ecosystem moves on, other libraries start requiring what the pin excludes, and the plan's next step must design around two versions of one thing. Suggest: every pin records its reason (what breaks), its lifting condition (the release, fix or decision that ends it) and a review date; at review, check the package's latest release and its default branch, since the fix may be merged and unreleased, and check whether other dependencies now require what the pin holds back.
+
 ### I. One truth, several copies
 
 #### I1. Two implementations

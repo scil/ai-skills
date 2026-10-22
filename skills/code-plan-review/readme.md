@@ -65,6 +65,7 @@ The machinery had grown past its findings. A plan could not be reviewed until it
 | New on 2026-10-05, against over-defence | C4.3; outsider line in step 1; the proportionality rule in "What to report" |
 | New on 2026-10-20, from the Leafi design reviews | G5.1, I2.3, K1.1, K2.1, K3.1 |
 | New on 2026-10-20 (later), from the Leafi hardware day | K2.2, K3.2, K4.1–K4.3, I1.3; K3.1 extended with the per-utterance handshake |
+| New on 2026-10-22, from the Leafi `anthropic` pin | H6.1–H6.3 |
 
 ## Rule 1 — the `useBlocker` incident (2026-09-11, ThanksPorch) / 事故一
 
@@ -382,6 +383,11 @@ What the acceptance run above could not have shown: every case in it was a known
 
 Leafi gained a `.env` settings tab in its task editor, a new `env-file` configuration check and a `leafi env-example` command, through a design reviewed for eleven rounds and an implementation reviewed for seven. Every round passed without anyone asking about the owner's console, because the project's definition of done (full tests, regression tests, codex review) does not mention it and the global rule ("every command gets a button") is worded for writing replies, not for finishing work. The owner noticed. H5.1 is the question that would have raised it at planning time. The owner also narrowed the rule: only operations used more than once get a button, so the one-off `env-example` button added in the fix was removed again.
 Leafi 的任务编辑器新增了 `.env` 设置页、`env-file` 配置检查和 `leafi env-example` 命令；设计审了十一轮、实现审了七轮，没有一轮问到主人的控制台——项目的完成标准（全量测试、回归测试、codex 评审）里没有它，全局规则（"每条命令都有按钮"）又是写回复时的规则，不是收尾时的规则。是主人发现的。H5.1 就是在计划阶段能提出它的问题。主人同时收窄了规则：只有会多次用到的操作才加按钮，所以补救时加的一次性 `env-example` 按钮又被删掉了。
+
+## H6 — the pin that aged in three days (2026-10-22, Leafi) / 三天就过时的版本锁
+
+On 2026-10-19 Leafi pinned `anthropic==0.120.2`. Its tech-debt entry TD-1 gave a reason that was not one — the old line had no `fallbacks` parameter — and a lifting condition that lifted nothing: "upgrade to 1.x (httpx2) once a reason exists". `anthropic` 1.0.0, which moved to `httpx2`, had been out since 2026-08-20. Research on 2026-10-22 (`docs/research/2026-10-22-harness-libraries.md` in that repository) found that the Python LLM SDK ecosystem had moved from `httpx` to `httpx2` in August: current pydantic-ai (≥2.33), `openai` 3.x and `huggingface_hub` 2.x all required `httpx2`. The pin blocked adopting any of them, and the egress filter and the retry layer had to plan for two HTTP stacks at once. The owner asked whether the rule "third-party imports only in one adapter, contract tests per adapter, pins with reasons" was already in the catalog. A check of H1–H4 found one owner per concern (H1.2, H3.2), interface depth (H3.3, H3.4), a test with the real library (H1.5) and a justified rejection of a library (H2.3), but nothing on where an import may appear, on testing a candidate adapter by the same suite as the current one, or on what a pin must record. Those three became H6.1–H6.3, in a new sub-scenario because H1 asks how a library already chosen is used, not how the plan survives its next release. H6.3's review step repeats the owner's standing rule to check a package's latest release and default branch before calling a fix absent.
+2026-10-19，Leafi 把 `anthropic` 锁在 `0.120.2`。它的技术债条目 TD-1 给的理由算不上理由——旧版本线没有 `fallbacks` 参数——解除条件也解除不了什么："有理由时升级到 1.x（httpx2）"。而改用 `httpx2` 的 `anthropic` 1.0.0 早在 2026-08-20 就发布了。2026-10-22 的调研（该仓库 `docs/research/2026-10-22-harness-libraries.md`）发现，Python 的 LLM SDK 生态在八月从 `httpx` 迁到了 `httpx2`：当前的 pydantic-ai（≥2.33）、`openai` 3.x、`huggingface_hub` 2.x 都要求 `httpx2`。这个版本锁挡住了采用其中任何一个，出口过滤器和重试层也只好同时为两套 HTTP 栈做设计。主人问"第三方 import 只在一个适配器里、每个适配器有契约测试、版本锁写明理由"这条规则目录里是否已有。核对 H1–H4 发现：有"一个关注点一个 owner"（H1.2、H3.2）、接口深度（H3.3、H3.4）、用真实库的测试（H1.5）、拒绝某个库要有依据（H2.3），却没有"import 允许出现在哪"、"候选适配器用和现有适配器同一套测试来评判"、"版本锁必须记下什么"。这三条成了 H6.1–H6.3，放在新的子场景里，因为 H1 问的是已选定的库怎么用，而不是方案怎么熬过它的下一个版本。H6.3 的复查步骤重复了主人的常设规则：在说某个修复不存在之前，先查包的最新发布和默认分支。
 
 ## How to maintain / 怎么维护
 
