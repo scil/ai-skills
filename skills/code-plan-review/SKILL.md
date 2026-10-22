@@ -271,6 +271,10 @@ Hand-made content is not the defect; hand-made content nobody chose is. An item 
 2. A prototype or design handoff is ported verbatim, its hand-made assets with it, though a document the project owns names a source for them. Suggest: map each asset to the named source before porting — the prototype decides the look, the document decides the source; an asset kept hand-made says why.
 3. The plan adds one item to a hand-made set. Suggest: ask H4.1 once of the whole set, not only of the new item; the set's size is the figure H2.3 asks for.
 
+#### H5. An operation the owner will repeat
+
+1. The plan adds or changes something the owner will run or open more than once (a script, a command, a web page or tab, a health or configuration check) in a project that keeps a console of such operations, and no step updates it; the plan's own definition of done (tests, review) passes without it, so the operation ships reachable only from a reply that scrolls away. Suggest: a step "update the console": a button for each new recurring operation, the help line or card of each changed one, and the console's own check run; a one-off command stays in the reply and is not a button.
+
 ### I. One truth, several copies
 
 #### I1. Two implementations
