@@ -23,6 +23,11 @@ Two further findings shaped the method. The user said one ETH study was "not eno
 5. Blog-described exemplar → *verify the object directly.*
 6. Circulating numbers → *pull splices apart; register each piece.*
 
+## The IT-security harvest (2026-10-23) / IT 安全经验
+
+A defence plan for a WordPress VPS was researched with this method by four parallel subagents. Its lessons went into `references/it-security.md`, at the user's request that they live in this skill as a separate, security-only file. The lessons were: severity differs between project, CNA and distro; a breach detail found only in the attacker's claims stayed "reported"; a "free" tool recommended from memory had ended its free licences 9 days earlier; `DISALLOW_FILE_MODS` silently disables auto-updates; Docker bypasses ufw; a security scanner was itself compromised; a practitioner's four principles had been used as the report's frame until the user asked for a recognised framework; and one subagent brief about offensive tools was stopped by a safety classifier, while a defender-only brief succeeded.
+用本方法、四个并行子代理为一台 WordPress VPS 做了防御方案调研。按用户要求，经验单独放进 `references/it-security.md`，只管 IT 安全。经验包括：项目、CNA、发行版的严重性评级不同；只出现在攻击者说法里的入侵细节仍记为"报道"；凭记忆推荐的"免费"工具 9 天前已停发免费许可；`DISALLOW_FILE_MODS` 会悄悄关闭自动更新；Docker 会绕过 ufw；安全扫描器自身被投毒；报告一度以某位从业者的四条原则为框架，直到用户要求改用公认框架；一个询问攻击工具的子代理任务被安全分类器拦停，而只问防守信息的任务说明顺利完成。
+
 ## Boundaries / 边界
 
 `gather-code-references` collects third-party coding resources for an implementation; `derive-project-plan` turns references into project decisions; `ai-agents-md` and `docs-maintainer` carry sources registries built with this method and share the checker script. This skill owns the judging and registering method only.

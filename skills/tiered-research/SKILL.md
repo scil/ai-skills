@@ -17,6 +17,10 @@ Research whose output is a set of verdicts and a source table, not an impression
 5. **Splices are common.** A circulating sentence often joins a number from one study, a scope from another, and a rule of thumb from a guide. Pull the pieces apart and register each with its real source.
 6. **Dates are two columns.** `source-date` is what the source states (published, revised, version); `checked` is when you looked. An undated living page is written as such, never given a guessed date.
 
+## Domain references
+
+- IT security (vulnerabilities, advisories, breaches, security tools, defence plans): read [`references/it-security.md`](references/it-security.md) before naming corpora.
+
 ## Paths
 
 ### Verify claims
