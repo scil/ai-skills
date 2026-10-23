@@ -135,6 +135,15 @@ One runner per project):
 
 plus a copy with `confirm_execution: true`, and the custom variable `console_button` in
 `custom_variables` (`{"name": "console_button", "default_value": null, "id": "console-button"}`).
+
+**Runner commands use `"output_handling_mode": "realtime"`.** In `buffered` mode the plugin reads
+`stdout.read()` once, on the child's `exit` event; a PowerShell child's output is usually still in
+the pipe then, so the output is empty and no modal opens — the command runs, silently (observed
+2026-10-22: even `Write-Output 'diag ok'` never showed; the same spawn from Node returned it). `cmd`
+children happen to win that race, which is why the old per-button commands worked. Realtime reads on
+each `readable` event and opens the modal on the first output. Set
+`custom_variables_notify_changes_via.obsidian_uri: false` too, or every Buttons link pops a
+"`{{_console_button}} = <key>`" notice.
 The three forms below are now what the runner's cases run; pick by the checklist in
 `project-console.md` §3 and do not compose new forms.
 
