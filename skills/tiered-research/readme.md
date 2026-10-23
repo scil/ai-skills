@@ -28,6 +28,18 @@ Two further findings shaped the method. The user said one ETH study was "not eno
 A defence plan for a WordPress VPS was researched with this method by four parallel subagents. Its lessons went into `references/it-security.md`, at the user's request that they live in this skill as a separate, security-only file. The lessons were: severity differs between project, CNA and distro; a breach detail found only in the attacker's claims stayed "reported"; a "free" tool recommended from memory had ended its free licences 9 days earlier; `DISALLOW_FILE_MODS` silently disables auto-updates; Docker bypasses ufw; a security scanner was itself compromised; a practitioner's four principles had been used as the report's frame until the user asked for a recognised framework; and one subagent brief about offensive tools was stopped by a safety classifier, while a defender-only brief succeeded.
 用本方法、四个并行子代理为一台 WordPress VPS 做了防御方案调研。按用户要求，经验单独放进 `references/it-security.md`，只管 IT 安全。经验包括：项目、CNA、发行版的严重性评级不同；只出现在攻击者说法里的入侵细节仍记为"报道"；凭记忆推荐的"免费"工具 9 天前已停发免费许可；`DISALLOW_FILE_MODS` 会悄悄关闭自动更新；Docker 会绕过 ufw；安全扫描器自身被投毒；报告一度以某位从业者的四条原则为框架，直到用户要求改用公认框架；一个询问攻击工具的子代理任务被安全分类器拦停，而只问防守信息的任务说明顺利完成。
 
+The same day the report became a framework-based checklist, and `it-security.md` §3 records what that taught.
+同一天，报告被做成基于框架的检查清单，`it-security.md` §3 记录了从中学到的经验。
+
+- The CIS IG1 rows were first written from memory. They were reconciled with the CIS workbook once the user downloaded it, because the download needs a registration form. 4 of the 56 proposed CSF functions were wrong.
+  CIS IG1 各行最初凭记忆写成。用户下载 CIS 工作簿后（下载需填写注册表）才逐行核对，56 个建议的 CSF 职能中有 4 个是错的。
+- NIST's CSF 2.0 PDF would not render. The categories were verified from NIST's JSON export instead, which also contains withdrawn CSF 1.1 identifiers.
+  NIST 的 CSF 2.0 PDF 无法渲染，改用 NIST 的 JSON 导出核实类别；该导出里还混有已废止的 CSF 1.1 标识符。
+- Coverage at category level exposed five governance and communication gaps that function-level coverage had hidden.
+  按类别统计覆盖后，暴露出五个按职能统计时被掩盖的治理与沟通缺口。
+- The user read the letter prefixes A–D on source IDs as an unexplained classification scheme. They were renamed to topic names.
+  用户把来源编号上的字母前缀 A–D 误读为一种没有解释的分类体系，于是改成了主题名。
+
 ## Boundaries / 边界
 
 `gather-code-references` collects third-party coding resources for an implementation; `derive-project-plan` turns references into project decisions; `ai-agents-md` and `docs-maintainer` carry sources registries built with this method and share the checker script. This skill owns the judging and registering method only.
