@@ -29,9 +29,11 @@ const LINK = /^(https?|file):/;
 const KEY_VARIABLE = '_console_button';
 const CONFIRM_COLORS = new Set(['red', 'orange', 'yellow']);
 
+// getVariables() returns a Set (Shell commands' VariableSet), not an array.
 function shellVariable(name) {
   const plugin = app.plugins.plugins['obsidian-shellcommands'];
-  return plugin?.getVariables?.().find((v) => v.variable_name === name);
+  const variables = plugin?.getVariables?.();
+  return variables ? [...variables].find((v) => v.variable_name === name) : undefined;
 }
 
 function readStorage(key) {
@@ -154,20 +156,25 @@ function renderTiles(parent, buttons) {
       : null;
     const name = SHELL_PREFIX + (runner || spec.action);
     button.onclick = async () => {
-      const command = findCommand(name);
-      if (!command) {
-        if (!tile.hasClass('is-broken')) markBroken(tile, `Command "${name}" not found`);
-        return;
-      }
-      if (runner) {
-        const variable = shellVariable(KEY_VARIABLE);
-        if (!variable) {
-          if (!tile.hasClass('is-broken')) markBroken(tile, `Custom variable "${KEY_VARIABLE}" not found`);
+      try {
+        const command = findCommand(name);
+        if (!command) {
+          if (!tile.hasClass('is-broken')) markBroken(tile, `Command "${name}" not found`);
           return;
         }
-        await variable.setValue(spec.action, 'manual');
+        if (runner) {
+          const variable = shellVariable(KEY_VARIABLE);
+          if (!variable) {
+            if (!tile.hasClass('is-broken')) markBroken(tile, `Custom variable "${KEY_VARIABLE}" not found`);
+            return;
+          }
+          await variable.setValue(spec.action, 'manual');
+        }
+        app.commands.executeCommandById(command.id);
+      } catch (error) {
+        // An async click handler's error is otherwise swallowed: the button would just do nothing.
+        if (!tile.hasClass('is-broken')) markBroken(tile, `console-grid: ${error?.message || error}`);
       }
-      app.commands.executeCommandById(command.id);
     };
     if (!findCommand(name)) markBroken(tile, `Command "${name}" not found`);
   }
