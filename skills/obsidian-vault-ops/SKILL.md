@@ -140,7 +140,10 @@ action Shell commands: Execute: <alias>
 ```
 
 Where the palette name is `<Plugin display name>: <palette prefix><alias>`, i.e.
-`Shell commands: Execute: <alias>` with default settings.
+`Shell commands: Execute: <alias>` with default settings. A project console registers only its
+runner (`scripts\win\run_for_obsidian_console.ps1`, one per project) and its buttons pass a key, so a
+console's Buttons blocks are `type link` to `obsidian://shell-commands/?vault=<vault>&_console_button=<key>&execute=<runner id>`
+(`references/project-console.md` → One runner per project).
 
 Design rules that come from real breakage:
 - **Call repo scripts, not inlined commands.** Keep one source of truth in the project; the vault

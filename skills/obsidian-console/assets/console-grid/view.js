@@ -11,7 +11,11 @@
 //   | 按钮 | 动作 | 颜色 | 说明 |
 //   |---|---|---|---|
 //   | 🚀 Start all | 启动全部服务 | blue | `script.bat` → … |
-// 动作 is a Shell commands alias ("Shell commands: Execute: <alias>") or a link (http, https, file).
+// 动作 is a link (http, https, file), or, with a project runner, a key:
+//   await dv.view("_views/console-grid", { data: "…", tabs: true, runner: "<alias>", confirmRunner: "<alias>" })
+// A key is written into the Shell commands custom variable `_console_button`, then the runner command runs
+// (the project's one `scripts\win\run_for_obsidian_console.ps1`); red, orange and yellow buttons use
+// confirmRunner, which asks first. Without `runner`, 动作 is a Shell commands alias as before.
 // 颜色 is blue | green | yellow | red | purple | orange or empty. 说明 is markdown; write | as \|.
 // Everything else in the section (the callouts) is rendered under that group's buttons in tabs mode.
 //
@@ -22,6 +26,13 @@ const SHOW_HELP_CLASS = 'console-grid-show-help';
 const HELP_KEY = 'console-grid-show-help';
 const SHELL_PREFIX = 'Shell commands: Execute: ';
 const LINK = /^(https?|file):/;
+const KEY_VARIABLE = '_console_button';
+const CONFIRM_COLORS = new Set(['red', 'orange', 'yellow']);
+
+function shellVariable(name) {
+  const plugin = app.plugins.plugins['obsidian-shellcommands'];
+  return plugin?.getVariables?.().find((v) => v.variable_name === name);
+}
 
 function readStorage(key) {
   try {
@@ -138,12 +149,23 @@ function renderTiles(parent, buttons) {
       button.onclick = () => window.open(spec.action);
       continue;
     }
-    const name = SHELL_PREFIX + spec.action;
-    button.onclick = () => {
+    const runner = input.runner
+      ? (CONFIRM_COLORS.has(spec.color) && input.confirmRunner ? input.confirmRunner : input.runner)
+      : null;
+    const name = SHELL_PREFIX + (runner || spec.action);
+    button.onclick = async () => {
       const command = findCommand(name);
       if (!command) {
         if (!tile.hasClass('is-broken')) markBroken(tile, `Command "${name}" not found`);
         return;
+      }
+      if (runner) {
+        const variable = shellVariable(KEY_VARIABLE);
+        if (!variable) {
+          if (!tile.hasClass('is-broken')) markBroken(tile, `Custom variable "${KEY_VARIABLE}" not found`);
+          return;
+        }
+        await variable.setValue(spec.action, 'manual');
       }
       app.commands.executeCommandById(command.id);
     };

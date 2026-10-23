@@ -10,15 +10,33 @@ a check, run tests). A project with one command does not need one.
 ## Architecture: four layers, one source of truth
 
 ```
-button (Buttons plugin)         the note — grouped, labelled, with context help
-  └─ command (Shell commands)   registration: alias, shell, output routing, confirmation
-       └─ script (in the repo)  the actual logic — committed, reviewable, reusable
-            └─ the real work    docker / python / whatever
+button (grid row or Buttons block)   the note — grouped, labelled, with context help; sends a key
+  └─ runner command (Shell commands)  one per project: "<P> 控制台", and "<P> 控制台(先确认)" that asks first
+       └─ runner (in the repo)        scripts\win\run_for_obsidian_console.ps1: key → one fixed command
+            └─ script (in the repo)   the actual logic — committed, reviewable, reusable
+                 └─ the real work     docker / python / whatever
 ```
 
-**The vault holds no logic.** Its config only names a script in the repo. Inlining commands into
-plugin config creates a second source of truth that drifts silently and is invisible to anyone
-reading the repo.
+**The vault holds no logic.** Its config only names the project's runner; the runner names scripts.
+Inlining commands into plugin config creates a second source of truth that drifts silently and is
+invisible to anyone reading the repo.
+
+**One runner per project** (owner decision 2026-10-22). Every button of a project reaches the same
+file, `<repo>\scripts\win\run_for_obsidian_console.ps1`, with a key: `param([string]$Button)` and a
+`switch` with one case per key (`'health' { cmd /c "… health.bat < nul"; Done }`) and a `default`
+that runs nothing. Registered commands per project:
+
+| Command | Command string | Why |
+|---|---|---|
+| `<P> 控制台` | `& '<repo>\scripts\win\run_for_obsidian_console.ps1' -Button {{_console_button}}` (PowerShell shell, so the key is escaped) | every button |
+| `<P> 控制台(先确认)` | the same, `confirm_execution: true` | destructive, irreversible or noisy buttons |
+| one per `{{selection}}` / prompt button | the same file with a fixed key: `-Button test-one -Selection {{selection}}` | the editor or a prompt supplies a value |
+
+A grid row sets the key through the plugin (`console-grid` with `runner` / `confirmRunner`); a
+Buttons block is `type link` with the plugin's URI,
+`action obsidian://shell-commands/?vault=<vault>&_console_button=<key>&execute=<runner command id>`.
+The custom variable `console_button` exists once in `custom_variables`. Adding a button then never
+touches `data.json` and never needs Obsidian quit.
 
 ## 1. Inventory the operations
 
@@ -69,8 +87,8 @@ Run every candidate through this checklist:
 | Question | If yes |
 |---|---|
 | Does it terminate on its own? | If no, write a bounded variant (`--tail 60`, not `-f`) |
-| Is it destructive, irreversible, or physically noticeable? | `confirm_execution: true` |
-| Is the output more than a couple of lines? | route to `modal`, else `notification` |
+| Is it destructive, irreversible, or physically noticeable? | the confirming runner: a grid row coloured red, orange or yellow; a Buttons link with `execute=<prefix>console-confirm` |
+| Is the output more than a couple of lines? | the runners route to `modal`; keep a one-line result one line |
 | Does it consume arbitrary user text? | PowerShell shell, invoke the program directly, no `.bat` |
 | Does it need a terminal (interactive prompts, TUI, a foreground server)? | Not a button. Leave it as a `file:///` link to a `.bat`, which opens a real console |
 
@@ -108,16 +126,19 @@ some text first") so a mis-click is not silent.
   `cmd /c "cd /d <repo> && scripts\win\x.bat < nul"` for the headless ones, and the `.ps1` that
   takes `{{selection}}` **twice**: with no argument (must print its hint and exit 1) and with a real
   keyword. Do this *before* registering — it is the last point where a mistake costs nothing.
-- Cross-check every button `action` against the registered aliases programmatically (recipe in
-  `SKILL.md`) — exact-match failures are silent-ish and easy to miss by eye.
+- Run the runner once per new key, and once with an unknown key (it must print "Unknown console
+  button" and exit non-zero).
 - Confirm no command is a follow/tail form.
-- Run `obsidian-console`'s `check-console.js` for the grid's aliases and cards.
+- Run `obsidian-console`'s `check-console.js <view.js> <note> <data.json> <runner .ps1>` on every
+  console note (grid rows and Buttons blocks): each key must be a runner case, each command id and
+  alias registered.
 - Then hand over with a **safe first test**: a read-only button with visible output. Green means the
   whole chain works, with no side effects.
 
 ## Build order
 
-For a new console: **survey → scripts → run each once → register (Obsidian quit) → note → verify.**
+For a new console: **survey → scripts → runner → run each key once → register the runners
+(Obsidian quit, once per project) → note → verify.**
 Registration is the only step that needs Obsidian closed, so ask for that when the task starts and
 do everything else in the meantime; by the time you write `data.json` every alias and command
 string has already been exercised. A second console in the same vault reuses the first project's
@@ -127,8 +148,9 @@ do not redesign.
 
 ## Maintenance
 
-Adding a button later touches three places: script → command registration → one row, with its help
-line, in the group's table (`obsidian-console`).
+Adding a button later touches the repo and the note only: a script, one case in the project's
+`run_for_obsidian_console.ps1`, and one row (or block) with its help line. `data.json` changes only for
+a new project or a new `{{selection}}` / prompt button.
 
 When the project changes ports, paths or procedures, the console's folded memo is the thing that goes
 stale first. Keep it thin: state only what has no home in the repo, and link out for the rest.

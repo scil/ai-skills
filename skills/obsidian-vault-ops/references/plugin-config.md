@@ -124,10 +124,19 @@ Route by size: one or two lines → `notification`; a report → `modal`.
 Known: `CMD.EXE`, `PowerShell.exe` (5.1), `pwsh.exe` (Core), `bash`, `dash`, `zsh`.
 Empty `{}` uses the platform default.
 
-## The three command-string forms (Windows, verified)
+## The command-string forms (Windows, verified)
 
-Every console button so far is one of these. Pick by the checklist in `project-console.md` §3;
-do not compose new forms.
+A project console registers its **runner**, not one command per button (`project-console.md` →
+One runner per project):
+
+| Job | `platform_specific_commands.default` | `shells` | `output` |
+|---|---|---|---|
+| Every button of the project | `& '<repo>\scripts\win\run_for_obsidian_console.ps1' -Button {{_console_button}}` | `{"win32":"PowerShell.exe"}` | `modal` |
+
+plus a copy with `confirm_execution: true`, and the custom variable `console_button` in
+`custom_variables` (`{"name": "console_button", "default_value": null, "id": "console-button"}`).
+The three forms below are now what the runner's cases run; pick by the checklist in
+`project-console.md` §3 and do not compose new forms.
 
 | Job | `platform_specific_commands.default` | `shells` | `output` |
 |---|---|---|---|
