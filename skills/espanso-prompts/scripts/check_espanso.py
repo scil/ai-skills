@@ -2,7 +2,8 @@
 
 Reports: YAML that fails to parse; a trigger that ends with another trigger while lacking
 left_word (typing the long one fires both); more than one $|$ cursor marker in a match;
-an underscore-prefixed file that no other match file imports (Espanso skips it).
+an underscore-prefixed file that no other match file imports (Espanso skips it); a line of
+DUP_MIN or more characters repeated across matches (shared text belongs in a global var).
 
 Usage: python -I -X utf8 check_espanso.py <match-dir> [<prompt-subdir-glob>]
   e.g. check_espanso.py D:\\A\\Scoop\\persist\\Espanso\\.espanso\\match "_prompts/*.yml"
@@ -11,6 +12,8 @@ import sys
 from pathlib import Path
 
 import yaml
+
+DUP_MIN = 80
 
 
 def main():
@@ -43,6 +46,16 @@ def main():
         for long_, lf, lm in matches:
             if long_ != short and long_.endswith(short) and not (sm.get("left_word") or sm.get("word")):
                 problems.append(f"typing {long_!r} ({lf}) also fires {short!r} ({sf}); add left_word: true to {short!r}")
+
+    seen = {}
+    for t, f, m in {id(m): (t, f, m) for t, f, m in matches}.values():  # once per match, not per trigger
+        for line in str(m.get("replace", "")).splitlines():
+            line = line.strip()
+            if len(line) >= DUP_MIN:
+                seen.setdefault(line, []).append(f"{t!r} ({f})")
+    for line, where in seen.items():
+        if len(where) > 1:
+            problems.append(f"repeated in {', '.join(where)}: {line[:60]}...; move it into a global var, or merge whole duplicates with triggers: [...]")
 
     print(f"{len(matches)} triggers in {len(files)} files; {len({t for t, _, _ in matches})} distinct")
     missing = sorted({t for t, _, m in matches if not (m.get("left_word") or m.get("word"))})

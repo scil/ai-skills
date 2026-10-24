@@ -1,6 +1,9 @@
-# harvest-prompts — where the rules came from
+# espanso-prompts — where the rules came from
 
-Written on 2026-10-20 after one session mined 3,275 prompts (2026-05 to 2026-10, 490 Claude Code transcripts and 12 Codex sessions) into about 20 Espanso triggers.
+Written on 2026-10-20 as `harvest-prompts` after one session mined 3,275 prompts (2026-05 to 2026-10, 490 Claude Code transcripts and 12 Codex sessions) into about 20 Espanso triggers. Renamed on 2026-10-24 and given the Distill and Add entries, after a Leafi session reviewed one pasted prompt (explain a mechanism by analogy) and installed it as two `analogy ;` variants, with and without a code-grounding step.
+
+- **Edit through the real path**: in that session the Edit tool failed with `EEXIST` on its temp file when writing through `%APPDATA%\espanso` (a link to the Scoop persist folder); the same edit through the target path worked.
+- **One `$|$` per match** forced the second placeholder (`<system>`) to become "the system", which the session's context resolves.
 
 - **The selection test** ("would deleting this line change the agent's behaviour?") came from the same session's review of a `git-commit` skill and two commit prompts: most of their text restated defaults. A snippet earns its place only for non-default behaviour, because the user types it exactly when they want something other than the default.
 - **Exact-repeat counting was not enough.** The top exact repeats were `commit`, `ok`, `继续`, `push`; the useful intents (act on pasted review findings, explain for a beginner, implement a design prototype) only appeared after grouping by keyword.
