@@ -3,17 +3,21 @@
 Reports: YAML that fails to parse; a trigger that ends with another trigger while lacking
 left_word (typing the long one fires both); more than one $|$ cursor marker in a match;
 an underscore-prefixed file that no other match file imports (Espanso skips it); a line of
-DUP_MIN or more characters repeated across matches (shared text belongs in a global var).
+DUP_MIN or more characters repeated across matches (shared text belongs in a global var);
+more than TAIL_MAX characters after $|$ once echo global vars are expanded (Espanso reaches
+the marker by pressing Left once per character).
 
 Usage: python -I -X utf8 check_espanso.py <match-dir> [<prompt-subdir-glob>]
   e.g. check_espanso.py D:\\A\\Scoop\\persist\\Espanso\\.espanso\\match "_prompts/*.yml"
 """
+import re
 import sys
 from pathlib import Path
 
 import yaml
 
 DUP_MIN = 80
+TAIL_MAX = 5
 
 
 def main():
@@ -23,7 +27,7 @@ def main():
     all_yml = [p for p in match_dir.rglob("*.yml") if "packages" not in p.parts]
     config_dir = match_dir.parent / "config"
     importers = all_yml + (sorted(config_dir.glob("*.yml")) if config_dir.exists() else [])
-    problems, matches = [], []
+    problems, matches, echo_vars = [], [], {}
 
     for f in files:
         try:
@@ -31,6 +35,9 @@ def main():
         except yaml.YAMLError as e:
             problems.append(f"{f.name}: YAML error: {e}")
             continue
+        for v in doc.get("global_vars") or []:
+            if v.get("type") == "echo":
+                echo_vars[v["name"]] = str(v.get("params", {}).get("echo", ""))
         for m in doc.get("matches", []):
             triggers = m.get("triggers") or [m.get("trigger")]
             for t in filter(None, triggers):
@@ -49,6 +56,9 @@ def main():
 
     seen = {}
     for t, f, m in {id(m): (t, f, m) for t, f, m in matches}.values():  # once per match, not per trigger
+        expanded = re.sub(r"\{\{(\w+)\}\}", lambda x: echo_vars.get(x.group(1), x.group(0)), str(m.get("replace", "")))
+        if "$|$" in expanded and len(tail := expanded.split("$|$", 1)[1]) > TAIL_MAX:
+            problems.append(f"{t!r} ({f}): {len(tail)} characters after $|$, so Espanso presses Left {len(tail)} times; end the replace with $|$ (block style |-)")
         for line in str(m.get("replace", "")).splitlines():
             line = line.strip()
             if len(line) >= DUP_MIN:
