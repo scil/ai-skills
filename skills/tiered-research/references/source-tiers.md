@@ -5,7 +5,7 @@
 | Tier | `kind` prefix | What it is | What it may do |
 |---|---|---|---|
 | 1 | `T1-vendor` · `T1-standard` | The owner's own documentation: a vendor's docs for its product, a standard's own site, a specification, a project's own README for its layout | **Decides alone.** A tier-1 statement enters a rule or a fact table by itself. When two tier-1 owners differ (two vendors, a vendor and a standard), record both; the artefact follows the owner it is read by. |
-| 2 | `T2-research` | Peer-reviewed or preprint empirical studies | **Corroborates or qualifies.** Enters when two independent studies agree, or when one explains a tier-1 rule. A lone study is written "one study finds" and shapes no conclusion. Always record scope (§2): studies disagree along their scope lines. |
+| 2 | `T2-research` | Peer-reviewed or preprint empirical studies; a vendor's study of a field beyond its own product, marked "vendor study" | **Corroborates or qualifies.** Enters when two independent studies agree, or when one explains a tier-1 rule. A lone study is written "one study finds" and shapes no conclusion. Always record scope (§2): studies disagree along their scope lines. |
 | 3 | `T3-exemplar` | The real thing in the wild: a file in a popular repository, a shipped configuration | **Illustrates.** Shows a pattern in use; never the source of a rule. Verified by direct access (API, tree, raw file), never through an article about it. |
 | 4 | `T4-report` | Blogs, engineering posts, secondary coverage, vendor guides, chat transcripts | **Points.** Leads to a tier-1 or tier-2 source, or is recorded as "reported". A vendor's first-hand engineering post about its own practice is tier 4 with weight: primary, but one team's account. |
 

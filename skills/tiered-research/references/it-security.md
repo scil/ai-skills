@@ -8,14 +8,14 @@ Read this when the question or the claims are about IT security: vulnerabilities
 |---|---|---|---|
 | A vulnerability in a product | The project's own advisory page (e.g. `nginx.org/en/security_advisories.html`, `php.net/archive/<year>.php`, `nodejs.org/en/blog/vulnerability`), the GitHub security advisories of its repo | The CVE record from the CNA: `https://cveawg.mitre.org/api/cve/<CVE-ID>` | The project and the CNA may rate severity differently; record both (§2.1). |
 | Whether a distro is patched | The distro tracker: `security-tracker.debian.org/tracker/<CVE>`, `ubuntu.com/security/<CVE>`, the distro's `-security` suite | — | Trackers can lag upstream by more than a week; never infer "patched" from upstream alone, nor "unpatched" from the main suite alone. |
-| Exploitation in the wild | Vendor's own telemetry post (e.g. a cloud provider's threat blog), CISA KEV catalogue | Security-vendor blogs (T4) | Record the date of first observed exploitation separately from the disclosure date. |
+| Exploitation in the wild | CISA KEV catalogue, the product's own advisory | Vendor telemetry reports (T2 vendor study, §2.12), researchers' and security-vendor posts (T4, §2.13–14) | Record the date of first observed exploitation separately from the disclosure date. |
 | A breach or incident at an organisation | The victim's own statement (trust centre, status page, blog, filing) | News (T4), attacker leak-site claims (T4) | See §2.3. |
 | A security tool's status | `api.github.com/repos/<owner>/<repo>` (licence, `pushed_at`, `archived`), `/releases/latest`, the README, the vendor's product and pricing pages | Aggregators (T4) | Status decays: see §2.4. |
 | A tool's or service's free tier, price, licence | The vendor's pricing page and licence file on the day of checking | — | A README licence claim and GitHub's licence field can disagree; record both. |
 | A configuration flag's effect | The owner's reference docs and, when docs are silent, the source code of the function that reads the flag | — | See §2.5. |
 | Interaction between two components (firewall vs container runtime, proxy vs IP-based blocking) | Each component's own docs on the other | — | See §2.6. |
 | Hardening or defence structure | Framework owners: NIST CSRC (glossary, CSF 2.0, SP 800-61r3, SP 800-63B), CIS Controls (v8.1, IG1), OWASP cheat sheets | Practitioner lists (T4) | See §2.8. |
-| Attack trends ("attacks now take days") | Vendor threat reports with their own data (Mandiant M-Trends, Google GTIG), peer-reviewed studies | Commentary (T4) | Separate the measured trend from the claimed cause (§2.9). |
+| Attack trends ("attacks now take days") | No T1 exists: the trend is not one owner's fact. T2: peer-reviewed studies and vendor threat reports with their own data (Mandiant M-Trends, Google GTIG, Patchstack, Wordfence), marked "vendor study" | Commentary, experts' posts (T4) | Separate the measured trend from the claimed cause (§2.9). Vendor studies need the usual pairing (§2.12). |
 
 ## 2. Traps and the rule for each
 
@@ -30,6 +30,9 @@ Read this when the question or the claims are about IT security: vulnerabilities
 9. **Trend measured, cause claimed.** Time-to-exploit data (T1 vendor data) and the claim that AI causes the change (often T4) are separate rows. A lab capability study (T2) is not real-world timing.
 10. **Fit verdicts name the scale.** "Use now / optional / not relevant" must state the deployment it was judged for (e.g. one VPS, small team). Keep the not-relevant tools in the report with their facts; the reader may need them for study or other work.
 11. **Repository red flags are facts to record, not to resolve.** Star counts implausible for the repository's age, a backup of a deleted upstream, a disclaimer that forbids the advertised use, a null licence field with commercial terms in the README, an extra EULA over an open-source licence. Write each as found.
+12. **A vendor is T1 only for its own product.** A security vendor's report on the ecosystem (vulnerability counts, time to exploit, leaked-secret totals) is T2, marked "vendor study": it has its own data, a method and a sample, and a seller's angle. Record its scope fields; it corroborates when another independent study agrees, and alone it is "one vendor study finds". A vendor study known only through news coverage is "reported" until the report itself is read.
+13. **A researcher's own write-up is first-hand for what they found.** When the person who found a vulnerability publishes it (blog, post, conference talk), it is T4 with weight, like a vendor's post about its own practice: record it as "reported by the finder", then look for the product's advisory and the CVE record (T1). Where they differ (affected versions, severity, preconditions), record both.
+14. **An expert's post is an early signal, not evidence.** A practitioner's post on social media ("this is being exploited", "this tool is abandoned") is T4: it sends you to the T1 or T2 source that would hold the fact (KEV, the advisory, the repository's API). Record its date, which can be the earliest one for first exploitation. Many experts agreeing raises the urgency of checking; it does not raise the tier.
 
 ## 3. Verifying a framework's own content
 
