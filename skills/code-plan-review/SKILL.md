@@ -309,6 +309,10 @@ H2 and H4 are instances of this sub-scenario for interaction concerns and commod
 1. A confirmation sentence ("remove Sam"; "charge 3 seats") reads one copy of the value and the write uses another: a snapshot in one, fresh query data at click in the other; or the expected value is sent and the server never checks it. Suggest: one snapshot taken when the confirmation opens feeds both the sentence and the request; the expected value goes into the write's own condition, and zero rows changed is shown as "this changed under you".
 2. On a phone the sentence sits at the end of a list and scrolls away while the button stays. Suggest: the sentence beside the button.
 
+#### I4. Copies a tool derives
+
+1. The plan sets a boundary ("do not touch area X", "leave the other service alone") and changes a shared source from which X's own files are generated and checked for staleness — a fingerprint in a generated workbook or report, a lockfile, a snapshot, a compiled bundle, a generated client. The plan's done-check then fails until X's files are regenerated, which touches X; or the implementer regenerates them without saying so, and the boundary is broken silently. Suggest: for every shared source the plan changes, list the artifacts derived from it and the area each belongs to; the plan says whether regenerating a derived artifact counts as touching its area, and the report names every regenerated file outside the plan's scope.
+
 ### J. Time passes
 
 An expiry, a trial or subscription ending, a hold or reservation lapsing, an invite or token timing out, an auto-close, a grace period, a reminder, "after N days": a state that changes because the clock moved, not because anybody acted.
