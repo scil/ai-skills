@@ -40,6 +40,9 @@ The same day the report became a framework-based checklist, and `it-security.md`
 - The user read the letter prefixes A–D on source IDs as an unexplained classification scheme. They were renamed to topic names.
   用户把来源编号上的字母前缀 A–D 误读为一种没有解释的分类体系，于是改成了主题名。
 
+On 2026-10-23 a review of this skill's fit moved the last two lessons, with the evidence column and the licensed-title rule, into the project's own `cs-checklist` skill: they are about building that checklist, not about judging sources. §3 now keeps only the verification of a framework's own content. The same review added principle 7, a re-check date for source tables that stay in use, because the appendices had no way to age out a "free and maintained" fact.
+2026-10-23 评估本 skill 是否合适后，后两条经验连同证据列、许可标题规则移入该项目自己的 `cs-checklist` skill：它们讲的是怎么建那份清单，而不是怎么判断来源。§3 现在只保留核实框架原文。同一次评估加了第 7 条原则：仍在使用的来源表要有复查日期，因为附录原先没有办法让"免费且在维护"这类事实过期。
+
 ## Boundaries / 边界
 
 `gather-code-references` collects third-party coding resources for an implementation; `derive-project-plan` turns references into project decisions; `ai-agents-md` and `docs-maintainer` carry sources registries built with this method and share the checker script. This skill owns the judging and registering method only.

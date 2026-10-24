@@ -16,6 +16,7 @@ Research whose output is a set of verdicts and a source table, not an impression
 4. **State disagreements; do not resolve them by preference.** When tier-1 sources or studies conflict, record both with the scope that explains the difference (models, languages, task type, what was measured). A clean conclusion the sources do not support is worse than a stated split.
 5. **Splices are common.** A circulating sentence often joins a number from one study, a scope from another, and a rule of thumb from a guide. Pull the pieces apart and register each with its real source.
 6. **Dates are two columns.** `source-date` is what the source states (published, revised, version); `checked` is when you looked. An undated living page is written as such, never given a guessed date.
+7. **A table that stays in use carries its re-check date.** A source table that a living document keeps citing (a checklist's research appendix, a report that is updated) states `- Next re-check: <date>` in its header, and every row is checked again by then. A row reused before that date to back a new or changed claim is re-checked first when its `checked` is older than the registry's `gate-days`: 7 for fast-moving vendor facts (a tool's price, free tier, licence, maintenance, latest version), 30 for standards.
 
 ## Domain references
 
