@@ -2,6 +2,11 @@
 
 Newest first. Each entry is written by the Refresh path (`refresh.md` §4); proposals are applied only after the user accepts them.
 
+## 2026-10-24 — one rule-shape bullet from a session (not a refresh)
+
+- Source: a user session that compressed a nine-line reply-language rule into one line by naming the established terms (diglot weave; matrix language, from the Matrix Language Frame model) and keeping only the parameters they leave open. No source was read; fingerprints and `last-refresh` are unchanged.
+- Applied (accepted by the user): `rules.md` §2, new bullet "Name the established term, then only what it leaves open".
+
 ## 2026-10-20 — one finding taken from the docs-maintainer refresh (not a full refresh)
 
 - Source: `claude-code-memory-docs`, read during the docs-maintainer refresh of the same day (its changelog has the full entry). Fingerprints and `last-refresh` here are unchanged; this skill's own gate is still due and its other sources were not read.
