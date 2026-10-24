@@ -50,5 +50,5 @@ On 2026-10-23 a review of this skill's fit moved the last two lessons, with the 
 
 ## How to maintain / 怎么维护
 
-Add a row to the corpus table in `references/verdict-protocol.md` §1 when a new wrong-corpus incident happens; add a scope field to `source-tiers.md` §2 when two studies disagree on a dimension not listed. Keep `SKILL.md` a router.
-新的"查错语料"事故加进 `verdict-protocol.md` §1 的表；两篇研究在未列维度上分歧时，把该维度加进 `source-tiers.md` §2。`SKILL.md` 只做路由。
+Research types each have a reference file: `references/ai-agents.md` (the 2026-09-15 incident, split out of the general files on 2026-10-23) and `references/it-security.md`. A new wrong-corpus incident or a scope field on which studies disagree goes into the matching type's file; only a rule true for every type goes into `source-tiers.md` or `verdict-protocol.md`. A new type gets its own file. Keep `SKILL.md` a router.
+每种调研类型有自己的参考文件：`references/ai-agents.md`（2026-09-15 事故，2026-10-23 从通用文件中拆出）和 `references/it-security.md`。新的"查错语料"事故、研究之间新的分歧维度，写进对应类型的文件；只有对所有类型都成立的规则才写进 `source-tiers.md` 或 `verdict-protocol.md`。新类型新建文件。`SKILL.md` 只做路由。

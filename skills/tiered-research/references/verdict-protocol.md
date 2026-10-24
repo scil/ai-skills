@@ -2,15 +2,9 @@
 
 ## 1. Corpus first
 
-For each claim, before searching, write the corpus that would contain it if it were true. Examples of getting this wrong, from the incident that produced this skill:
+For each claim, before searching, write the corpus that would contain it if it were true. Each domain reference has a corpus-by-claim-type table and the wrong-corpus incidents behind it (AI agents: `ai-agents.md` §1 and §3; IT security: `it-security.md` §1).
 
-| Claim | Corpus first searched | Corpus that held it | Consequence |
-|---|---|---|---|
-| "Avoid 'always double-check'; it causes over-verification on new models" | Claude Code docs (memory, best practices) | Anthropic platform prompting docs (Opus 5, Fable 5 pages) | wrongly "NOT FOUND" |
-| "OpenAI keeps AGENTS.md around 100 lines as a table of contents" | the `openai/codex` repository's AGENTS.md (~550 lines) | OpenAI engineering post about a different, internal repository | wrongly "CONTRADICTED" |
-| "anthropics/claude-code is the canonical CLAUDE.md" | blog posts saying so | the repository's full git tree (no such file) | correctly "WRONG" — only because the object itself was listed |
-
-Rules that follow:
+Rules:
 
 - A vendor has several documentation properties (product docs, platform docs, cookbook, engineering blog, changelog). Name which one.
 - "X does Y" about an organization may be about one team's post, not about the organization's public repository.

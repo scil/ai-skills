@@ -13,13 +13,13 @@ Tier is about *ownership of the fact*, not prestige. A vendor blog about its own
 
 ## 2. Scope fields for a study
 
-Record these before the findings; they are where the disagreements live:
+Record these before the findings; they are where the disagreements live. A domain reference adds its own fields (AI agents: `ai-agents.md` §2).
 
-- **Agents / models tested**, with versions.
-- **Languages and task type** (bug fixes from issues, feature work, small PRs under N lines).
-- **Input provenance**: generated vs developer-written artefacts; repositories with or without existing documentation.
-- **What was measured**: success/correctness, cost (which tokens), time, behaviour counts — and what was *not* measured (a study with no correctness check cannot speak to quality).
-- **Sample**: repositories, tasks, files, sessions.
+- **Subjects tested**, with versions: the systems, products or populations studied.
+- **Task or setting**: what the subjects were asked to do, in what environment.
+- **Input provenance**: where the study's material came from (generated or real, curated or in the wild).
+- **What was measured** — and what was *not* (a study with no correctness check cannot speak to quality).
+- **Sample**: how many systems, tasks, files, sessions, organisations.
 - **Stated limitations**, in the authors' words.
 - **Versions and dates**: v1, revisions, venue.
 

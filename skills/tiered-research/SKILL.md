@@ -13,13 +13,16 @@ Research whose output is a set of verdicts and a source table, not an impression
 1. **Authority tiers decide what a source may do.** Tier 1, the owner's own documentation (a vendor for its product, a standard's own site), decides alone. Tier 2, empirical research, corroborates when two independent studies agree or one explains a tier-1 rule; a single study is "one study finds" and shapes no conclusion by itself. Tier 3, real exemplars, illustrate. Tier 4, blogs, posts and secondary coverage, point to a tier-1 or tier-2 source or are recorded as "reported". Table and scope fields: [`references/source-tiers.md`](references/source-tiers.md).
 2. **Name the corpus before the verdict.** Before writing *not found* or *contradicted*, ask which corpus would contain the claim if it were true, and search that one. A verdict states where it looked. A vendor has several documentation sites; a claim about "OpenAI" may be about a blog post, not a repository.
 3. **Verify the object, not the description of it.** An exemplar, a file, a number: fetch or list it directly (API call, tree listing, the paper's own page). Articles that describe a thing are tier 4 about that thing.
-4. **State disagreements; do not resolve them by preference.** When tier-1 sources or studies conflict, record both with the scope that explains the difference (models, languages, task type, what was measured). A clean conclusion the sources do not support is worse than a stated split.
+4. **State disagreements; do not resolve them by preference.** When tier-1 sources or studies conflict, record both with the scope that explains the difference (what was tested, on which task, what was measured). A clean conclusion the sources do not support is worse than a stated split.
 5. **Splices are common.** A circulating sentence often joins a number from one study, a scope from another, and a rule of thumb from a guide. Pull the pieces apart and register each with its real source.
 6. **Dates are two columns.** `source-date` is what the source states (published, revised, version); `checked` is when you looked. An undated living page is written as such, never given a guessed date.
 7. **A table that stays in use carries its re-check date.** A source table that a living document keeps citing (a checklist's research appendix, a report that is updated) states `- Next re-check: <date>` in its header, and every row is checked again by then. A row reused before that date to back a new or changed claim is re-checked first when its `checked` is older than the registry's `gate-days`: 7 for fast-moving vendor facts (a tool's price, free tier, licence, maintenance, latest version), 30 for standards.
 
 ## Domain references
 
+Each research type has its own reference with its corpora, scope fields and traps. Read the matching one before naming corpora; a question that spans two reads both. A new type gets its own file when its first incident teaches a corpus or trap the others lack.
+
+- AI agents and LLMs (instruction files, prompting guidance, skills, agent behaviour, studies of agents): read [`references/ai-agents.md`](references/ai-agents.md).
 - IT security (vulnerabilities, advisories, breaches, security tools, defence plans): read [`references/it-security.md`](references/it-security.md) before naming corpora.
 
 ## Paths
