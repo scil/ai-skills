@@ -43,7 +43,8 @@ for (const [name, group] of Object.entries(groups)) {
   const cards = group.cards.split('\n').filter((line) => line.startsWith('> [!')).length;
   if (unknown.length || leak) failed = true;
   checked++;
-  console.log(`${unknown.length || leak ? 'FAIL' : 'ok  '} ${name}: ${group.buttons.length} buttons, unknown=${JSON.stringify(unknown)}, tableLeak=${leak}, cards=${cards}`);
+  const subgroups = (group.parts || []).filter((p) => p.title).map((p) => `${p.title}:${p.buttons.length}`);
+  console.log(`${unknown.length || leak ? 'FAIL' : 'ok  '} ${name}: ${group.buttons.length} buttons, unknown=${JSON.stringify(unknown)}, tableLeak=${leak}, cards=${cards}${subgroups.length ? `, subgroups=${JSON.stringify(subgroups)}` : ''}`);
 }
 
 const blocks = [...note.matchAll(/```button\r?\n([\s\S]*?)```/g)].map((m) => m[1]);

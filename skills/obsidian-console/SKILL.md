@@ -50,6 +50,12 @@ The vault holds no logic: every button sends a key to the project's runner, whic
 - 颜色 is `blue`, `green`, `yellow`, `red`, `purple`, `orange`, or empty. Red marks destructive buttons, orange ones that change the system or download, yellow ones that make noise; all three run through `confirmRunner`, which asks first.
 - 说明 is the **help line**: the script, then what it really runs (`` `scripts\win\x.bat` → `docker compose …` ``), read off the script and the registered command. One line. A literal `|` inside a cell is written `\|`.
 - Everything in the section except the table is that tab's cards, rendered under its buttons. Cards fold (`> [!type]- title (点开)`), with the headline in the title. The links-to-files card in the files tab may stay open.
+- A `### <subgroup>` heading inside a tab starts a **subgroup**: a small title, its own 按钮 table, its own cards, rendered in order. Lines before the first `###` form an untitled part, so a tab without `###` renders as before. Use subgroups when buttons in one tab depend on different things the owner can swap, e.g. one per piece of hardware (`### PC + DJI 耳机（pc）`), plus one for steps that need no hardware.
+
+## Which buttons a console needs
+
+- **One button per independently verifiable step.** Besides the end-to-end run, every step of a flow that can be checked on its own (capture a frame, recognise it, record from the mic, synthesise speech, play it, reach the model) gets its own button, so the owner finds the broken link by clicking down the chain. Each runs on the flow's own code path (the same device selection, the same backend), not a parallel test path. A step that keeps an artifact the next step can reuse (a still, a clip) gets a second button that reuses the latest one, so one input can be retried without re-capturing it.
+- Put these in one tab ordered along the flow, grouped by the hardware each depends on, with a folded card saying what to fix when each one fails. Only a step whose purpose is sound makes sound, and it is colored yellow.
 
 ## Console note skeleton
 

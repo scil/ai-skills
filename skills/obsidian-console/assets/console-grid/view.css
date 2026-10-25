@@ -28,6 +28,14 @@
 }
 .console-grid-tabbar .console-grid-toggle { margin: 0 0 4px auto; }
 .console-grid-cards { margin-top: 12px; }
+.console-grid-subhead {
+  margin: 14px 0 6px;
+  font-size: var(--font-ui-small);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.console-grid-panel > .console-grid-subhead:first-child,
+.console-grid > .console-grid-subhead:nth-child(2) { margin-top: 0; }
 
 .console-grid-head {
   display: flex;

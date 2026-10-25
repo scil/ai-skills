@@ -18,6 +18,8 @@
 // confirmRunner, which asks first. Without `runner`, 动作 is a Shell commands alias as before.
 // 颜色 is blue | green | yellow | red | purple | orange or empty. 说明 is markdown; write | as \|.
 // Everything else in the section (the callouts) is rendered under that group's buttons in tabs mode.
+// A `### <subgroup>` heading inside a section starts a subgroup: its title, its own 按钮 table, its own cards
+// (e.g. one subgroup per piece of hardware a check depends on).
 //
 // Help visibility is one switch for the whole window (a body class); it and the open tab
 // are remembered in localStorage, so Dataview's periodic re-render keeps them.
@@ -83,7 +85,31 @@ function splitRow(line) {
   return cells;
 }
 
-// One group per `## ` section that contains a 按钮 table; the rest of the section is its cards.
+// One part: its 按钮 table (the first) as buttons, every other line as its cards.
+function parsePart(title, lines) {
+  const start = lines.findIndex(
+    (line, i) => isRow(line) && splitRow(line)[0] === '按钮' && /^\s*\|?\s*:?-{3,}/.test(lines[i + 1] || ''),
+  );
+  if (start < 0) return { title, buttons: [], cards: lines.join('\n').trim() };
+  let end = start + 2;
+  while (end < lines.length && isRow(lines[end])) end++;
+  const header = splitRow(lines[start]);
+  const cell = (cells, column) => (header.indexOf(column) >= 0 ? cells[header.indexOf(column)] || '' : '');
+  return {
+    title,
+    buttons: lines.slice(start + 2, end).map(splitRow).map((cells) => ({
+      name: cell(cells, '按钮'),
+      action: cell(cells, '动作'),
+      color: cell(cells, '颜色'),
+      help: cell(cells, '说明'),
+    })),
+    cards: [...lines.slice(0, start), ...lines.slice(end)].join('\n').trim(),
+  };
+}
+
+// One group per `## ` section that contains a 按钮 table. A `### ` heading inside it starts a subgroup with its
+// own table and cards; the lines before the first `### ` are an untitled part, so a section without `### `
+// is one part, as before subgroups existed. `buttons` and `cards` flatten the parts (check-console reads them).
 function parseGroups(markdown) {
   const sections = [];
   let current = null;
@@ -91,31 +117,23 @@ function parseGroups(markdown) {
   for (const line of markdown.split(/\r?\n/)) {
     if (/^(```|~~~)/.test(line.trim())) inFence = !inFence;
     if (!inFence && /^#{1,2} /.test(line)) {
-      current = line.startsWith('## ') ? { name: line.slice(3).trim(), lines: [] } : null;
+      current = line.startsWith('## ') ? { name: line.slice(3).trim(), parts: [{ title: null, lines: [] }] } : null;
       if (current) sections.push(current);
       continue;
     }
-    if (current) current.lines.push(line);
+    if (!current) continue;
+    if (!inFence && line.startsWith('### ')) current.parts.push({ title: line.slice(4).trim(), lines: [] });
+    else current.parts[current.parts.length - 1].lines.push(line);
   }
 
   const groups = {};
-  for (const { name, lines } of sections) {
-    const start = lines.findIndex(
-      (line, i) => isRow(line) && splitRow(line)[0] === '按钮' && /^\s*\|?\s*:?-{3,}/.test(lines[i + 1] || ''),
-    );
-    if (start < 0) continue;
-    let end = start + 2;
-    while (end < lines.length && isRow(lines[end])) end++;
-    const header = splitRow(lines[start]);
-    const cell = (cells, column) => (header.indexOf(column) >= 0 ? cells[header.indexOf(column)] || '' : '');
+  for (const { name, parts } of sections) {
+    const parsed = parts.map((p) => parsePart(p.title, p.lines)).filter((p) => p.title || p.buttons.length || p.cards);
+    if (!parsed.some((p) => p.buttons.length)) continue;
     groups[name] = {
-      buttons: lines.slice(start + 2, end).map(splitRow).map((cells) => ({
-        name: cell(cells, '按钮'),
-        action: cell(cells, '动作'),
-        color: cell(cells, '颜色'),
-        help: cell(cells, '说明'),
-      })),
-      cards: [...lines.slice(0, start), ...lines.slice(end)].join('\n').trim(),
+      parts: parsed,
+      buttons: parsed.flatMap((p) => p.buttons),
+      cards: parsed.map((p) => p.cards).filter(Boolean).join('\n\n'),
     };
   }
   return groups;
@@ -200,9 +218,18 @@ if (!names.length || missing.length) {
 
 const root = dv.container.createDiv('console-grid');
 
+// A group's parts in order: a subgroup's title, its tiles, its cards. `withCards` is off in single-group mode.
+function renderGroup(parent, group, withCards) {
+  for (const part of group.parts) {
+    if (part.title) parent.createDiv({ cls: 'console-grid-subhead', text: part.title });
+    if (part.buttons.length) renderTiles(parent, part.buttons);
+    if (withCards && part.cards) dv.el('div', part.cards, { container: parent, cls: 'console-grid-cards' });
+  }
+}
+
 if (!input.tabs) {
   addHelpToggle(root.createDiv('console-grid-head'));
-  renderTiles(root, groups[names[0]].buttons);
+  renderGroup(root, groups[names[0]], false);
   return;
 }
 
@@ -228,8 +255,7 @@ addHelpToggle(bar);
 for (const name of names) {
   const panel = root.createDiv('console-grid-panel');
   panels[name] = panel;
-  renderTiles(panel, groups[name].buttons);
-  if (groups[name].cards) dv.el('div', groups[name].cards, { container: panel, cls: 'console-grid-cards' });
+  renderGroup(panel, groups[name], true);
 }
 
 const saved = readStorage(tabKey);
