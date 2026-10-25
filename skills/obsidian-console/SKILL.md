@@ -63,7 +63,7 @@ The vault holds no logic: every button sends a key to the project's runner, whic
 - **Subgroups (`###`) by what a button acts on**: one piece of hardware, one service, one data store, one feature. Use them only when a tab mixes two or more such kinds; a small tab of one kind has none.
 - **Opposites together**: start and stop of the same thing, install and uninstall, back up and prune.
 - **A feature's own tools stay with the feature** (its editor page, its mock run, its sound test), even when they also touch settings; the settings tab may point to them in a card.
-- **Cards go with the buttons they explain**, under that subgroup. A card or help line that sends the user to a button in another tab names the tab: 「机器」tab 的【🔁 重启 go2rtc】.
+- **Cards go with the buttons they explain**, under that subgroup. A card about several subgroups belongs to the tab: put it before the first `###`, where it renders at the top of the tab outside every frame, and make its title name the subgroups it covers. A card or help line that sends the user to a button in another tab names the tab: 「机器」tab 的【🔁 重启 go2rtc】.
 - When regrouping, move rows verbatim and check that the set of 动作 keys and the button count are unchanged (`check-console.js` prints the counts per tab and subgroup).
 
 ## Console note skeleton

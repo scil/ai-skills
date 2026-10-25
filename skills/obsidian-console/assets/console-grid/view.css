@@ -45,6 +45,8 @@
   color: var(--text-normal);
 }
 .console-grid-subgroup .console-grid-cards { margin-top: 8px; }
+/* A tab-level card (before the first subgroup) sits outside every frame: it is about several of them. */
+.console-grid-panel > .console-grid-cards + .console-grid-subgroup { margin-top: 12px; }
 .console-grid-subgroup .callout {
   margin: 6px 0 0;
   padding: 4px 10px;
