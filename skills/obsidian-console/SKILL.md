@@ -100,4 +100,4 @@ This is what the owner can rely on. Keep it true when editing the view or the no
 - Dataview re-renders on vault changes, so an open card folds back; the tab and the help switch survive.
 - DataviewJS gets `dv`, `input` and `app`, but no YAML parser. Frontmatter data works but is hard to read and edit, which is why the data lives in tables.
 - Before replacing a live console with a rebuilt copy, diff the live note against the copy's starting point, and merge edits made since then. Other agents and the owner edit consoles between turns.
-- Measured 2026-10-21 on Dataview 0.5.68: tabs, cards folding, links inside cards and the ⓘ switch all work in reading view.
+- Measured 2026-10-21 on Dataview 0.5.68: tabs, cards folding, links inside cards and the ⓘ switch all work in reading view. Subgroups (`###`) confirmed in reading view by the owner on 2026-10-25.
