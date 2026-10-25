@@ -218,12 +218,15 @@ if (!names.length || missing.length) {
 
 const root = dv.container.createDiv('console-grid');
 
-// A group's parts in order: a subgroup's title, its tiles, its cards. `withCards` is off in single-group mode.
+// A group's parts in order. A titled part (subgroup) is one framed block holding its title, its tiles and its
+// cards, so the cards read as belonging to it; an untitled part renders straight into the panel.
+// `withCards` is off in single-group mode.
 function renderGroup(parent, group, withCards) {
   for (const part of group.parts) {
-    if (part.title) parent.createDiv({ cls: 'console-grid-subhead', text: part.title });
-    if (part.buttons.length) renderTiles(parent, part.buttons);
-    if (withCards && part.cards) dv.el('div', part.cards, { container: parent, cls: 'console-grid-cards' });
+    const box = part.title ? parent.createDiv('console-grid-subgroup') : parent;
+    if (part.title) box.createDiv({ cls: 'console-grid-subhead', text: part.title });
+    if (part.buttons.length) renderTiles(box, part.buttons);
+    if (withCards && part.cards) dv.el('div', part.cards, { container: box, cls: 'console-grid-cards' });
   }
 }
 

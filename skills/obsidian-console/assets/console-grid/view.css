@@ -28,14 +28,33 @@
 }
 .console-grid-tabbar .console-grid-toggle { margin: 0 0 4px auto; }
 .console-grid-cards { margin-top: 12px; }
-.console-grid-subhead {
-  margin: 14px 0 6px;
-  font-size: var(--font-ui-small);
-  font-weight: 600;
-  color: var(--text-muted);
+/* A subgroup is one framed block: its title on top, then its tiles, then its cards (quieter than the title). */
+.console-grid-subgroup {
+  margin: 0 0 14px;
+  padding: 8px 12px 12px;
+  border: 1px solid var(--background-modifier-border);
+  border-left: 4px solid var(--interactive-accent);
+  border-radius: 8px;
 }
-.console-grid-panel > .console-grid-subhead:first-child,
-.console-grid > .console-grid-subhead:nth-child(2) { margin-top: 0; }
+.console-grid-subhead {
+  margin: 0 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  font-size: var(--font-ui-medium);
+  font-weight: 700;
+  color: var(--text-normal);
+}
+.console-grid-subgroup .console-grid-cards { margin-top: 8px; }
+.console-grid-subgroup .callout {
+  margin: 6px 0 0;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.console-grid-subgroup .callout-title {
+  font-size: var(--font-ui-small);
+  font-weight: 500;
+}
+.console-grid-subgroup .callout-content { font-size: var(--font-ui-small); }
 
 .console-grid-head {
   display: flex;
