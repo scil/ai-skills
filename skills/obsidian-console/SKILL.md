@@ -59,7 +59,8 @@ The vault holds no logic: every button sends a key to the project's runner, whic
 
 ## How to group buttons
 
-- **Tabs by what the user wants to do**, not by how it is built. A typical set, in this order: the product's own features (what the household uses it for), checks and tests (find a fault, measure quality), the machine (start, stop and watch services and daemons), settings and data (configuration, privacy, backups), links (web pages, files). The most used tab comes first. A button belongs to the tab its user would open to look for it.
+- **Tabs by what the user wants to do**, not by how it is built. A typical set, in this order: the product's own features (what the household uses it for), checks (find a fault), evaluations (measure and tune), the machine (start, stop and watch services and daemons), settings and data (configuration, privacy, backups), links (web pages, files). The most used tab comes first. A button belongs to the tab its user would open to look for it.
+- **Checks and evaluations are separate tabs.** A check answers ok / FAIL and is for finding a fault; an evaluation prints numbers together with the parameters that produced them (and, where a decision depends on a threshold, the score of every candidate), and is for tuning and comparing runs. A step whose output always has a quality level (recognition, scoring) is an evaluation, even when it is also a link in a flow; the flow's card points to it.
 - **Subgroups (`###`) by what a button acts on**: one piece of hardware, one service, one data store, one feature. Use them only when a tab mixes two or more such kinds; a small tab of one kind has none.
 - **Opposites together**: start and stop of the same thing, install and uninstall, back up and prune.
 - **A feature's own tools stay with the feature** (its editor page, its mock run, its sound test), even when they also touch settings; the settings tab may point to them in a card.
