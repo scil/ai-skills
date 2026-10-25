@@ -57,6 +57,15 @@ The vault holds no logic: every button sends a key to the project's runner, whic
 - **One button per independently verifiable step.** Besides the end-to-end run, every step of a flow that can be checked on its own (capture a frame, recognise it, record from the mic, synthesise speech, play it, reach the model) gets its own button, so the owner finds the broken link by clicking down the chain. Each runs on the flow's own code path (the same device selection, the same backend), not a parallel test path. A step that keeps an artifact the next step can reuse (a still, a clip) gets a second button that reuses the latest one, so one input can be retried without re-capturing it.
 - Put these in one tab ordered along the flow, grouped by the hardware each depends on, with a folded card saying what to fix when each one fails. Only a step whose purpose is sound makes sound, and it is colored yellow.
 
+## How to group buttons
+
+- **Tabs by what the user wants to do**, not by how it is built. A typical set, in this order: the product's own features (what the household uses it for), checks and tests (find a fault, measure quality), the machine (start, stop and watch services and daemons), settings and data (configuration, privacy, backups), links (web pages, files). The most used tab comes first. A button belongs to the tab its user would open to look for it.
+- **Subgroups (`###`) by what a button acts on**: one piece of hardware, one service, one data store, one feature. Use them only when a tab mixes two or more such kinds; a small tab of one kind has none.
+- **Opposites together**: start and stop of the same thing, install and uninstall, back up and prune.
+- **A feature's own tools stay with the feature** (its editor page, its mock run, its sound test), even when they also touch settings; the settings tab may point to them in a card.
+- **Cards go with the buttons they explain**, under that subgroup. A card or help line that sends the user to a button in another tab names the tab: 「机器」tab 的【🔁 重启 go2rtc】.
+- When regrouping, move rows verbatim and check that the set of 动作 keys and the button count are unchanged (`check-console.js` prints the counts per tab and subgroup).
+
 ## Console note skeleton
 
 ````markdown
