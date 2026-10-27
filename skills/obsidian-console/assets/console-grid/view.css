@@ -27,7 +27,20 @@
   font-weight: 600;
 }
 .console-grid-tabbar .console-grid-toggle { margin: 0 0 4px auto; }
-.console-grid-cards { margin-top: 12px; }
+/* A part's cards sit folded in one 说明 card: one quiet line under the tiles until opened. */
+.console-grid-notes {
+  margin-top: 10px;
+  padding: 4px 10px;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 6px;
+}
+.console-grid-notes > summary {
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.console-grid-notes[open] > summary { margin-bottom: 4px; }
+.console-grid-cards .callout { margin: 6px 0 0; }
 /* A subgroup is one framed block: its title on top, then its tiles, then its cards (quieter than the title). */
 .console-grid-subgroup {
   margin: 0 0 14px;
@@ -44,9 +57,9 @@
   font-weight: 700;
   color: var(--text-normal);
 }
-.console-grid-subgroup .console-grid-cards { margin-top: 8px; }
-/* A tab-level card (before the first subgroup) sits outside every frame: it is about several of them. */
-.console-grid-panel > .console-grid-cards + .console-grid-subgroup { margin-top: 12px; }
+.console-grid-subgroup .console-grid-notes { margin-top: 8px; }
+/* Tab-level cards (before the first subgroup) sit outside every frame: they are about several of them. */
+.console-grid-panel > .console-grid-notes + .console-grid-subgroup { margin-top: 12px; }
 .console-grid-subgroup .callout {
   margin: 6px 0 0;
   padding: 4px 10px;

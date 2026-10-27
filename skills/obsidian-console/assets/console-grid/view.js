@@ -17,7 +17,8 @@
 // (the project's one `scripts\win\run_for_obsidian_console.ps1`); red, orange and yellow buttons use
 // confirmRunner, which asks first. Without `runner`, 动作 is a Shell commands alias as before.
 // 颜色 is blue | green | yellow | red | purple | orange or empty. 说明 is markdown; write | as \|.
-// Everything else in the section (the callouts) is rendered under that group's buttons in tabs mode.
+// Everything else in the section (the callouts) is rendered under that group's buttons in tabs mode, folded
+// into one 说明 card per part.
 // A `### <subgroup>` heading inside a section starts a subgroup: its title, its own 按钮 table, its own cards
 // (e.g. one subgroup per piece of hardware a check depends on).
 //
@@ -218,21 +219,32 @@ if (!names.length || missing.length) {
 
 const root = dv.container.createDiv('console-grid');
 
+// A part's cards, folded into one 说明 card so a stack of cards never pushes the buttons apart; opened, it lists
+// the cards' titles (each still folded). Whether it is open is remembered, so a Dataview re-render keeps it.
+function renderCards(parent, cards, key) {
+  const notes = parent.createEl('details', { cls: 'console-grid-notes' });
+  const count = (cards.match(/^> \[!/gm) || []).length;
+  notes.createEl('summary', { text: count > 1 ? `📖 说明 · ${count}` : '📖 说明' });
+  notes.open = readStorage(key) === '1';
+  notes.addEventListener('toggle', () => writeStorage(key, notes.open ? '1' : '0'));
+  dv.el('div', cards, { container: notes, cls: 'console-grid-cards' });
+}
+
 // A group's parts in order. A titled part (subgroup) is one framed block holding its title, its tiles and its
 // cards, so the cards read as belonging to it; an untitled part renders straight into the panel.
 // `withCards` is off in single-group mode.
-function renderGroup(parent, group, withCards) {
+function renderGroup(parent, name, group, withCards) {
   for (const part of group.parts) {
     const box = part.title ? parent.createDiv('console-grid-subgroup') : parent;
     if (part.title) box.createDiv({ cls: 'console-grid-subhead', text: part.title });
     if (part.buttons.length) renderTiles(box, part.buttons);
-    if (withCards && part.cards) dv.el('div', part.cards, { container: box, cls: 'console-grid-cards' });
+    if (withCards && part.cards) renderCards(box, part.cards, `console-grid-notes:${input.data}:${name}:${part.title || ''}`);
   }
 }
 
 if (!input.tabs) {
   addHelpToggle(root.createDiv('console-grid-head'));
-  renderGroup(root, groups[names[0]], false);
+  renderGroup(root, names[0], groups[names[0]], false);
   return;
 }
 
@@ -258,7 +270,7 @@ addHelpToggle(bar);
 for (const name of names) {
   const panel = root.createDiv('console-grid-panel');
   panels[name] = panel;
-  renderGroup(panel, groups[name], true);
+  renderGroup(panel, name, groups[name], true);
 }
 
 const saved = readStorage(tabKey);

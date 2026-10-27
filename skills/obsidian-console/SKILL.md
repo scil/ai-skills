@@ -49,7 +49,7 @@ The vault holds no logic: every button sends a key to the project's runner, whic
 - 动作 is a key of the project's runner (with `runner` in the console's `dv.view` call): the view writes it into the custom variable `_console_button` and runs the runner command. A value starting with `http://`, `https://` or `file:///` makes the button open that link instead. Without `runner`, 动作 is a Shell commands alias, as in consoles built before 2026-10-22.
 - 颜色 is `blue`, `green`, `yellow`, `red`, `purple`, `orange`, or empty. Red marks destructive buttons, orange ones that change the system or download, yellow ones that make noise; all three run through `confirmRunner`, which asks first.
 - 说明 is the **help line**: the script, then what it really runs (`` `scripts\win\x.bat` → `docker compose …` ``), read off the script and the registered command. One line. A literal `|` inside a cell is written `\|`.
-- Everything in the section except the table is that tab's cards, rendered under its buttons. Cards fold (`> [!type]- title (点开)`), with the headline in the title. The links-to-files card in the files tab may stay open.
+- Everything in the section except the table is that tab's cards, rendered under its buttons inside one folded **📖 说明** card per part (with the count when there are several), so a stack of cards never pushes the buttons apart; its open state is remembered. Each card still folds on its own (`> [!type]- title (点开)`), so the opened 说明 card reads as a list of titles. The links-to-files card in the files tab may stay open.
 - A `### <subgroup>` heading inside a tab starts a **subgroup**: a small title, its own 按钮 table, its own cards, rendered in order. Lines before the first `###` form an untitled part, so a tab without `###` renders as before. Use subgroups when buttons in one tab depend on different things the owner can swap, e.g. one per piece of hardware (`### PC + DJI 耳机（pc）`), plus one for steps that need no hardware.
 
 ## Which buttons a console needs
@@ -66,6 +66,17 @@ The vault holds no logic: every button sends a key to the project's runner, whic
 - **A feature's own tools stay with the feature** (its editor page, its mock run, its sound test), even when they also touch settings; the settings tab may point to them in a card.
 - **Cards go with the buttons they explain**, under that subgroup. A card about several subgroups belongs to the tab: put it before the first `###`, where it renders at the top of the tab outside every frame, and make its title name the subgroups it covers. A card or help line that sends the user to a button in another tab names the tab: 「机器」tab 的【🔁 重启 go2rtc】.
 - When regrouping, move rows verbatim and check that the set of 动作 keys and the button count are unchanged (`check-console.js` prints the counts per tab and subgroup).
+
+## How to write a card
+
+Every card has the same shape, so the owner can scan titles and stop at the first line:
+
+- **Title: the question the card answers**, ending `(点开)`: `> [!tip]- 关卡失败了先看哪一层?(点开)`, not a topic label.
+- **First line: the answer**, plain, with no label in front. A reader who stops here has what they need.
+- **Then short sections** under bold labels (`**怎么用**`, `**为什么**`, `**别做**`), a few short bullets each; a symptom → cause → fix lookup is a table. Commands, outputs and tables stay verbatim.
+- **History last**, in one `**来历:** <date> …` line. Dates and "why it used to be different" stay out of the body; a whole retired environment or past incident goes in a background card of the console note, not in a tab.
+- **One fact, one card.** Explained once at the narrowest place that covers every reader (a tab-level card for several subgroups); other cards point to it by tab and button or card title instead of repeating it.
+- When rewriting cards, keep every fact (move it or merge it, never drop it silently), and check that every `[[wikilink]]` still resolves.
 
 ## Console note skeleton
 
@@ -107,7 +118,6 @@ This is what the owner can rely on. Keep it true when editing the view or the no
 
 ## Known limits
 
-- Dataview re-renders on vault changes, so an open card folds back; the tab and the help switch survive.
-- DataviewJS gets `dv`, `input` and `app`, but no YAML parser. Frontmatter data works but is hard to read and edit, which is why the data lives in tables.
+- Dataview re-renders on vault changes, so an open card inside a 说明 card folds back; the tab, the help switch and each 说明 card's open state survive.- DataviewJS gets `dv`, `input` and `app`, but no YAML parser. Frontmatter data works but is hard to read and edit, which is why the data lives in tables.
 - Before replacing a live console with a rebuilt copy, diff the live note against the copy's starting point, and merge edits made since then. Other agents and the owner edit consoles between turns.
-- Measured 2026-10-21 on Dataview 0.5.68: tabs, cards folding, links inside cards and the ⓘ switch all work in reading view. Subgroups (`###`) confirmed in reading view by the owner on 2026-10-25.
+- Measured 2026-10-21 on Dataview 0.5.68: tabs, cards folding, links inside cards and the ⓘ switch all work in reading view. Subgroups (`###`) confirmed in reading view by the owner on 2026-10-25, the folded 说明 card on 2026-10-27.
