@@ -18,7 +18,7 @@
 // confirmRunner, which asks first. Without `runner`, 动作 is a Shell commands alias as before.
 // 颜色 is blue | green | yellow | red | purple | orange or empty. 说明 is markdown; write | as \|.
 // Everything else in the section (the callouts) is rendered under that group's buttons in tabs mode, folded
-// into one 说明 card per part.
+// into one 说明 card per part when the part has more than one and buttons follow it.
 // A `### <subgroup>` heading inside a section starts a subgroup: its title, its own 按钮 table, its own cards
 // (e.g. one subgroup per piece of hardware a check depends on).
 //
@@ -221,10 +221,16 @@ const root = dv.container.createDiv('console-grid');
 
 // A part's cards, folded into one 说明 card so a stack of cards never pushes the buttons apart; opened, it lists
 // the cards' titles (each still folded). Whether it is open is remembered, so a Dataview re-render keeps it.
-function renderCards(parent, cards, key) {
-  const notes = parent.createEl('details', { cls: 'console-grid-notes' });
+// A lone card is already one folded line, and cards at the end of the tab push no buttons down, so both render
+// as they are.
+function renderCards(parent, cards, key, isLast) {
   const count = (cards.match(/^> \[!/gm) || []).length;
-  notes.createEl('summary', { text: count > 1 ? `📖 说明 · ${count}` : '📖 说明' });
+  if (count <= 1 || isLast) {
+    dv.el('div', cards, { container: parent, cls: 'console-grid-cards' });
+    return;
+  }
+  const notes = parent.createEl('details', { cls: 'console-grid-notes' });
+  notes.createEl('summary', { text: `📖 说明 · ${count}` });
   notes.open = readStorage(key) === '1';
   notes.addEventListener('toggle', () => writeStorage(key, notes.open ? '1' : '0'));
   dv.el('div', cards, { container: notes, cls: 'console-grid-cards' });
@@ -234,12 +240,15 @@ function renderCards(parent, cards, key) {
 // cards, so the cards read as belonging to it; an untitled part renders straight into the panel.
 // `withCards` is off in single-group mode.
 function renderGroup(parent, name, group, withCards) {
-  for (const part of group.parts) {
+  group.parts.forEach((part, index) => {
     const box = part.title ? parent.createDiv('console-grid-subgroup') : parent;
     if (part.title) box.createDiv({ cls: 'console-grid-subhead', text: part.title });
     if (part.buttons.length) renderTiles(box, part.buttons);
-    if (withCards && part.cards) renderCards(box, part.cards, `console-grid-notes:${input.data}:${name}:${part.title || ''}`);
-  }
+    if (withCards && part.cards) {
+      const key = `console-grid-notes:${input.data}:${name}:${part.title || ''}`;
+      renderCards(box, part.cards, key, index === group.parts.length - 1);
+    }
+  });
 }
 
 if (!input.tabs) {

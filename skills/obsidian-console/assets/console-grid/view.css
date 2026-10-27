@@ -40,6 +40,8 @@
   cursor: pointer;
 }
 .console-grid-notes[open] > summary { margin-bottom: 4px; }
+/* A lone card sits straight under the tiles, at the 说明 card's spacing. */
+.console-grid-tiles + .console-grid-cards { margin-top: 10px; }
 .console-grid-cards .callout { margin: 6px 0 0; }
 /* A subgroup is one framed block: its title on top, then its tiles, then its cards (quieter than the title). */
 .console-grid-subgroup {
@@ -59,7 +61,8 @@
 }
 .console-grid-subgroup .console-grid-notes { margin-top: 8px; }
 /* Tab-level cards (before the first subgroup) sit outside every frame: they are about several of them. */
-.console-grid-panel > .console-grid-notes + .console-grid-subgroup { margin-top: 12px; }
+.console-grid-panel > .console-grid-notes + .console-grid-subgroup,
+.console-grid-panel > .console-grid-cards + .console-grid-subgroup { margin-top: 12px; }
 .console-grid-subgroup .callout {
   margin: 6px 0 0;
   padding: 4px 10px;
