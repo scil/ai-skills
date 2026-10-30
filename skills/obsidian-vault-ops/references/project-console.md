@@ -32,6 +32,9 @@ that runs nothing. Registered commands per project:
 | `<P> 控制台(先确认)` | the same, `confirm_execution: true` | destructive, irreversible or noisy buttons |
 | one per `{{selection}}` / prompt button | the same file with a fixed key: `-Button test-one -Selection {{selection}}` | the editor or a prompt supplies a value |
 
+A choice from lists that change (hosts, playbooks) needs no command of its own: the key's script
+opens a picker window (`obsidian-console` → Buttons that ask what to act on).
+
 A grid row sets the key through the plugin (`console-grid` with `runner` / `confirmRunner`); a
 Buttons block is `type link` with the plugin's URI,
 `action obsidian://shell-commands/?vault=<vault>&_console_button=<key>&execute=<runner command id>`.

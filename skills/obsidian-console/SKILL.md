@@ -16,6 +16,7 @@ A **console** is one note a person operates by clicking: one tab per group of op
 | data note | `<vault>/<Project>/<Project> Console buttons.md` | one `## <group>` section per tab: a 按钮 table, then that group's folded cards |
 | view | `<vault>/_views/console-grid/view.js` + `view.css` | rendering only; the canonical copy is `assets/console-grid/` in this skill |
 | runner | `<repo>\scripts\win\run_for_obsidian_console.ps1` | the project's one entry point: key → one fixed command |
+| picker | `assets/picker/Show-Picker.ps1`, copied next to the runner | the choice window for a button that asks what to act on (below) |
 | commands | Shell commands' `data.json` | per project `<P> 控制台` and `<P> 控制台(先确认)` → the runner with `{{_console_button}}` (`obsidian-vault-ops` → `project-console.md`, One runner per project) |
 
 The vault holds no logic: every button sends a key to the project's runner, which runs a script in the repo.
@@ -27,7 +28,7 @@ The vault holds no logic: every button sends a key to the project's runner, whic
 3. **Scripts, runner and commands** (`obsidian-vault-ops` §3: scripts → runner → run each key once → register the runners). Done when every key is a case of the runner and the project's runner commands and the `console_button` custom variable exist in `data.json`.
 4. **Write the data note** (format below). Done when every group of operations has its section, and every card that explains a group sits in that group's section.
 5. **Write the console note** (skeleton below).
-6. **Verify**: `node scripts/check-console.js <view.js> "<note>.md" <shellcommands data.json> <runner .ps1>` for the data note and for every console note holding Buttons blocks. Done when it exits 0 and prints the button and card counts you expect for every tab.
+6. **Verify**: `node scripts/check-console.js <view.js> "<note>.md" <shellcommands data.json> <runner .ps1>` for the data note and for every console note holding Buttons blocks. Done when it exits 0 and prints the button and card counts you expect for every tab, and every `.ps1` under `<repo>\scripts\win\` parses with no errors (`[System.Management.Automation.Language.Parser]::ParseFile(<path>, [ref]$null, [ref]$errors)`, run from a `.ps1` so Git Bash leaves the `$` alone). The check reads the runner's keys but does not parse PowerShell, and one lost line break in the runner fails every button.
 7. **Hand off.** Say what the check covered and what only the owner can see in reading view: the grid, tab switching, cards folding, links inside cards. Name a read-only button as the safe first click.
 
 ## Data note format
@@ -47,7 +48,7 @@ The vault holds no logic: every button sends a key to the project's runner, whic
 - A tab is a `## ` section whose table has 按钮 as its first header cell. The section heading is the tab label, and the tab order is the section order. Other `##` sections (a field legend, say) are not tabs.
 - The column names 按钮 / 动作 / 颜色 / 说明 are the format, matched literally, whatever language the note is in.
 - 动作 is a key of the project's runner (with `runner` in the console's `dv.view` call): the view writes it into the custom variable `_console_button` and runs the runner command. A value starting with `http://`, `https://` or `file:///` makes the button open that link instead. Without `runner`, 动作 is a Shell commands alias, as in consoles built before 2026-10-22.
-- 颜色 is `blue`, `green`, `yellow`, `red`, `purple`, `orange`, or empty. Red marks destructive buttons, orange ones that change the system or download, yellow ones that make noise; all three run through `confirmRunner`, which asks first.
+- 颜色 is `blue`, `green`, `yellow`, `red`, `purple`, `orange`, or empty. Red marks destructive buttons, orange ones that change the system or download, yellow ones that make noise; all three run through `confirmRunner`, which asks first. A button that only opens a window with its own Cancel (a picker) is none of these, so the owner is not asked twice.
 - 说明 is the **help line**: the script, then what it really runs (`` `scripts\win\x.bat` → `docker compose …` ``), read off the script and the registered command. One line. A literal `|` inside a cell is written `\|`.
 - Everything in the section except the table is that tab's cards, rendered under its buttons. A part with two or more cards gets them inside one folded **📖 说明 · N** card, so a stack of cards never pushes the buttons apart; a lone card, and the cards of a tab's last part (nothing below them to push), show as they are; its open state is remembered. Each card still folds on its own (`> [!type]- title (点开)`), so the opened 说明 card reads as a list of titles. The links-to-files card in the files tab may stay open.
 - A `### <subgroup>` heading inside a tab starts a **subgroup**: a small title, its own 按钮 table, its own cards, rendered in order. Lines before the first `###` form an untitled part, so a tab without `###` renders as before. Use subgroups when buttons in one tab depend on different things the owner can swap, e.g. one per piece of hardware (`### PC + DJI 耳机（pc）`), plus one for steps that need no hardware.
@@ -56,6 +57,17 @@ The vault holds no logic: every button sends a key to the project's runner, whic
 
 - **One button per independently verifiable step.** Besides the end-to-end run, every step of a flow that can be checked on its own (capture a frame, recognise it, record from the mic, synthesise speech, play it, reach the model) gets its own button, so the owner finds the broken link by clicking down the chain. Each runs on the flow's own code path (the same device selection, the same backend), not a parallel test path. A step that keeps an artifact the next step can reuse (a still, a clip) gets a second button that reuses the latest one, so one input can be retried without re-capturing it.
 - Put these in one tab ordered along the flow, grouped by the hardware each depends on, with a folded card saying what to fix when each one fails. Only a step whose purpose is sound makes sound, and it is colored yellow.
+
+## Buttons that ask what to act on
+
+When a button needs a choice before it runs (which hosts, which playbook, which environment), the key's script opens a **picker window**; the button stays an ordinary grid row.
+
+- **The script reads its lists on every click** (the files in a folder, the inventories, a header line in each file), so a new host or playbook appears without editing the note or `data.json`.
+- **Use `assets/picker/Show-Picker.ps1`**: copy it next to the runner and dot-source it in the key's script. It is an always-on-top WinForms window with an optional drop-down for one choice and a tick list of targets (`-Single` for one target). An item with a `Blocked` reason is listed with that reason but cannot be ticked, so the owner sees why it is out.
+- **Validate again after the window**: an unknown choice, nothing ticked, an unlisted or blocked name, or too many targets each stop with `[X] …`. Give the script parameters for the same values (`-Play`, `-Hosts`), so it runs and is tested without the window.
+- **Copy, don't run, when the action changes a real system** (a server's config, its firewall, its users): the script builds the command line, puts it on the clipboard and prints it; the owner reads it and runs it in a terminal. Placeholders left for the owner are UPPERCASE words (`SITE`, `LOGIN`), never `<...>`: bash reads an unreplaced `<` or `>` as a redirection, and `>` can overwrite a file.
+- **The runner calls a script that takes a value in-process** (`& "$PSScriptRoot\x.ps1" -Line $Selection`), not with `pwsh -File`, which reads a value starting with `-` as a parameter name.
+- **Shell commands' own prompt dialog** (a `prompt` preaction: text, toggle, single-choice; no multi-select) suits a short fixed list only. Its fields are static in `data.json`, so a new choice means quitting Obsidian to edit it, and the button needs its own command and a Buttons block, since the grid calls only `runner` and `confirmRunner`.
 
 ## How to group buttons
 
@@ -118,6 +130,7 @@ This is what the owner can rely on. Keep it true when editing the view or the no
 
 ## Known limits
 
-- Dataview re-renders on vault changes, so an open card inside a 说明 card folds back; the tab, the help switch and each 说明 card's open state survive.- DataviewJS gets `dv`, `input` and `app`, but no YAML parser. Frontmatter data works but is hard to read and edit, which is why the data lives in tables.
+- Dataview re-renders on vault changes, so an open card inside a 说明 card folds back; the tab, the help switch and each 说明 card's open state survive.
+- DataviewJS gets `dv`, `input` and `app`, but no YAML parser. Frontmatter data works but is hard to read and edit, which is why the data lives in tables.
 - Before replacing a live console with a rebuilt copy, diff the live note against the copy's starting point, and merge edits made since then. Other agents and the owner edit consoles between turns.
-- Measured 2026-10-21 on Dataview 0.5.68: tabs, cards folding, links inside cards and the ⓘ switch all work in reading view. Subgroups (`###`) confirmed in reading view by the owner on 2026-10-25, the folded 说明 card on 2026-10-27.
+- Measured 2026-10-21 on Dataview 0.5.68: tabs, cards folding, links inside cards and the ⓘ switch all work in reading view. Subgroups (`###`) confirmed in reading view by the owner on 2026-10-25, the folded 说明 card on 2026-10-27. The picker window opened from a grid button (Shell commands' windowless process, pwsh 7) confirmed by the owner on 2026-10-30; `Show-Picker.ps1` itself is driven by a timer test (blocked item refused, `-Single`, Cancel).
