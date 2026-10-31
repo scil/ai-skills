@@ -13,6 +13,32 @@ A console panel is a block that shows tabs of colored buttons. A button runs one
 
 The runner is the same file that an Obsidian console uses. The `obsidian-console` skill and `obsidian-vault-ops` (`project-console.md`) tell you how to write a runner. A Logseq panel adds no logic of its own.
 
+## How a click reaches the runner
+
+Logseq is an Electron app with two processes. The renderer process shows the window and runs page scripts. The main process has full system access and can start programs. A click passes through both:
+
+```
+renderer: custom.js draws the panel, checks the values, builds the command line
+   └─ window.apis.doAction(['runCli', ...])                       (bridge to the main process)
+main:     runCli checks the first word against the allowlist      ("pwsh"? allowed)
+   └─ child_process.spawn(..., { shell: true })  →  cmd.exe /d /s /c "<line>"
+         └─ pwsh -NoProfile -File <runner> -Button <key> [-Param "value" ...]
+               └─ the runner's fixed command for that key
+```
+
+- A page is only text, and Logseq has no button that runs a program. custom.js is the only code that runs in the window and can call `window.apis.doAction`. Community plugins run in a sandbox without that bridge, so they cannot start a program.
+- Logseq runs custom.js once for each window, at window start or at the first open of the graph. The script stays loaded while you change pages. A `MutationObserver` reports the blocks that each opened page draws. The script draws a panel only where it finds a `console-grid` marker. After you edit custom.js, restart Logseq.
+- The allowlist decides only which program Logseq can start. It does not remove `cmd.exe`. With `shell: true` on Windows, `cmd.exe` reads the whole line first. A `&`, `|`, `>`, `^` or extra `"` in a value acts there, before `pwsh` starts. For example, `-Selection "a" & calc & "b"` starts Calculator.
+- `pwsh -File` passes each argument to the runner as plain text and does not run it. The risk is only in the `cmd.exe` layer.
+- custom.js therefore allows only safe characters in keys and form values. A `free` field sends its text as base64 of UTF-8 in `-<Param>B64 "<base64>"`. Base64 uses only letters, digits, `+`, `/` and `=`, which have no meaning in `cmd.exe`. The runner decodes it:
+
+  ```powershell
+  param([Parameter(Mandatory = $true)][string]$Button, [string]$Selection = '', [string]$SelectionB64 = '')
+  if ($SelectionB64) { $Selection = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($SelectionB64)) }
+  ```
+
+- Logseq asks before it runs a new or changed custom.js, because any code in that file can reach the bridge. Read the script before you accept it.
+
 ## Set up a graph once
 
 1. The main graph already has the script. For another graph, copy the main graph's `custom.js` to `<graph>/logseq/custom.js`. If that graph already has a `custom.js`, append the script to it. The copy does not follow later changes.
