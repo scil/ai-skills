@@ -78,9 +78,12 @@ Risk: an allowed shell lets any graph's `custom.js` run commands. Open only grap
    | a direct child of the marker, with children | a tab |
    | `name \| key \| color \| help`, one line, no children | a button |
    | the same line, with field lines as children | a form button (see "Form buttons") |
-   | a title whose children include buttons | a subgroup with a frame |
-   | a title with children and no buttons | a folded card, with the children as its body |
+   | a title whose children include buttons, or subgroups | a subgroup with a frame; a subgroup inside a subgroup has a thinner frame |
+   | a subgroup title that ends in `` `side-by-side` `` | a subgroup whose child subgroups stand in columns; the keyword is not shown |
+   | a title with children and no buttons or subgroups | a folded card, with the children as its body |
    | a block with no children that is not a button | a note line |
+
+   Use `side-by-side` only for parallel subgroups, such as one set of buttons for each of two targets, so the reader can compare them line by line. Inside the columns, each subgroup shows its buttons in one column, so the same buttons line up across the columns. Without the keyword, child subgroups stand one below the other. A narrow window also puts the columns one below the other.
 
    Two or more cards and notes in a row fold into one closed **📖 说明 · N** card. Then they do not push the buttons apart. This is the rule of the Obsidian console. A run at the end of a tab shows as it is, because no buttons follow it. The panel remembers whether each 说明 card is open.
 4. A button's key is a runner key, which must match `^[a-z0-9-]+$`. A key can also be an `http`, `https` or `file` link, and the button then opens that link.
