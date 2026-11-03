@@ -43,13 +43,16 @@
 /* A lone card sits straight under the tiles, at the 说明 card's spacing. */
 .console-grid-tiles + .console-grid-cards { margin-top: 10px; }
 .console-grid-cards .callout { margin: 6px 0 0; }
-/* A subgroup is one framed block: its title on top, then its tiles, then its cards (quieter than the title). */
+/* A subgroup is one framed block: its title on top, then its tiles, then its cards (quieter than the title).
+   One muted grey for every subgroup: a thick left border and a light tint, like a quiet callout. The colour
+   stays for the tiles, whose left border says what a click does. */
 .console-grid-subgroup {
   margin: 0 0 14px;
   padding: 8px 12px 12px;
   border: 1px solid var(--background-modifier-border);
-  border-left: 4px solid var(--interactive-accent);
+  border-left: 4px solid var(--text-faint);
   border-radius: 8px;
+  background-color: var(--background-secondary);
 }
 .console-grid-subhead {
   margin: 0 0 8px;
