@@ -1,6 +1,6 @@
 # harvest-exp — where the rules came from
 
-The skill began as two Espanso prompts: `harvest-findings` (review findings into agent memory) and `harvest-exp` (a retrospective into project docs, itself rewritten from a Codex-generated prompt). They shared the filter, the dedup step and the approval gate, so they were merged; a finding is one kind of evidence, and the destination table decides where it goes.
+a finding is one kind of evidence, and the destination table decides where it goes.
 
 - **Findings go to code-plan-review, not memory.** The user's global rule: lessons from incidents become questions or bindings there, never a new skill.
 - **No cross-project lesson in project memory.** Claude's memory loads per project directory; a general lesson stored there is never seen by another repository. The first version said memory "enters every session's context" — only the `MEMORY.md` index loads, and only in that project.
