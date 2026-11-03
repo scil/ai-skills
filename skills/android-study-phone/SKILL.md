@@ -55,7 +55,7 @@ The records tell a person from the system, never parent from child. Present the 
 
 ## Logseq log
 
-- Page file: `D:\A\data\Logseq-scil\pages\<Brand> Android <version>.md`, for a phone or a tablet alike; the `logseq://graph/Logseq-scil?page=...` URL maps to that file name.
+- Page file: `E:\GitHub\scil-only-me\Logseq-scil\pages\<Brand> Android <version>.md`, for a phone or a tablet alike; the `logseq://graph/Logseq-scil?page=...` URL maps to that file name.
 - The owner edits these pages too: Read the file before every edit and keep their changes.
 - Write a log line only after the command's output confirms success.
 - Layout, matching the existing pages: a top block `adb操作日志`, tab-indented children, `collapsed:: true` under each group, written in Chinese with app ids in backticks. Groups: device facts; device info (chip, memory, storage, screen, system version, bootloader lock and verified-boot state, battery, app counts; never accounts or personal data); the reason for the session, as the owner reported it; restore commands; disabled; uninstalled but restorable; fully uninstalled; kept (with reasons); kept because the owner has not decided (with the risk); apps the owner installed; current state (browser, store, phone).
