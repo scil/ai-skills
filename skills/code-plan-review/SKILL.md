@@ -1,7 +1,7 @@
 ---
 name: code-plan-review
 disable-model-invocation: true
-description: Review a plan (a design doc, pseudocode, a diagram, a described change) before code exists by walking a catalog of scenarios and asking each one's questions: a client sending a request, a server write, who is asking, screen state, a journey across routes, a branch over several states, the domain model, reuse of libraries, modules and ready-made content, one truth in several copies, a state that changes as time passes, a pipeline that judges input. Use when asked to review a plan or design, before implementing a change that touches any of those, or when harvesting a lesson from an incident into a question here.
+description: Review a plan (a design doc, pseudocode, a diagram, a described change) before code exists by walking a catalog of scenarios and asking each one's questions: a client sending a request, a server write, who is asking, screen state, a journey across routes, a branch over several states, the domain model, reuse of libraries, modules and ready-made content, one truth in several copies, a state that changes as time passes, a pipeline that judges input, a job that works through a set of items. Use when asked to review a plan or design, before implementing a change that touches any of those, or when harvesting a lesson from an incident into a question here.
 ---
 
 # Plan review by scenario
@@ -211,6 +211,7 @@ A form submit, a save, an action button, an autosave, an upload.
 2. A boolean ("has x" from truthiness, "is empty" from a missing length) hides a third state before the branch. Suggest: branch on the discriminant.
 3. A `switch` has no default, or a default that returns a normal case; a union gains a member and not every `switch` is revisited. Suggest: an exhaustiveness check that stops compiling when a member is added; the matching lint.
 4. The branch structure is copied from a sibling and one of the sibling's branches did not come along. Suggest: diff the two.
+5. A formatter builds an output line from a field (a list of counts, a date, a name) with no branch at all, so an empty or missing input renders as a blank in the middle of the line ("data   (read on …)"), which a reader takes for a glitch or for zero; nothing fails, and the line is stored. Suggest: every formatter states its output for empty, missing and malformed input (an explicit "not captured", never a blank and never a zero); one test feeds it an empty record.
 
 #### F2. Where the rest lands
 
@@ -366,3 +367,15 @@ Input passes through stages — a sensor, a recognizer, a matcher, a scorer, a m
 1. A threshold or calibration constant that decides an event (a frame difference that means "the page turned", an energy level that means "speech", a confidence below which a reading is discarded) is set on synthetic or rendered inputs, or on one clean recording, with no measured noise floor of the real sensor in its real place (its compression, its automatic gain, its lighting, the people moving in front of it). The detector either never settles or never fires once it meets the device. Suggest: the plan names, per threshold, the two measurements that bracket it on the real device (what quiet looks like, what the event looks like) and the margin between them; the synthetic value survives only as an explicit test setting with the reason it differs.
 2. A recognizer stage assumes the framing of what it is given — an upright page, a face filling the frame, a label larger than N pixels, the object in the centre — and the capture is by a device placed by a person, so the page lies sideways, fills a fifth of the frame, or sits under a hand; accuracy targets were set on inputs that had the assumed framing. Suggest: state the capture geometry as a requirement with a measurable check at run time (fraction of the frame, line height in pixels, orientation score), a fallback when it fails (try the other orientations, ask the person, crop and retry), and a calibration run on real captures before any accuracy figure is promised.
 3. The input device is "the default" chosen at open time (the operating system's default microphone or camera, the first device found), and the default can change under the running process — a wireless device drops, a virtual device takes its place — to one that keeps delivering frames that carry nothing (all-zero samples, black frames), so the pipeline reports that it is listening or watching and never hears or sees again. Suggest: name the device in configuration and log the one actually opened; treat a bounded stretch of nothing-valid as the device being lost, distinct from silence; say what the person is told and how capture is retried.
+
+### L. A job works through a set of items
+
+A batch run, an import, a migration over many records, a crawl, a backlog that several workers take in turns.
+
+#### L1. Every item reaches an outcome
+
+1. Items set aside during the run ("read later", "retry after the rest", "needs a person") are recorded only where they were set aside (a log line, a comment in one batch's output, a worker's reply), with no single list that a later step reads, so they never come back and the job reports done; nothing fails. Suggest: one pending list the job owns, written at the moment an item is set aside; before the job reports done, a step compares every input with an outcome (done, gone with its reason, kept with its reason, pending) and does not report done while the pending list has entries.
+
+#### L2. Which items are in the set
+
+1. The input set is chosen by a pattern (a file glob, a name prefix, a query with a wildcard, a tag) that also matches things outside the set (an index file beside the batch files, a backup copy, another job's output), so the extra item is processed as input or crashes the run; a looser case counts the wrong items with no error. Suggest: choose by an exact pattern that names the whole shape of the name, or by an explicit list the job wrote; print the count and a sample of what matched before acting on it.
