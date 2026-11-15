@@ -1,7 +1,7 @@
 ---
 name: logseq-ops
 disable-model-invocation: true
-description: Use when you change a Logseq graph through code. Covers a graph's custom.js, buttons that run local programs (runCli and :commands-allowlist), and block data read from custom.js. Applies to Logseq OG 0.10.x and Logseq DB 2.0.x.
+description: Use when you change a Logseq graph through code. Covers edits to page files, a graph's custom.js, and block data read from custom.js. Also covers buttons that run local programs (runCli and :commands-allowlist), a page in the Journals view, and interactive HTML in a page. Applies to Logseq OG 0.10.x and Logseq DB 2.0.x.
 ---
 
 # Logseq Ops
@@ -11,6 +11,25 @@ Logseq can run local programs from a graph without a rebuild. A graph's `custom.
 ## Console panel
 
 To build a panel of buttons that run a project's commands, read `references/console-panel.md`. The panel script lives only in the main graph, `E:\GitHub\scil-only-me\Logseq-scil\logseq\custom.js`, and `scripts/console2logseq.py` moves an Obsidian console into a page.
+
+## Journals view and embedded pages (OG)
+
+1. No setting pins a page above the Journals view. Pick by where it must show:
+   - Under today's journal, after its blocks, in every session: an entry in `:default-queries {:journals [...]}` of `logseq/config.edn`. Past days do not show it. List order sets its place among the other default queries. To show a page's top-level blocks with their children: `[:find (pull ?b [*]) :where [?p :block/name "<lower-case name>"] [?b :block/page ?p] [?b :block/parent ?p]]`.
+   - At the top of each new day: `{{embed [[page]]}}` as the first child of the template named in `:default-templates {:journals "<name>"}`. Days that already exist keep their content.
+   - Above everything: `:default-home {:page "<page>"}`. This replaces the Journals view as the start page.
+2. The Diagrams as Code plugin (`{{renderer code_diagram,mermaid}}`) sends the diagram text to kroki.io to render it. For private data (schedules, plans), use a local HTML page instead.
+3. Interactive local HTML: put it in `<graph>/assets/` and embed it in a block with `<iframe data-src="../assets/x.html" style="width:100%;height:470px;border:0;"></iframe>`. Logseq keeps `<iframe>` and `data-*` through its sanitizer, but it never rewrites an iframe `src`: a relative `src` resolves against Logseq's own app folder, and it rewrites `../assets/` only in `custom.css`. A short script at the end of the main graph's `custom.js` sets `src` to `file:///<graph path>/assets/x.html`, with the path from `logseq.api.get_current_graph()`. Without that script, write an absolute `file:///` URL in `src`. Checked in OG 0.10.15: the frame loads, and its relative `<script src>` loads too.
+   - The frame is a `file://` page like Logseq's own window, so it shares Logseq's `localStorage`. Prefix its keys (`gantt:`).
+4. Keep the page's data in a sibling `x-data.js` that sets `window.X = [ ...JSON... ]`, loaded with `<script src="x-data.js">`. A page opened from `file://` cannot `fetch` a JSON file, but a script tag loads. An agent then edits only the data file. If `window.X` is missing, show a visible error. Then a typo in the data does not leave a blank frame.
+5. To test the page outside Logseq, serve the folder: `python -m http.server 8765 --bind 127.0.0.1`. The Claude desktop browser pane shows a `file://` page as a `data:` snapshot, where relative scripts do not load. Stop the server after the test.
+
+## Edit a page file (OG)
+
+1. An OG page is `<graph>/pages/<name>.md`. Each block is a line `- text`, and the tab count before the dash sets the nesting level. Use tabs, not spaces, and keep the file's own line endings.
+2. The Read tool puts a tab between the line number and the line. That tab looks like one more indent level. An Edit string copied from the Read view then has one tab too many and does not match. Count the real tabs first: `cat -T <file>` shows each tab as `^I`.
+3. For a large insert, a script that finds the anchor line by its text and splices in the new lines is safer than an Edit. Assert that the anchor matches once, and print the result with `cat -T` after the change.
+4. If the file changes on disk, Logseq reads it again. If the page is open with unsaved typing, Logseq can ask which version to keep. Close the page or stop typing before an agent edits it.
 
 ## custom.js
 
