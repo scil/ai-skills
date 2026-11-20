@@ -11,7 +11,7 @@ A console panel is a block that shows tabs of colored buttons. A button runs one
 | runner | `<repo>\scripts\win\run_for_obsidian_console.ps1` | the project's one entry point: key to one fixed command |
 | marker block | any page | the panel's place, its runner, and its data as child blocks |
 
-The runner is the same file that an Obsidian console uses. The `obsidian-console` skill and `obsidian-vault-ops` (`project-console.md`) tell you how to write a runner. A Logseq panel adds no logic of its own.
+A Logseq panel adds no logic of its own. `console-design.md` says which buttons a console needs, how to group them and write its cards, and how the runner works. `runner-scripts.md` covers the scripts behind a button.
 
 ## How a click reaches the runner
 
@@ -58,7 +58,7 @@ Risk: an allowed shell lets any graph's `custom.js` run commands. Open only grap
      collapsed:: true
    ```
 
-   `<shell>` is `pwsh` or `powershell`, the same shell the Obsidian console uses for this project. Write the runner path with forward slashes, for example `E:/GitHub/scil/Leafi/scripts/win/run_for_obsidian_console.ps1`.
+   `<shell>` is `pwsh` or `powershell`. Use `pwsh` for a new project. Write the runner path with forward slashes, for example `E:/GitHub/scil/Leafi/scripts/win/run_for_obsidian_console.ps1`.
 3. Add the data as child blocks of the marker block, in this shape:
 
    ```
@@ -85,7 +85,7 @@ Risk: an allowed shell lets any graph's `custom.js` run commands. Open only grap
 
    Use `side-by-side` only for parallel subgroups, such as one set of buttons for each of two targets, so the reader can compare them line by line. Inside the columns, each subgroup shows its buttons in one column, so the same buttons line up across the columns. Without the keyword, child subgroups stand one below the other. A narrow window also puts the columns one below the other.
 
-   Two or more cards and notes in a row fold into one closed **📖 说明 · N** card. Then they do not push the buttons apart. This is the rule of the Obsidian console. A run at the end of a tab shows as it is, because no buttons follow it. The panel remembers whether each 说明 card is open.
+   Two or more cards and notes in a row fold into one closed **📖 说明 · N** card. Then they do not push the buttons apart. A run at the end of a tab shows as it is, because no buttons follow it. The panel remembers whether each 说明 card is open.
 4. A button's key is a runner key, which must match `^[a-z0-9-]+$`. A key can also be an `http`, `https` or `file` link, and the button then opens that link.
 5. Colors are `blue`, `green`, `yellow`, `orange`, `red` and `purple`. A `red`, `orange` or `yellow` button asks for confirmation before it runs.
 6. Fold the marker block. The panel draws within one second.
@@ -148,7 +148,7 @@ Inline code in backticks keeps its text. Never paste passwords or tokens into a 
 
 ## Move an Obsidian console to Logseq
 
-`scripts/console2logseq.py` turns Obsidian console notes into the block tree, and makes the text changes in the table above:
+The Obsidian console is retired (2026-11-20), and every project panel is in Logseq now. If an old console note turns up, `scripts/console2logseq.py` turns it into the block tree, and makes the text changes in the table above:
 
 ```
 python scripts/console2logseq.py <out.md> "<title> \`console-grid <shell> <runner>\`" "<buttons note>.md:data" "<console note>.md:page"
@@ -164,9 +164,10 @@ Read the output before you paste it. Then put it at the top of the project's pag
 
 ## Check a panel
 
-1. Open the page and unfold the marker block. Each tab must show the buttons and cards that you expect.
-2. Click one read-only button, for example a status key. A notification must show the runner's output.
-3. Alt+click one button. The cursor must go to that button's own block. Do this once more with two large tabs unfolded, and make sure that only one panel shows.
-4. Open each form button, and cancel it. The form must show the runner arguments that you expect.
+1. Run `python -I scripts/check-panel.py "<graph>/pages/<page>.md"`. It counts the buttons per tab, lists each key that is not a runner case, and parses the runner. It must exit 0.
+2. Open the page and unfold the marker block. Each tab must show the buttons and cards that you expect.
+3. Click one read-only button, for example a status key. A notification must show the runner's output.
+4. Alt+click one button. The cursor must go to that button's own block. Do this once more with two large tabs unfolded, and make sure that only one panel shows.
+5. Open each form button, and cancel it. The form must show the runner arguments that you expect.
 
 If the panel shows `console-grid: add the tabs as child blocks of this block`, the marker block has no child with children. If nothing draws, restart Logseq: the script runs once for each window.

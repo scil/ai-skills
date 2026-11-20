@@ -1,21 +1,18 @@
-# Making scripts safe to call from a plugin (Windows)
+# Scripts behind a console button (Windows)
 
-A script written for double-clicking behaves differently when a plugin runs it headless: no console,
-no stdin, output captured instead of displayed. These are the failures that result.
+The panel runs the runner through Logseq's `runCli` (`console-panel.md` → How a click reaches the runner). The run is headless: no console window, no keyboard input, and the output comes back as Logseq notifications, one per chunk. A script written for a double-click fails in the ways below.
 
 ## `pause` hangs a headless run
 
-`.bat` files written for double-clicking usually end with `pause` so the window does not vanish.
-Under a plugin there is no console; the run can block forever and looks hung.
+A `.bat` file written for a double-click usually ends with `pause`, so that the window stays open. In a headless run, nobody presses a key, and the run waits forever.
 
-**Fix — redirect stdin from `nul` at the call site**, keeping the script itself unchanged:
+Redirect stdin from `nul` where the runner calls the script, and keep the script unchanged:
 
 ```
 cmd /c "cd /d C:\path\to\repo && scripts\win\thing.bat < nul"
 ```
 
-`pause` reads stdin, gets EOF immediately, and returns. Verified: prints its message and continues.
-This keeps one script usable from both the plugin and a double-click.
+`pause` reads stdin, gets the end of the input at once, and returns. The same script still works from a double-click.
 
 ## `.ps1` with non-ASCII text needs a UTF-8 BOM
 
@@ -37,32 +34,25 @@ Set-Content -Path $path -Value $c -Encoding utf8BOM -NoNewline
 [System.IO.File]::ReadAllBytes($path)[0..2] | ForEach-Object { $_.ToString('X2') }
 ```
 
-`pwsh` (PowerShell 7+) defaults to UTF-8 and does not need this — but if the launcher says
-`powershell`, the BOM is required. Most file-writing tools emit UTF-8 *without* BOM by default, so
-this must be done deliberately after writing.
+`pwsh` (PowerShell 7+) defaults to UTF-8 and does not need this. If the marker block says
+`powershell`, the BOM is required. Most tools write UTF-8 without a BOM, so add it after you write the file.
 
-## Every command must terminate
+## Every command must stop
 
-A plugin waits for the process to exit. Anything that follows or tails runs forever:
+The runner process lives until its command stops. A command that follows or tails never stops, and it keeps running with no window to close:
 
-| Interactive form | Plugin-safe form |
+| Interactive form | Form for a button |
 |---|---|
 | `docker compose logs -f svc` | `docker compose logs --tail 60 svc` |
 | `tail -f app.log` | `Get-Content app.log -Tail 40` |
 | `ping -t host` | `ping -n 4 host` |
-| `npm run dev` | not suitable for a button — start it detached instead |
+| `npm run dev` | its own window: `start "dev" cmd /k npm run dev` |
 
-Ship both when the interactive form is genuinely useful: `logs.bat` (follows, for a terminal) and
-`logs-tail.bat` (bounded, for the button).
+If the interactive form is useful, ship both: `logs.bat` (follows, for a terminal) and `logs-tail.bat` (bounded, for the button).
 
 ## Keep one source of truth
 
-Put the real logic in the **project repo** as a script; let the vault config only invoke it. Commands
-inlined into plugin config drift the moment the project changes, and they are invisible to anyone
-reading the repo.
-
-Corollary: prefer `.ps1` for anything with logic (loops, JSON parsing, formatting) with a thin `.bat`
-wrapper for double-click convenience:
+Put the real logic in the project repo as a script. The page names only the runner, and the runner names the script. Use `.ps1` for anything with logic (loops, JSON parsing, formatting), with a thin `.bat` wrapper for a double-click:
 
 ```bat
 @echo off
@@ -71,21 +61,20 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\win\thing.ps1"
 pause
 ```
 
-`%~dp0` makes the script location-independent — it resolves relative to the script, so the repo can
-move without breaking anything.
+`%~dp0` resolves relative to the script, so the repo can move without breaking anything.
 
-## Health-check scripts are worth writing
+## A health check is the first button to write
 
-Once a plugin can display output in a modal, a one-shot "is everything alive" script becomes
-genuinely useful in a way it never was as a flashing console window. A good one:
+A one-shot "is everything alive" report is the button that people click first. A good one:
 
-- checks each moving part and prints a per-line verdict (`[OK]` / `[X]` / `[--]`),
-- includes the numbers that indicate *degradation*, not just up/down (reconnect counts, dropped
-  frames, error tallies),
-- says what "normal" looks like, so the reader does not need to remember,
-- ends with the last few error lines, trimmed of noisy path prefixes.
+- checks each moving part and prints a verdict per line (`[OK]` / `[X]` / `[--]`),
+- includes the numbers that show degradation, not only up or down (reconnect counts, dropped frames, error tallies),
+- says what normal looks like, so the reader does not need to remember,
+- ends with the last few error lines, without long path prefixes.
 
-Skeleton that has served several projects — sections: repo, toolchain, dependencies and build
+Each output chunk is one notification, so keep the report to a few short sections.
+
+This skeleton served several projects. Its sections: repo, toolchain, dependencies and build
 products, ports. Adjust the pins and the artefact/port lists; keep the helpers and the
 `[OK] / [! ] / [X ] / [--] / [ON]` vocabulary so consoles read alike:
 
@@ -123,18 +112,15 @@ foreach ($p in @(@{ port = 3000; who = 'Vite dev server' }, @{ port = 8787; who 
 }
 ```
 
-Save it with a UTF-8 BOM if it carries any non-ASCII text (previous section), and run it once
+Save it with a UTF-8 BOM if it carries any non-ASCII text (the section on the UTF-8 BOM), and run it once
 headless: `cmd /c "cd /d <repo> && scripts\win\health.bat < nul"`.
 
 ## Passing arbitrary text
 
-Do not route user-supplied text through a `.bat`. Even under a safe outer shell, the `.bat` layer
-re-introduces cmd parsing of its arguments. Invoke the target program directly:
+Never route text that a person typed through a `.bat` or a `cmd /c` string: `cmd.exe` parses it again, and `& | > "` become commands. Use a form button with a `free` field. The panel sends the text as base64 (`-SelectionB64`), the runner decodes it, and the runner passes it to the program as one PowerShell argument (`console-panel.md` → Form buttons):
 
-```
-.venv\Scripts\python.exe -m mypackage --say {{selection}}
+```powershell
+& "$repo\.venv\Scripts\python.exe" -m mypackage --say $Selection
 ```
 
-with the command's shell set to PowerShell so the plugin's escaper applies. Then handle empty input
-explicitly in the program — a button pressed with nothing selected should say "select some text
-first", not fail silently or with a stack trace.
+The program handles empty input itself. A button pressed with no text prints "type some text first". It does not fail without a word or with a stack trace.

@@ -122,7 +122,7 @@ it up front avoids a later move that breaks links.
 
 ### Encoding
 
-Plain UTF-8, **no BOM**. (The BOM requirement in `windows-scripts.md` applies to `.ps1` files
+Plain UTF-8, **no BOM**. (The BOM requirement in `logseq-ops/references/runner-scripts.md` applies to `.ps1` files
 executed by `powershell.exe`, not to notes.)
 
 ### Editing while Obsidian is running

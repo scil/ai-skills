@@ -1,7 +1,7 @@
 ---
 name: logseq-ops
 disable-model-invocation: true
-description: Use when you change a Logseq graph through code. Covers edits to page files, a graph's custom.js, and block data read from custom.js. Also covers buttons that run local programs (runCli and :commands-allowlist), a page in the Journals view, and interactive HTML in a page. Applies to Logseq OG 0.10.x and Logseq DB 2.0.x.
+description: Use when you change a Logseq graph through code. Covers edits to page files, a graph's custom.js, and block data read from custom.js. Also covers console panels: buttons that run a project's commands through its runner (runCli and :commands-allowlist). Also covers a page in the Journals view, and interactive HTML in a page. Applies to Logseq OG 0.10.x and Logseq DB 2.0.x.
 ---
 
 # Logseq Ops
@@ -10,7 +10,13 @@ Logseq can run local programs from a graph without a rebuild. A graph's `custom.
 
 ## Console panel
 
-To build a panel of buttons that run a project's commands, read `references/console-panel.md`. The panel script lives only in the main graph, `E:\GitHub\scil-only-me\Logseq-scil\logseq\custom.js`, and `scripts/console2logseq.py` moves an Obsidian console into a page.
+A console panel is a block with tabs of colored buttons. Each button runs one fixed command of a project through the project's runner, `<repo>\scripts\win\run_for_obsidian_console.ps1`.
+
+- To draw a panel in a page and edit its data, read `references/console-panel.md`. The panel script lives only in the main graph, `E:\GitHub\scil-only-me\Logseq-scil\logseq\custom.js`.
+- To decide which buttons a console needs, group them, write its cards, and write the runner, read `references/console-design.md`.
+- For the scripts behind a button (`pause`, encoding, commands that must stop, a health check), read `references/runner-scripts.md`.
+- `scripts/check-panel.py <page file>` checks each key of a page's panels against the runner.
+- `assets/picker/Show-Picker.ps1` is the choice window for a button that asks what to act on.
 
 ## Journals view and embedded pages (OG)
 
