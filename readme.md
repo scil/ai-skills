@@ -2,6 +2,18 @@
 
 Shared, project-agnostic skills, linked into each repository through directory junctions.
 
+## Skills by group
+
+The groups exist only in this index. `skills/` stays flat, for two reasons. Each project links one junction per skill to `skills/<name>`, and the `link-shared-skills.ps1` scripts build that path. Claude Code documents only `.claude/skills/<name>/SKILL.md`, one level deep. A new skill gets a row in one group here.
+
+The model never loads a skill on its own. You call it by name. Claude Code reads `disable-model-invocation: true` in `SKILL.md`. Codex reads `policy.allow_implicit_invocation: false` in `agents/openai.yaml`.
+
+| Group | Skills |
+|---|---|
+| Agent setup | `ai-harness`, `ai-skill-audit`, `project-docs`, `harvest-exp`, `espanso-prompts` |
+| Build | `tiered-research`, `explain`, `code-plan-review`, `codex-review`, `fix-bugs`, `derive-project-plan`, `gather-code-references`, `warm-product-design` |
+| app |  `anki-cards`, `logseq-ops`, `obsidian-vault-ops` |  `android-study-phone`, `arduino-uno-r4-ota`, `playwright-real-phone`, `windows-c-drive-cleanup`, `create-scoop-manifest` |
+
 ## The two docs skills
 
 Each owns one object. When a task touches both, each skill does its own part and hands off the rest.

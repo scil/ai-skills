@@ -13,7 +13,7 @@ Owner decisions:
 - Content that most runs need stays in `SKILL.md`: the principles, the loading model, the refresh gate and the path index. A run takes one path, so the steps of each path live in `references/paths/`.
 - Registries with different subject areas stay separate: `sources-instruction-file.md` and `sources-docs-system.md`, each with its own changelog. A gap in days only is not a reason for two rules: both use `gate-days: 30`, and the script default is 30. The tier table exists once, in `references/refresh/refresh.md`.
 
-The rule-by-rule checklist of the merge is `plans/merge-docs-skills-checklist.md` in this repository. Old changelog entries keep the old names, because they are history.
+The plan and the rule-by-rule checklist of the merge were deleted after the merge. Read them from git history: `git show cc2a197:plans/merge-docs-skills.md` and `git show cc2a197:plans/merge-docs-skills-checklist.md`. Old changelog entries keep the old names, because they are history.
 
 ## ai-agents-md — where this came from
 

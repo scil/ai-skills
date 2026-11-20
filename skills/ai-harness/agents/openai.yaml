@@ -2,3 +2,5 @@ interface:
   display_name: "AI Harness"
   short_description: "Set or review Claude Code / Codex configuration keys and scopes"
   default_prompt: "Use $ai-harness to review my harness configuration: read every settings scope, check each key against the vendor docs, and report shadowed, duplicate, out-of-range or stale keys."
+policy:
+  allow_implicit_invocation: false

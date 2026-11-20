@@ -1,5 +1,6 @@
 ---
 name: windows-c-drive-cleanup
+disable-model-invocation: true
 description: Inspect and free space on the Windows C drive by removing verified temporary files and rebuildable caches, including administrator-assisted Windows Update download cleanup. Use for a full or nearly full C drive; preserve personal files, installed applications, and development environments.
 ---
 

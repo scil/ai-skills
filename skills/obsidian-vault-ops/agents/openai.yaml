@@ -2,3 +2,5 @@ interface:
   display_name: "Obsidian Vault Ops"
   short_description: "Author and restructure notes in an Obsidian vault"
   default_prompt: "Use $obsidian-vault-ops to write or restructure notes in an Obsidian vault."
+policy:
+  allow_implicit_invocation: false

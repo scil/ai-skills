@@ -1,5 +1,6 @@
 ---
 name: arduino-uno-r4-ota
+disable-model-invocation: true
 description: Configure and verify Arduino UNO R4 WiFi uploads over Wi-Fi on Windows with Arduino IDE and Juraj Andrassy's ArduinoOTA library; troubleshoot network-port discovery. Use for IDE-style OTA uploads, rather than the official OTAUpdate download workflow or ESP32 OTA.
 ---
 

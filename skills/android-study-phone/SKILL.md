@@ -1,5 +1,6 @@
 ---
 name: android-study-phone
+disable-model-invocation: true
 description: Strip an Android phone or tablet down to a child's study device over adb, following the owner's standing preferences, and log every change with app ids to Logseq. Use when a phone or tablet is connected over USB to list, classify, uninstall, disable, hide or restore its apps, to find out who changed them, or to install Shizuku.
 ---
 
