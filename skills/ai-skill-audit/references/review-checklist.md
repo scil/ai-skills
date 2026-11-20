@@ -6,7 +6,7 @@ Walk it in order: description, body, references, mirror. Each line is a question
 
 | Question | If no |
 |---|---|
-| Is every clause a trigger — a situation, a phrase the user would say, a symptom? | Move ownership prose ("owns X; Y is Z's") to one **Hand-offs:** line under the H1; move an order of work to the instruction file (ai-agents-md). |
+| Is every clause a trigger — a situation, a phrase the user would say, a symptom? | Move ownership prose ("owns X; Y is Z's") to one **Hand-offs:** line under the H1; move an order of work to the instruction file (project-docs). |
 | Would the skill still fire on its own cases if the harness cut the description in half? | Put the two or three most distinctive triggers first; drop synonyms that only lengthen it. |
 | Does it say what the skill is *not* for, when a sibling skill shares the territory? | Add one "Not for …" clause naming the sibling's case; longer than that is the sibling's description, not this one's. |
 | Is it shorter than, or the same length as, before this review? | A description grows only when a trigger was missing — record the incident. |
@@ -37,7 +37,7 @@ Walk it in order: description, body, references, mirror. Each line is a question
 | Is each reference one topic, one level deep, named for its topic? | Split or merge; a reference named `misc.md` is the body's overflow, not a reference. |
 | Does each reference pass the body's content questions — no-op, unneeded justification, the same content twice, a list re-applying one principle? | Apply the same dispositions; a reference is loaded less often, not exempt. |
 | Is any rule stated in full in two files of this skill (router, references, templates)? | Keep one full copy where the rule is used most and replace the others with a pointer; a template cell that is copied into a project may keep its short form. |
-| Is any reference read whole by every path — a hot reference? | Put a question-first map at its top and the reading rule in the path that routes to it (ai-docs-organizing → Hot pointer docs). |
+| Is any reference read whole by every path — a hot reference? | Put a question-first map at its top and the reading rule in the path that routes to it (project-docs, loading-system path → Hot pointer docs). |
 | Was a block moved verbatim, or rewritten in transit? | Diff against the previous body; rewrite in a separate change so the move stays reviewable. |
 | Does `readme.md` hold the origin and the incidents behind the rules, so the body can state each rule without its story? | Create it from the sentences the body sheds; one line per incident is enough. |
 

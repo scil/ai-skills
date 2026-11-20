@@ -1,18 +1,18 @@
 # Refresh — keeping the sources and this skill current
 
-The procedure is [`ai-agents-md/references/refresh.md`](../../ai-agents-md/references/refresh.md), run against this skill's sources file. Only what differs is written here.
+The procedure is [`project-docs/references/refresh/refresh.md`](../../project-docs/references/refresh/refresh.md), run against this skill's sources file. Only what differs is written here.
 
 ## 1. Fingerprint
 
 ```powershell
-pwsh -File skills/ai-agents-md/scripts/check-sources.ps1 -Path skills/ai-skill-audit/references/sources.md
+pwsh -NoProfile -File skills/project-docs/scripts/check-sources.ps1 -Path skills/ai-skill-audit/references/sources.md
 ```
 
 `-GateOnly` prints the days since `last-refresh`; `-Update` rewrites fingerprints and the date — only after step 4.
 
 ## 2. Read only what moved
 
-For each `CHANGED` or `NEW` row ask: does it alter a frontmatter rule (name grammar, description cap), a loading fact (which directories, what is truncated where, how the roster budget shortens descriptions), or the body guidance (line count, one-level references)? A loading fact also belongs in [`ai-docs-organizing/references/harness-loading.md`](../../ai-docs-organizing/references/harness-loading.md) — propose the edit there, do not copy the fact here.
+For each `CHANGED` or `NEW` row ask: does it alter a frontmatter rule (name grammar, description cap), a loading fact (which directories, what is truncated where, how the roster budget shortens descriptions), or the body guidance (line count, one-level references)? A loading fact also belongs in [`project-docs/references/loading/harness-loading.md`](../../project-docs/references/loading/harness-loading.md) — propose the edit there, do not copy the fact here.
 
 ## 3. Search
 

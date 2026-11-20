@@ -6,13 +6,13 @@ description: Review, slim or grow one skill's SKILL.md — a description that is
 
 # One skill's SKILL.md
 
-Hand-offs: the roster (which directories each harness scans, provenance classes, how many skills load under what budget) → ai-docs-organizing; the instruction file's content → ai-agents-md; creating a skill from nothing or measuring it with evals → skill-creator; where any other project fact lives → docs-maintainer.
+Hand-offs: the roster (which directories each harness scans, provenance classes, how many skills load under what budget), the instruction file's content, and where any other project fact lives → project-docs; creating a skill from nothing or measuring it with evals → skill-creator.
 
 A **skill** is a directory with a `SKILL.md`: its `description` is loaded into every session by every harness; its body loads only when the skill triggers. The two halves have different budgets and different failure modes. Origin: [`readme.md`](readme.md).
 
 ## Principles
 
-1. **The description is the trigger and nothing else.** It is paid on every turn by every harness, and Codex shortens *every* description when the roster exceeds its budget — the skill with the longest trigger list is the one that misses its own case first ([`harness-loading.md`](../ai-docs-organizing/references/harness-loading.md)). An order of work ("settle behaviour before implementing") is a rule about the work and lives in the instruction file once, not in three descriptions; ownership prose shrinks to one **Hand-offs:** line under the body's H1, naming only where the agent sends work this skill does not own — what the skill *covers* is a table of contents and goes.
+1. **The description is the trigger and nothing else.** It is paid on every turn by every harness, and Codex shortens *every* description when the roster exceeds its budget — the skill with the longest trigger list is the one that misses its own case first ([`harness-loading.md`](../project-docs/references/loading/harness-loading.md)). An order of work ("settle behaviour before implementing") is a rule about the work and lives in the instruction file once, not in three descriptions; ownership prose shrinks to one **Hand-offs:** line under the body's H1, naming only where the agent sends work this skill does not own — what the skill *covers* is a table of contents and goes.
 2. **The body's budget is attention, not bytes.** It loads on trigger, so the reason to slim is that steps buried under reference get skipped. A router is: a two-line purpose; the principles that change behaviour; the split rule; the paths, each a numbered list of steps ending on a *done when …* line. Each reference is linked at the step that uses it; a closing "References" list is a second copy of those links. Large blocks move **verbatim** into one-level-deep `references/`, one topic per file — nothing rewritten in transit, so the move is reviewable. All three vendors say under 500 lines and one level of references ([`sources.md`](references/sources.md)).
 3. **The no-op test is model-relative.** Delete a sentence a current model obeys unprompted ("prefer clear headings"); keep one the model gets wrong without it. Vendor guidance for newer models says skills written for older ones are often too prescriptive ([`sources.md`](references/sources.md)). Settle a disagreement by running the skill, not by debate.
 4. **A word count is a guideline, not the goal.** Stop when every remaining sentence is a rule, a step or a done-criterion; cutting a rule to hit a number is the failure. Report the number you landed on, not the one you aimed at.
@@ -41,7 +41,7 @@ Read the `last-refresh` line at the top of [`references/sources.md`](references/
 ### Grow (from an incident)
 
 1. Refresh gate. State the incident: what the agent did with the skill loaded, what it should have done, how many times.
-2. Place the fix by layer: a missed trigger → one phrase in the description; a skipped step → a step in the path, ending on its done-criterion; a rule needed on one path only → that path's reference; a rule about the work in general → the instruction file (ai-agents-md), not this skill.
+2. Place the fix by layer: a missed trigger → one phrase in the description; a skipped step → a step in the path, ending on its done-criterion; a rule needed on one path only → that path's reference; a rule about the work in general → the instruction file (project-docs), not this skill.
 3. Done when: the rule is in one place, the description is no longer than before unless a trigger was missing, and the body still reads as steps.
 
 ### Fold a fork back
@@ -53,4 +53,4 @@ Read the `last-refresh` line at the top of [`references/sources.md`](references/
 
 ### Refresh (sources)
 
-Procedure in [`references/refresh.md`](references/refresh.md): run the shared checker ([`ai-agents-md/scripts/check-sources.ps1`](../ai-agents-md/scripts/check-sources.ps1)) against this skill's `sources.md`, read only the sources whose fingerprint moved, search for vendor changes to the skill format since the last refresh, write the dated entry in [`references/changelog.md`](references/changelog.md), and *propose* edits for the user to accept. Disputes between sources are named with the tier of each side. Fingerprints and `last-refresh` update only after the user has seen the report.
+Procedure in [`references/refresh.md`](references/refresh.md): run the shared checker ([`project-docs/scripts/check-sources.ps1`](../project-docs/scripts/check-sources.ps1)) against this skill's `sources.md`, read only the sources whose fingerprint moved, search for vendor changes to the skill format since the last refresh, write the dated entry in [`references/changelog.md`](references/changelog.md), and *propose* edits for the user to accept. Disputes between sources are named with the tier of each side. Fingerprints and `last-refresh` update only after the user has seen the report.

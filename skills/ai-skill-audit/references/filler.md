@@ -13,7 +13,7 @@ A sentence in a skill body is paid for on every trigger by the agent doing the t
 
 ## In an instruction file (`AGENTS.md`), two exemptions
 
-`ai-agents-md/references/review-checklist.md` §F applies these kinds to an instruction file with two differences: **dates are required** there (`Instance:` lines carry them so a rule can be pruned later), and a **Pointers section is one of the ordered sections**, not a duplicate list. The project-name kind inverts: the file is project-specific by design; what does not belong is machine- or user-specific text.
+`project-docs/references/instruction-file/review-checklist.md` §F applies these kinds to an instruction file with two differences: **dates are required** there (`Instance:` lines carry them so a rule can be pruned later), and a **Pointers section is one of the ordered sections**, not a duplicate list. The project-name kind inverts: the file is project-specific by design; what does not belong is machine- or user-specific text.
 
 ## What is not filler
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Docs"
+  short_description: "Instruction files, loading budgets and the project docs system"
+  default_prompt: "Use $project-docs to review the documents agents read in this repository: run the refresh gate, then pick the path (instruction file, loading system or docs system) and report every line or fact that is inferable, stale, unowned, unenforced or over budget."

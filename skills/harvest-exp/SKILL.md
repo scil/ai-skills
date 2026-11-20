@@ -6,7 +6,7 @@ description: Harvest the reusable lessons of a session — failed and working pa
 
 # Harvest a session's lessons
 
-Hand-offs: a plan-review question or binding → [code-plan-review](../code-plan-review/SKILL.md); a skill's content → [ai-skill-audit](../ai-skill-audit/SKILL.md); where a repository fact lives → [docs-maintainer](../docs-maintainer/SKILL.md); an instruction file's wording → [ai-agents-md](../ai-agents-md/SKILL.md); flashcards of new concepts → [anki-cards](../anki-cards/SKILL.md). Origin: [`readme.md`](readme.md).
+Hand-offs: a plan-review question or binding → [code-plan-review](../code-plan-review/SKILL.md); a skill's content → [ai-skill-audit](../ai-skill-audit/SKILL.md); where a repository fact lives, and an instruction file's wording → [project-docs](../project-docs/SKILL.md); flashcards of new concepts → [anki-cards](../anki-cards/SKILL.md). Origin: [`readme.md`](readme.md).
 
 ## Principles
 
@@ -35,7 +35,7 @@ Hand-offs: a plan-review question or binding → [code-plan-review](../code-plan
 |---|---|---|
 | a defect shape a plan review could have caught (most review findings) | code-plan-review: a question under its scenario, or a binding in `references/stacks/` | its *Harvest a lesson*; never a new skill for an incident |
 | a repeatable multi-step procedure | a skill: extend an existing one first; else the repository's skill directory; the shared skills directory only when it is project-agnostic | ai-skill-audit; propose a new skill's name and description before creating it |
-| any other fact about this repository: rules, commands, how to start and verify, environment traps, architecture, decisions, troubleshooting | its owner per the ownership map; a local fact a reader would misread away from the code → a code comment | docs-maintainer; wording inside `AGENTS.md` / `CLAUDE.md` per ai-agents-md |
+| any other fact about this repository: rules, commands, how to start and verify, environment traps, architecture, decisions, troubleshooting | its owner per the ownership map; a local fact a reader would misread away from the code → a code comment | project-docs (docs-system path); wording inside `AGENTS.md` / `CLAUDE.md` per its instruction-file path |
 | a fact about a tool on this machine, unrelated to any project | the Obsidian-AI vault named in the user's global instructions | the vault's English, agent-facing format: facts, commands, limits |
-| a cross-project working preference that fits in two sentences | the user's global instruction file | ai-agents-md; it sits near its 4 KiB cap, so propose only a compression or a replacement, with the resulting byte count; anything longer becomes a skill |
+| a cross-project working preference that fits in two sentences | the user's global instruction file | project-docs (instruction-file path); it sits near its 4 KiB cap, so propose only a compression or a replacement, with the resulting byte count; anything longer becomes a skill |
 | a collaboration preference or in-flight fact of this project only | the agent's own memory (Claude: the project memory directory and its `MEMORY.md` index) | memory loads only in this project, so never a cross-project lesson |

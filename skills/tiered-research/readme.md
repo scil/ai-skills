@@ -45,8 +45,8 @@ On 2026-10-23 a review of this skill's fit moved the last two lessons, with the 
 
 ## Boundaries / 边界
 
-`gather-code-references` collects third-party coding resources for an implementation; `derive-project-plan` turns references into project decisions; `ai-agents-md` and `docs-maintainer` carry sources registries built with this method and share the checker script. This skill owns the judging and registering method only.
-`gather-code-references` 为实现收集编码资源；`derive-project-plan` 把参考变成项目决策；`ai-agents-md` 与 `docs-maintainer` 的来源表用本方法建、共用检查脚本。本 skill 只管判断与登记方法。
+`gather-code-references` collects third-party coding resources for an implementation; `derive-project-plan` turns references into project decisions; `project-docs` and `ai-skill-audit` carry sources registries built with this method and share the checker script. This skill owns the judging and registering method only.
+`gather-code-references` 为实现收集编码资源；`derive-project-plan` 把参考变成项目决策；`project-docs` 与 `ai-skill-audit` 的来源表用本方法建、共用检查脚本。本 skill 只管判断与登记方法。
 
 ## How to maintain / 怎么维护
 

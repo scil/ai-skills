@@ -33,4 +33,4 @@ Record these, in addition to `source-tiers.md` §2, before the findings:
 
 ## 4. Registering the result
 
-Skills and instruction files that rest on this research keep a sources registry (`templates/sources.md`) checked by `ai-agents-md/scripts/check-sources.ps1`; vendor rows use `gate-days` 7.
+Skills and instruction files that rest on this research keep a sources registry (`templates/sources.md`) checked by `project-docs/scripts/check-sources.ps1`; vendor rows use `gate-days` 7.

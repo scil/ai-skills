@@ -35,12 +35,12 @@ A no-op pass on `docs-maintainer` (commit `91377fd`) found every defect outside 
 | Question | Owner |
 |---|---|
 | What goes in one skill's description, body, references; slimming; fork fold-back | this skill |
-| Which directories load skills, provenance classes, roster budget, parking, "the contract lists no skills" | `ai-docs-organizing` |
+| Which directories load skills, provenance classes, roster budget, parking, "the contract lists no skills" | `project-docs` (loading-system path) |
 | Creating a skill from nothing; evals and triggering benchmarks | `skill-creator` (Anthropic) |
-| The instruction file's content | `ai-agents-md` |
-| Where any other project fact lives; a doc section that has become a procedure → a skill | `docs-maintainer` |
+| The instruction file's content | `project-docs` (instruction-file path) |
+| Where any other project fact lives; a doc section that has become a procedure → a skill | `project-docs` (docs-system path) |
 
 ## How to maintain / 怎么维护
 
-`SKILL.md` stays a router: principles, the gate, four paths (Review-and-apply, Grow, Fold a fork back, Refresh — Slim was merged into Review on 2026-09-16 as its apply step, since both ran the same measurements and tests), each reference linked where it is used. Vendor facts about the format live only in `references/sources.md` (with the tier and the date); loading facts about a harness live in `ai-docs-organizing/references/harness-loading.md` and are pointed at, never copied. When a review or a slim teaches a rule the checklist lacks, add the row with its incident. The refresh runs through the sibling's `check-sources.ps1` with `-Path`; do not fork the script.
-`SKILL.md` 只放原则、刷新门、四条路径（Review 并执行、Grow、并回 fork、Refresh —— Slim 于 2026-09-16 并入 Review 作为其执行步骤，因为两者跑的是同一套测量和测试），引用在使用处链接。格式的厂商事实只放 `references/sources.md`（带层级与日期）；壳的加载事实放 `ai-docs-organizing/references/harness-loading.md`，只指向不复制。评审或瘦身教会了清单没有的规则，就连同事故加一行。刷新用兄弟 skill 的 `check-sources.ps1 -Path`，不要 fork 脚本。
+`SKILL.md` stays a router: principles, the gate, four paths (Review-and-apply, Grow, Fold a fork back, Refresh — Slim was merged into Review on 2026-09-16 as its apply step, since both ran the same measurements and tests), each reference linked where it is used. Vendor facts about the format live only in `references/sources.md` (with the tier and the date); loading facts about a harness live in `project-docs/references/loading/harness-loading.md` and are pointed at, never copied. When a review or a slim teaches a rule the checklist lacks, add the row with its incident. The refresh runs through the sibling's `check-sources.ps1` with `-Path`; do not fork the script.
+`SKILL.md` 只放原则、刷新门、四条路径（Review 并执行、Grow、并回 fork、Refresh —— Slim 于 2026-09-16 并入 Review 作为其执行步骤，因为两者跑的是同一套测量和测试），引用在使用处链接。格式的厂商事实只放 `references/sources.md`（带层级与日期）；壳的加载事实放 `project-docs/references/loading/harness-loading.md`，只指向不复制。评审或瘦身教会了清单没有的规则，就连同事故加一行。刷新用兄弟 skill 的 `check-sources.ps1 -Path`，不要 fork 脚本。

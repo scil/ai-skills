@@ -6,7 +6,7 @@ description: Set or review a coding harness's own configuration — Claude Code 
 
 # Harness configuration: set and review
 
-Hand-offs: which instruction files and skills a harness loads, and their byte budgets → ai-docs-organizing; the content of `AGENTS.md` / `CLAUDE.md` → ai-agents-md; a permission rule that encodes a project rule → ai-agents-md decides whether it belongs in the file or the config.
+Hand-offs: which instruction files and skills a harness loads, their byte budgets, and the content of `AGENTS.md` / `CLAUDE.md` → project-docs; a permission rule that encodes a project rule → project-docs decides whether it belongs in the file or the config.
 
 A **harness** is the program that runs the model (Claude Code, Codex CLI). Its **configuration** is the settings it reads from files, flags and environment variables. A **scope** is the file a key lives in (user, project, project-local, managed), which decides who it reaches and what overrides it.
 

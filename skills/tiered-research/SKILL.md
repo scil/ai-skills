@@ -45,6 +45,6 @@ Each research type has its own reference with its corpora, scope fields and trap
 
 1. Copy [`templates/sources.md`](templates/sources.md); one row per source with tier in `kind`, `purpose` saying what is taken *and what is not*, `source-date`, `-` fingerprint.
 2. Set `last-refresh` and `gate-days` (7 for fast-moving vendor topics, 30 for standards).
-3. Run the shared checker to fill fingerprints and GitHub commit dates: `ai-agents-md/scripts/check-sources.ps1 -Path <registry> -Update`. Mark sites that answer 403/429 as `manual:<date>`.
+3. Run the shared checker to fill fingerprints and GitHub commit dates: `project-docs/scripts/check-sources.ps1 -Path <registry> -Update`. Mark sites that answer 403/429 as `manual:<date>`.
 4. Done when the checker reports no `-` fingerprints and every row has a `purpose` and a `source-date`.
 
