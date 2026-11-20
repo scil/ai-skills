@@ -1,6 +1,6 @@
 # Plan: merge three docs skills into one
 
-Status, 2026-11-20: steps 1 to 6 are done in the working tree and not committed. Step 7 waits for the owner. Step 8 is open: the junctions in Leafi, ThanksPorch, share-with and point-composer point to directories that no longer exist until step 8 runs. Both registries are past their 30-day gate, so the next run of the skill starts with a refresh.
+Status, 2026-11-20: steps 1 to 8 are done. The junctions in Leafi, ThanksPorch (share-with is a symlink to it) and point-composer point to `project-docs`, and the parked `ai-agents-md` and `ai-docs-organizing` entries are gone. The text edits in the other repositories are not committed. Logseq pages, daily logs and ADRs keep the old names as history. Both registries are past their 30-day gate, so the next run of the skill starts with a refresh.
 
 ## Goal
 
