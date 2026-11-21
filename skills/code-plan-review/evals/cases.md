@@ -1,16 +1,16 @@
 # Validation cases
 
-Each case names a plan fixture, what the report must contain, and the wrong output it exists to catch. Two of the seven are correct plans whose questions must come back *unlikely*, and a third is a plan that rightly accepts a residual risk: a review that only ever meets known bugs never learns that it over-prescribes. Run a case by invoking the skill with the fixture as the plan, in a session that did not write it; a case passes when every "must" holds and no "must not" does.
+Each case names a plan fixture, what the report must contain, and the wrong output it exists to catch. Two of the seven are correct plans whose nodes must come back *unlikely*, and a third rightly accepts a residual risk. A review that only meets known bugs never learns that it over-prescribes. Run a case by invoking the skill with the fixture as the plan, in a session that did not write it. A case passes when every "must" holds and no "must not" does.
 
-## 1. A known bug is raised (B2.1)
+## 1. A known bug is raised (P1.3)
 
-**Plan.** Two request paths, `decide` and `ask`, each with numbered pseudocode that updates `access_requests` and inserts into `edges`; no lock order stated anywhere.
+**Plan.** Two request paths, `decide` and `ask`, each with numbered pseudocode that updates `access_requests` and inserts into `edges`. No lock order is stated anywhere.
 
-**Must.** A row for B2.1 marked *likely*, anchored to the two paths, whose suggestion names one lock order written beside the tables. Rows for B2.3 or B1 questions, if raised, stay separate rows with their own anchors.
+**Must.** A row for P1.3 marked *likely*, anchored to the two paths, whose suggestion names one lock order written beside the tables. Rows for P1.1 or P1.2, if raised, stay separate rows with their own anchors.
 
-**Must not.** The same fact filed under B3 (arrival rate) or G2.3 (a model problem); two suggestions of the form "add a lock at step N", one per path (I2.2 says one class fix).
+**Must not.** The same fact filed under P2 (load) or L2.3 (a model problem). Two suggestions of the form "add a lock at step N", one per path: rows with one cause get one class fix.
 
-## 2. A correct alternative comes back unlikely (C1)
+## 2. A correct alternative comes back unlikely (L1.1)
 
 **Plan.**
 
@@ -22,19 +22,19 @@ Each case names a plan fixture, what the report must contain, and the wrong outp
 5. The Claim button is inert until the "me" query has succeeded; unresolved is not guest.
 ```
 
-**Must.** `Unlikely: C1.1 (rows 2–4), C1.2 (row 5), C1.3 (cookie decides)` under the C table, or a C table with no rows and that line.
+**Must.** `Unlikely: L1.1 (rows 2–4, cookie decides)`, under a table with no row for L1.1. S3.1 is not raised for identity (row 5 gates on it). A row for S3.1 about a second send while the claim is in flight is allowed: the plan does not gate on that.
 
-**Must not.** C1.1 as *likely* or *possible* with "one endpoint" as the suggestion: the property holds on both routes.
+**Must not.** L1.1 as a row of any kind, for example with "one endpoint" or "report the branch taken" as the suggestion: the property holds on both routes, and a node's `Suggest:` is not a requirement.
 
-## 3. Material is asked for once; the review continues when declined
+## 3. Material is asked for once, and the review continues when declined
 
-**Plan.** "The seat procedure updates `cards` then `seats`; the release procedure updates `seats` then `cards`. Both run inside one transaction. Helpers `touchCard` and `touchSeat` do the writes." No diagram, no list of other writers of either table; the files are not in the checkout. When asked, the user declines.
+**Plan.** "The seat procedure updates `cards` then `seats`; the release procedure updates `seats` then `cards`. Both run inside one transaction. Helpers `touchCard` and `touchSeat` do the writes." No diagram, no list of other writers of either table, and the files are not in the checkout. When asked, the user declines.
 
-**Must.** Exactly one message asking for material, listing the other writers of the two tables (for B2.1 and B2.3) and the handle each helper takes (for B2.2), together with anything else the review needs. After the decline: B2.1 as *likely* from the two sentences alone (the orders differ as written), B2.2 and B2.3 as *cannot tell* with suggestions still given; Materials lists the items as declined; every other scenario has its table or not-touched line.
+**Must.** Exactly one message asking for material: the other writers of the two tables (for P1.2 and P1.3) and the handle each helper takes (for P1.3), with anything else the review needs. After the decline: P1.3 *likely* from the two sentences alone (the orders differ as written), and the helper-handle question and P1.2 *cannot tell* with suggestions still given. Materials lists the items as declined. Every loaded gate has a row, an Unlikely entry or a Not reached line.
 
-**Must not.** A second request; a list of writers built from the plan's prose and presented as if supplied; the review stopped at the decline; a subagent.
+**Must not.** A second request. A list of writers built from the plan's prose and presented as supplied. The review stopped at the decline. A subagent.
 
-## 4. The submit flow (A1, A3)
+## 4. The submit flow (S1, S3, S5)
 
 **Plan.**
 
@@ -45,27 +45,27 @@ Each case names a plan fixture, what the report must contain, and the wrong outp
 4. Show a toast and keep the user on the page.
 ```
 
-**Must.** A1.1 *likely* with "nowhere" as the anchor (nothing disables Save); A3.1 *likely* at step 3; A3.4 *possible* (Save is usable the moment the response lands, before the reset settles); A1.3 *possible* (the draft is sent raw). A2.1, A3.1 and A3.2 share one suggestion naming the token captured at send.
+**Must.** S3.1 *unspecified* with "nowhere" as the anchor (nothing says Save is disabled in flight or when it is usable again). S1.1 *likely* at step 3, with one suggestion naming the token captured at send. S5.1 raised as *possible* or *unspecified* (the draft is sent raw).
 
-**Must not.** A3.1 marked *unlikely* because Save is disabled while pending: a disabled button stops a second send, not a late response landing on a changed field.
+**Must not.** S1.1 marked *unlikely* because Save is disabled while pending: a disabled button stops a second send, not a late response landing on a changed field.
 
-## 5. Scenarios the plan does not touch are listed, not dropped
+## 5. Views the plan does not touch are listed, not dropped
 
 **Plan.** A server-only change: one `status` enum gains a member, and one handler runs `UPDATE … WHERE id = $1 AND status = 'open'` and reads rows affected. No UI file, no route.
 
-**Must.** Tables or Unlikely lines for B, F (the enum's existing `switch` statements, F1.3) and G2; one *Not touched* line each for at least A, D and E, with the reason; B1.1 and B1.4 under `Unlikely:` with the `WHERE` and the rows-affected read as the guards.
+**Must.** Tables or Unlikely lines for P1, L5 (the enum's existing `switch` statements, L5.1.1) and L2.2. The scenarios view as a Not loaded line with the reason, or loaded with the reason it was. P1.1 under `Unlikely:` with the `WHERE` as the guard. P1.1.1 under `Unlikely:` with the rows-affected read as the guard. A P1.1.1 row is allowed only if it names two meanings of zero rows (for example "already paid" and "on hold").
 
-**Must not.** D or E absent from the report; F skipped because the plan is "server-only".
+**Must not.** The scenarios view absent from the report. L5 skipped because the plan is "server-only".
 
-## 6. A binding supplies the fix; the question stays neutral (B1.2 · postgres)
+## 6. A binding supplies the fix, and the node stays neutral (P1.1 · postgres)
 
 **Plan.** On PostgreSQL: "Before inserting a hold, check `SELECT 1 FROM holds WHERE user_id = $1 AND status = 'active'`; if none, `INSERT INTO holds …`. Expired holds keep `status = 'active'` until a nightly job flips them." The manifest shows `pg`.
 
-**Must.** Materials lists `postgres` as loaded. A row `B1.2 · postgres` *likely*, whose suggestion is a partial unique index on `user_id WHERE status = 'active'` with `ON CONFLICT (user_id) WHERE status = 'active' DO NOTHING RETURNING`. A row for J1.1 (`· postgres` if it cites the immutable-predicate limit) *likely*: until the nightly job runs, an expired hold still blocks the insert.
+**Must.** Materials lists `postgres` as loaded. A row `P1.1 · postgres` *likely*, whose suggestion is a partial unique index on `user_id WHERE status = 'active'` with `ON CONFLICT (user_id) WHERE status = 'active' DO NOTHING RETURNING`. A row for P3.1 (`· postgres` if it cites the immutable-predicate limit) *likely*: until the nightly job runs, an expired hold still blocks the insert.
 
-**Must not.** A suggestion naming a different database's syntax; Postgres syntax quoted as if it were the catalog question's own wording; a new catalog question proposed for "Postgres partial index predicate" (that is a binding entry, not a shape).
+**Must not.** A suggestion in another database's syntax. Postgres syntax quoted as if it were the node's own wording. A new node proposed for "Postgres partial index predicate": that is a binding entry, not a shape.
 
-## 7. A proportionate residual is accepted, not padded (C4.3)
+## 7. A proportionate residual is accepted, not padded (L1.4.2)
 
 **Plan.**
 
@@ -78,6 +78,6 @@ Each case names a plan fixture, what the report must contain, and the wrong outp
 4. Non-Goals: the hidden path's residual timing (a few reads) is accepted.
 ```
 
-**Must.** `Unlikely: C4.1 (one body and status, step 3), C4.3 (ids unguessable and signed-in, gap is a few reads with no wait, named in Non-Goals)`. The model, restated, says what an outsider already holds (an unguessable id, a session).
+**Must.** `Unlikely: L1.4.1 (one body and status, step 3), L1.4.2 (ids unguessable and signed-in, gap is a few reads with no wait, named in Non-Goals)`. The model, restated, says what an outsider already holds (an unguessable id, a session). An L1.4.1 row is allowed only for a channel that step 3 does not cover. An example is a fault status that only an existing id can produce.
 
-**Must not.** A C4.3 row whose suggestion is padding every refusal to a fixed time, dummy reads on the missing path, or a constant-time comparison; C4.3 marked *possible* on the grounds that nothing in the plan rules a timing difference out.
+**Must not.** An L1.4.2 row whose suggestion pads every refusal to a fixed time, adds dummy reads, or uses a constant-time comparison. L1.4.2 marked *possible* because nothing in the plan rules a timing difference out.

@@ -34,12 +34,12 @@ A repository that adopted the skill's earlier shape may still hold `openspec/int
      instruction: |
        Run <skill path>/SKILL.md over design.md in a session that did not write
        design.md wherever you can — a fresh session, or an agent the authoring
-       session delegates the review to. Walk the catalog, ask once for any
+       session delegates the review to. Walk the question tree, ask once for any
        material only the author can supply (delegated: write it under Decisions
        for the owner with a recommendation each), and write the report here in
        the skill's shape — The model, restated; Decisions for the owner; Most
-       severe; one table per scenario the design touches with its Unlikely line;
-       then Not touched, Materials, Outside the catalog. Resolve every row marked
+       severe; one table per loaded view with its Unlikely and Not reached lines;
+       then Not loaded, Materials, Outside the tree. Resolve every row marked
        likely or unspecified by editing design.md where the decision stands, never
        by editing this file; a row carried as it stands goes under Accepted with
        the reason. When the resolutions changed the design substantially, run the
@@ -58,7 +58,7 @@ A repository that adopted the skill's earlier shape may still hold `openspec/int
 
    `<skill path>` is where the skill is reached in that repository (for a junction-linked shared skill, `.agents/skills/code-plan-review`).
 
-2. **Template.** `templates/review.md`: a leading HTML comment pointing at the skill's "What to report", then `## The model, restated`, `## Decisions for the owner`, `## Most severe`, the per-scenario tables, `## Not touched`, `## Materials`, `## Outside the catalog`, `## Accepted`.
+2. **Template.** `templates/review.md`: a leading HTML comment pointing at the skill's "What to report", then `## The model, restated`, `## Decisions for the owner`, `## Most severe`, the per-view tables, `## Not loaded`, `## Materials`, `## Outside the tree`, `## Accepted`.
 
 3. **`openspec/config.yaml`.**
 
@@ -94,6 +94,6 @@ A repository that adopted the skill's earlier shape may still hold `openspec/int
 
 `/opsx:propose` (or `/opsx:continue`) walks the artifacts in dependency order, so the review runs after the design and before the tasks without anyone remembering to ask for it. A likely row is resolved by editing `design.md` and recording the decision, not by editing `review.md`; `review.md` is appended to, never rewritten, so the rows that were raised stay visible beside what was decided.
 
-**Resolve in place.** Correct the decision where it is stated, and add a resolutions note only as an index ("B1.5 → D8"). A section appended to `design.md` that says "this wins where the text above differs" while the text above still states the old decision leaves the design holding two copies of one truth; the implementer reads whichever comes first, and the second pass has to report every such passage (SKILL.md, "A second pass").
+**Resolve in place.** Correct the decision where it is stated, and add a resolutions note only as an index ("L2.1 → D8"). A section appended to `design.md` that says "this wins where the text above differs" while the text above still states the old decision leaves the design holding two copies of one truth; the implementer reads whichever comes first, and the second pass has to report every such passage (SKILL.md, "A second pass").
 
-**Make the reviewer's reading cheap.** Most of a delegated review's cost is finding the code each decision touches. A design whose **Touches:** lines give `file:line` (or the function name) for every site — and, for every table written, each constraint with whether the new rows satisfy it (G4.2) and every existing writer of a constraint the design adds (G4.3) — spends the reviewer's budget on the questions rather than on the search.
+**Make the reviewer's reading cheap.** Most of a delegated review's cost is finding the code each decision touches. A design whose **Touches:** lines give `file:line` (or the function name) for every site — and, for every table written, each constraint with whether the new rows satisfy it, and every existing writer of a constraint the design adds (both L3.3) — spends the reviewer's budget on the questions rather than on the search.
