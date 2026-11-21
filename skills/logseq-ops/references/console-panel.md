@@ -58,7 +58,7 @@ Risk: an allowed shell lets any graph's `custom.js` run commands. Open only grap
      collapsed:: true
    ```
 
-   `<shell>` is `pwsh` or `powershell`. Use `pwsh` for a new project. Write the runner path with forward slashes, for example `E:/GitHub/scil/Leafi/scripts/win/run_for_obsidian_console.ps1`.
+   `<shell>` is `pwsh` or `powershell`. Use `pwsh` for a new project. Write the runner path with forward slashes, for example `E:/GitHub/scil/Leafi/scripts/win/run_for_obsidian_console.ps1`. The marker splits on spaces. If the path holds a space, write the folder's 8.3 short name instead, for example `E:/GitHub/scil/UNITYM~1/scripts/win/run_for_obsidian_console.ps1`. Get it with `pwsh -NoProfile -Command '(New-Object -ComObject Scripting.FileSystemObject).GetFolder("<folder>").ShortPath'`. If it prints the long name, 8.3 names are off on that volume: move the repository to a path without spaces.
 3. Add the data as child blocks of the marker block, in this shape:
 
    ```

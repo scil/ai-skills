@@ -25,9 +25,11 @@ switch ($Button) {
     { $_ -in 'tg-on', 'tg-off' } { & "$PSScriptRoot\tg.ps1" -State $Button.Substring(3) }
     default { Write-Output "Unknown console button: $Button"; exit 2 }
 }
+if ($LASTEXITCODE) { exit $LASTEXITCODE }
 ```
 
 - The `default` case runs nothing. An unknown key prints `Unknown console button` and exits non-zero.
+- The last line passes on a failure. A script called with `&` that ends with `exit 1` only sets `$LASTEXITCODE`, and without that line the runner still exits 0.
 - The runner calls a script that takes a value in-process (`& "$PSScriptRoot\x.ps1" -Line $Selection`), not with `pwsh -File`. `pwsh -File` reads a value that starts with `-` as a parameter name.
 - The file name `run_for_obsidian_console.ps1` stays. It dates from the retired Obsidian console, and every project and every panel marker uses it.
 - Adding a button touches the repo and the page only: the script, one case in the runner, and one button block with its help line.
