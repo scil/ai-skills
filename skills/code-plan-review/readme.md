@@ -44,8 +44,8 @@ A review reads and asks as little as it can without losing coverage. The princip
   按视图加载。评审只加载方案涉及的视图文件，加上每种变更种类必加载的门。整棵树约 44 KB，旧的单文件是 79 KB；一次典型评审加载 25 到 30 KB。
 - Prune the tree. Questions nest to any depth: gate, node, child, grandchild (`S1`, `S1.4`, `S1.4.1`). If the plan has no surface for a gate, the whole subtree is skipped with one Not reached line. A node becomes a child only of a parent whose surface it needs (`references/maintain.md`, rule 4). A gate holds about six children at most.
   剪枝。问题可多层嵌套：门、节点、子节点、孙节点（`S1`、`S1.4`、`S1.4.1`）。方案对某个门没有接触面时，整棵子树跳过，只写一行 Not reached。子节点只有在"必须有父节点的接触面才会出现"时才挂在父节点下（`references/maintain.md` 第 4 条）。一个门最多约六个子节点。
-- Fewer, shorter questions. 168 flat questions became 106 nodes under 26 gates in the rebuild. Gate S7 later brought it to 108 nodes under 27 gates. A node has one shape sentence of 40 words or fewer and one `Suggest:` of 25 words or fewer.
-  更少、更短的问题。168 个平铺的问题在重建中合并为 26 个门下的 106 个节点；之后新增 S7 门，变为 27 个门下的 108 个节点。每个节点只有一句不超过 40 词的形状描述和一句不超过 25 词的 `Suggest:`。
+- Fewer, shorter questions. 168 flat questions became 106 nodes under 26 gates in the rebuild. Gate S7 later brought it to 108 nodes under 27 gates, and S1.5 and O1.3 to 110. A node has one shape sentence of 40 words or fewer and one `Suggest:` of 25 words or fewer.
+  更少、更短的问题。168 个平铺的问题在重建中合并为 26 个门下的 106 个节点；之后新增 S7 门，变为 27 个门下的 108 个节点。再加 S1.5 和 O1.3，变为 110 个。每个节点只有一句不超过 40 词的形状描述和一句不超过 25 词的 `Suggest:`。
 - Bindings on demand. The manifest or schema decides which binding files load: only those of the technologies it shows. Its entries are keyed by node number, so the reviewer reads only the entries for the nodes it asks.
   绑定按需加载。只有清单或 schema 显示用了某项技术，才加载对应的绑定文件。条目按节点编号索引，评审只读正在问的节点的条目。
 - One reader, one request. One reviewer walks the tree in one context, with no subagents. Material only the author can supply is asked for once, in one message. A decline marks the dependent nodes *cannot tell* and does not stop the review.
@@ -545,6 +545,11 @@ The catalog had grown to 168 questions in 79 KB, about 20,000 tokens loaded for 
 
 A comparison with the owner's quality dimensions (Logseq page `d/quality-dimensions`) found that the tree asked nothing about Reach: what machine visitors (search crawlers, link previews, AI agents) and people using assistive technology, another language or another device receive. Gate S7 adds S7.1 (machine visitors) and S7.2 (people). It comes from a stated requirement, not an incident, like Rule 24. Its basis is CWE-435 (a correct site and a correct crawler that fail together) and the ISO/IEC 25010 sub-characteristics interoperability and inclusivity. The products (`robots.txt`, canonical links, Open Graph, MCP, ARIA) are in the `web-platform` binding. The gate sits first in `views/scenarios.md` because files are ordered by pillar, and keeps the number S7 because numbers are appended. Cost was considered in the same comparison and left out by the owner's decision.
 与作者的质量维度（Logseq 页面 `d/quality-dimensions`）对照后发现，问题树没有问 Reach：机器访客（搜索爬虫、链接预览、AI 代理）以及使用辅助技术、其他语言或其他设备的人收到什么。S7 门新增 S7.1（机器访客）和 S7.2（人）。它来自明确需求而非事故，与 Rule 24 相同。依据是 CWE-435（正确的网站与正确的爬虫一起出错）以及 ISO/IEC 25010 的子特性 interoperability 和 inclusivity。产品细节（`robots.txt`、canonical、Open Graph、MCP、ARIA）放在 `web-platform` 绑定。按支柱排序，该门排在 `views/scenarios.md` 最前；编号按追加规则保留为 S7。同一次对照也考虑了 Cost，按作者决定不纳入。
+
+## S1.5, O1.3, O2.1 — three defects caught before the first run (2026-11-21, Task City room model) / S1.5、O1.3、O2.1——首次运行前抓到的三个缺陷
+
+A three.js task app gained a room model, a batch input box and quick links in one session. Three defects were caught in design or before the first run, so none reached a person. The panel is rebuilt from a template on every sync pull. The new batch box holds a typed outline, and S1.5 asks where such a draft lives. The draft was kept in module state. A generic cleanup helper also freed the materials that every room shares: O1.3. A building-only cleanup now frees geometry and its own roof materials. New pick boxes inside a task card matched a broad selector, `input[type=checkbox]` in the active card. That selector bound the step-tick handler. O2.1 gains "a page selector" as an example. The selector was narrowed to the step list.
+一个 three.js 任务应用在一次会话里加了房间模型、批量输入框和快捷链接。三个缺陷在设计中或首次运行前被发现，没有影响到人。面板在每次同步拉取时按模板整块重建，而新批量框里有正在输入的大纲：S1.5 问这样的草稿放在哪里。草稿改存在模块状态里。一个通用清理函数会同时释放所有房间共享的材质：O1.3。现在用只属于建筑的清理，只释放几何体和它自己的屋顶材质。任务卡里新加的勾选框被勾选步骤处理器的宽选择器（当前卡内的 `input[type=checkbox]`）匹配到：O2.1 的例子加上"页面选择器"。选择器已收窄到步骤列表。
 
 ## How to maintain / 怎么维护
 

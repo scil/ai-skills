@@ -20,6 +20,7 @@ Screens, forms, client requests, routes and journeys: what a person does and see
   - **S1.4.1** The screen leaves "waiting" only in the push handler, so an event before the subscription is live is lost. Or a poll waits one interval before its first tick. Suggest: subscribe, then read once, and treat a push as a hint to read again. Tick now, then on the interval.
   - **S1.4.2** The handler is not idempotent, so a read and a late push apply the effect twice. Suggest: make the handler idempotent.
   - **S1.4.3** An automatic re-ask on an unexpected answer has no bound: it fires once and waits forever, or fires on every render. Suggest: a bounded number of attempts keyed on the disagreement, then a visible state the person can act on.
+- **S1.5** A push, a poll or a sync result redraws a whole region from a template (a panel, a list). The region holds a draft that the person is typing. The draft, the caret and the focus are lost. Suggest: keep each draft in state outside the region and restore it on redraw, or update only the parts that changed.
 
 ### S2. Does a write change values that this screen or another one shows?
 
