@@ -89,7 +89,7 @@ Risk: an allowed shell lets any graph's `custom.js` run commands. Open only grap
 4. A button's key is a runner key, which must match `^[a-z0-9-]+$`. A key can also be an `http`, `https` or `file` link, and the button then opens that link.
 5. Colors are `blue`, `green`, `yellow`, `orange`, `red` and `purple`. A `red`, `orange` or `yellow` button asks for confirmation before it runs.
 6. Fold the marker block. The panel draws within one second.
-7. Add one line for the project to the services index page `my/it-services-running` (file `pages/my___it-services-running.md`), under 项目服务 → Logseq 控制台. The line holds the page link and the repository folder. If the project serves a page, the line also holds its local address. Docker containers can start on their own (`restart: unless-stopped` or `always`). If a project has such containers, add a line under 项目服务 → Docker 自启, also when it has no console. If the project moves or retires, update or remove its line.
+7. Add one line for the project to the services index page `my/it-services-running` (file `pages/my___it-services-running.md`), under 项目服务 → Logseq 控制台. The line holds the page link and the repository folder. If the project serves a page, the line also holds its local address. Docker containers can start on their own (`restart: unless-stopped` or `always`). If a project has such containers, add a `Docker 自启` line as a child of its console line. A project without a console goes under 项目服务 → 没有控制台, with the same child lines. If the project moves or retires, update or remove its line.
 
 ## Form buttons
 
