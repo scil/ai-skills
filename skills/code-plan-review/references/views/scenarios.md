@@ -2,6 +2,13 @@
 
 Screens, forms, client requests, routes and journeys: what a person does and sees. The 4+1 scenarios view. Ask each gate (`S1`, …) first. If the plan has no surface for a gate, skip its subtree.
 
+## CWE-435 · Interaction between correct parties
+
+### S7. Does the change alter what a machine visitor or a person using assistive technology, another language or another device receives?
+
+- **S7.1** A route change, sign-in wall, redirect or client-only render changes what a machine visitor (crawler, link preview, AI agent) receives. The plan does not say. Suggest: for each changed route, list the machine visitors and the status, content and indexing signals each one gets.
+- **S7.2** A new screen, control or message reaches only some people: it has no keyboard path or accessible name, untranslated text, or a layout fixed to one device. Suggest: for each new control or text, state its keyboard path, label, translation source and the smallest screen it supports.
+
 ## CWE-664 · Resource lifetime
 
 ### S1. Can a response, a push or a poll result land after the screen moved on?

@@ -51,49 +51,64 @@ Use whatever headings the resource deserves. Examples:
 
 ## Theme Indexes
 
-Use these to compare findings across resources.
+Use these to compare findings across resources. One index per architecture view (Kruchten 4+1, as in `code-plan-review/references/taxonomy.md`). Tag each entry with the ISO/IEC 25010 characteristic it serves.
 
-### Dependencies
-
-- Candidate:
-- Sources:
-- Why it appears:
-- Tradeoffs:
-- Project fit:
-
-### Architecture And Module Boundaries
+### Scenarios
 
 - Pattern:
 - Sources:
+- Quality:
 - Benefits:
 - Costs:
 - Project fit:
 
-### Error Handling And Reliability
+### Logical
 
 - Pattern:
 - Sources:
+- Quality:
 - Benefits:
 - Costs:
 - Project fit:
 
-### Testing And Validation
+### Process
 
 - Pattern:
 - Sources:
+- Quality:
 - Benefits:
 - Costs:
 - Project fit:
 
-### Release, Ops, And Maintenance
+### Development
 
-- Pattern:
+Dependencies go here, each with why it appears.
+
+- Pattern or candidate:
 - Sources:
+- Quality:
 - Benefits:
 - Costs:
 - Project fit:
 
-Add more theme sections whenever the references reveal useful categories.
+### Operations
+
+- Pattern:
+- Sources:
+- Quality:
+- Benefits:
+- Costs:
+- Project fit:
+
+### Failure Modes
+
+- `code-plan-review` node:
+- Technology:
+- Shows up as:
+- Fix:
+- Sources:
+
+A failure mode no node names goes under "Outside the tree", as a candidate node.
 
 ## Decision Pool
 

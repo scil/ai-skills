@@ -1,7 +1,59 @@
-# code-plan-review — where the questions came from
+# code-plan-review: where the questions came from
 
-One skill, one catalog: lettered scenarios, numbered sub-scenarios, one question per kind of problem. The skill was created on 2026-09-16 as rules harvested from incidents — each rule with three gates and four sides, grouped into batch files, reviewed one batch per subagent against tables the plan's author had to fill. On 2026-10-02 it was reshaped into what it is now: a catalog of scenarios and the questions a reviewer asks of a plan, walked in one context, with possibility and suggestion in place of verdict and proof. The incident sections below are unchanged: they are where the questions came from, and the table after the vocabulary says which question each rule became. Where a section says *Rule N*, *Tell*, *Write*, *Prove*, *View*, *batch* or *intermediate*, it describes the shape the skill had then.
-一个 skill，一份目录：字母编号的场景、数字编号的子场景、一类问题一个问题。本 skill 于 2026-09-16 以"从事故收割的规则"创建——每条规则三道门四个面，按批次文件分组，一个批次一个子代理，对着方案作者必须先填好的表来审。2026-10-02 改成现在的样子：一份场景目录，每个场景下是审查者对方案要问的问题，在一个上下文里走完，用"可能性 + 建议"取代"判定 + 证明"。下面的事故小节原样保留：它们是问题的来处，词汇表后面的对照表写明每条规则变成了哪个问题。小节里出现 *Rule N*、*Tell*、*Write*、*Prove*、*View*、*batch*、*intermediate* 这些词时，说的是 skill 当时的形状。
+One skill, one question tree. The questions live in five view files under `references/views/`. Inside a file they are grouped by defect class into gates and nested to any depth (`S1`, `S1.4`, `S1.4.1`). This readme records where the questions came from: the incidents, dated, and the rebuilds that reshaped them.
+一个 skill，一棵问题树。问题放在 `references/views/` 下的五个视图文件里。文件内按缺陷类别分成若干门（gate），并可嵌套任意层（`S1`、`S1.4`、`S1.4.1`）。本 readme 记录问题的来处：带日期的事故，以及重塑它们的几次重建。
+
+The skill took three shapes. On 2026-09-16 it began as rules harvested from incidents, each rule with three gates and four sides, reviewed one batch per subagent. On 2026-10-02 it became a catalog: lettered scenarios (A to M), one question per kind of problem, walked by one reader in one context. On 2026-11-20 the catalog became the question tree, with new numbers. The incident sections below are unchanged, so they cite the numbers of their time. Where a section says *Rule N*, *Tell*, *Write*, *Prove*, *View*, *batch* or *intermediate*, it describes the first shape. A lettered id such as A3.1 is a catalog number. To find its node now, read the mapping in "The question tree rebuild".
+本 skill 经历了三种形状。2026-09-16 起步时是从事故收割的规则，每条规则三道门四个面，一个批次一个子代理。2026-10-02 改成目录：字母编号的场景（A 到 M），一类问题一个问题，由一个读者在一个上下文里走完。2026-11-20 目录改成问题树，并重新编号。下面的事故小节原样保留，所以引用的是当时的编号。小节里出现 *Rule N*、*Tell*、*Write*、*Prove*、*View*、*batch*、*intermediate* 时，说的是第一种形状。A3.1 这样的字母编号是目录编号；要找它现在对应的节点，看"问题树重建"一节里的对照表。
+
+## Principles / 原则
+
+The skill follows two principles: standards and efficiency. Every change to a node, a binding or the report keeps both. The rebuild of 2026-11-20 applied them to every question.
+本 skill 遵循两条原则：标准与效率。对节点、绑定或报告的每一次修改都要同时守住这两条。2026-11-20 的重建把它们落实到了每一个问题上。
+
+### Standards / 标准
+
+The classification rests on published, widely accepted standards, not on categories made for one project. Where the skill needs a list that no standard gives, it marks the list as its own and names the nearest standard. The principle shows in these places:
+分类建立在公开发表、广泛接受的标准之上，而不是为某个项目临时发明的类别。如果 skill 需要一份标准里没有的清单，就标明它是自创的，并写出最接近的标准。这条原则体现在以下地方：
+
+- Views. The five view files follow Kruchten's 4+1 view model (IEEE Software, 1995). The index in `SKILL.md` picks files by view.
+  视图。五个视图文件对应 Kruchten 的 4+1 视图模型（IEEE Software，1995）。`SKILL.md` 的索引按视图选文件。
+  - Why it works. A plan shows on its first page which views it touches, so picking files is cheap and rarely wrong. The model is the most cited split of an architecture into views. Each view fails in its own way, so questions that fail alike share a file.
+    为什么有效。方案第一页就能看出涉及哪些视图，选文件代价低、不易选错。该模型是架构视图划分中引用最多的。每个视图有自己的失败方式，失败方式相近的问题放在同一文件。
+  - Weak points. Views overlap: a double click is both S3.1 and P1.2, and cross-references only soften this. The model describes an architecture and does not find defects, so the CWE pillars are a second axis. The physical view was renamed "operations" and refilled, a stretch from the original. View sizes are uneven (process 28 nodes, operations 13), so a plan that touches many views saves little. C4 and arc42 split differently, and neither fits defect review better.
+    缺点。视图之间有重叠：双击既是 S3.1 也是 P1.2，交叉引用只能缓解。该模型用于描述架构而非找缺陷，所以需要 CWE 支柱作为第二轴。physical 视图被改名为 "operations" 并换了内容，偏离原意。各视图大小不均（process 28 个节点，operations 13 个），涉及多个视图的方案节省很少。C4 与 arc42 划分方式不同，但都不比它更适合缺陷评审。
+- Defect class. Each gate carries one pillar of MITRE CWE-1000, and gates in a file are ordered by pillar number. A node shares its gate's pillar (`references/maintain.md`, rule 2).
+  缺陷类别。每个门（gate）对应 MITRE CWE-1000 的一个支柱（pillar），文件内的门按支柱编号排序。节点与所属的门同属一个支柱（`references/maintain.md` 第 2 条）。
+- Severity. "Most severe" is ranked by the ISO/IEC 25010:2023 quality characteristic that a failure harms: safety and security first.
+  严重度。"Most severe" 按失败损害的 ISO/IEC 25010:2023 质量特性排序：安全与信息安全优先。
+- Report labels. *likely* and *unspecified* follow the "incorrect" and "missing" split of IBM ODC.
+  报告标签。*likely* 与 *unspecified* 沿用 IBM ODC 的"错误"与"缺失"之分。
+- Coined terms are marked. "Change kind" is declared as this skill's own term, with ISO/IEC/IEEE 14764 named as the nearest standard and the reason it does not fit.
+  自创术语有标注。"change kind"（变更种类）声明为本 skill 自创，并写明最接近的标准 ISO/IEC/IEEE 14764 以及它为什么不适用。
+- One record. `references/taxonomy.md` holds each standard, its source, what it decides and the date it was checked.
+  集中记录。`references/taxonomy.md` 记录每个标准、来源、它决定什么、以及核对日期。
+- General wording. A node names a defect shape in stack-neutral words. Products, APIs and syntax live only in the binding files (`references/stacks/`). If an existing node can cover a new shape, a maintainer widens it. The rules are in `references/maintain.md` (1, 3 and 6).
+  通用措辞。节点用与技术栈无关的语言描述缺陷形状。产品、API 和语法只出现在绑定文件（`references/stacks/`）里。新增节点之前，若现有节点放宽措辞就能覆盖，就放宽它（`references/maintain.md` 第 1、3、6 条）。
+
+### Efficiency / 效率
+
+A review reads and asks as little as it can without losing coverage. The principle shows in these places:
+评审在不丢失覆盖面的前提下，读得尽量少、问得尽量少。这条原则体现在以下地方：
+
+- Load by view. The reviewer loads only the view files the plan touches, plus the gates that each change kind always loads. The whole tree is about 44 KB, where the old single file was 79 KB. A typical review loads 25 to 30 KB.
+  按视图加载。评审只加载方案涉及的视图文件，加上每种变更种类必加载的门。整棵树约 44 KB，旧的单文件是 79 KB；一次典型评审加载 25 到 30 KB。
+- Prune the tree. Questions nest to any depth: gate, node, child, grandchild (`S1`, `S1.4`, `S1.4.1`). If the plan has no surface for a gate, the whole subtree is skipped with one Not reached line. A node becomes a child only of a parent whose surface it needs (`references/maintain.md`, rule 4). A gate holds about six children at most.
+  剪枝。问题可多层嵌套：门、节点、子节点、孙节点（`S1`、`S1.4`、`S1.4.1`）。方案对某个门没有接触面时，整棵子树跳过，只写一行 Not reached。子节点只有在"必须有父节点的接触面才会出现"时才挂在父节点下（`references/maintain.md` 第 4 条）。一个门最多约六个子节点。
+- Fewer, shorter questions. 168 flat questions became 106 nodes under 26 gates in the rebuild. Gate S7 later brought it to 108 nodes under 27 gates. A node has one shape sentence of 40 words or fewer and one `Suggest:` of 25 words or fewer.
+  更少、更短的问题。168 个平铺的问题在重建中合并为 26 个门下的 106 个节点；之后新增 S7 门，变为 27 个门下的 108 个节点。每个节点只有一句不超过 40 词的形状描述和一句不超过 25 词的 `Suggest:`。
+- Bindings on demand. The manifest or schema decides which binding files load: only those of the technologies it shows. Its entries are keyed by node number, so the reviewer reads only the entries for the nodes it asks.
+  绑定按需加载。只有清单或 schema 显示用了某项技术，才加载对应的绑定文件。条目按节点编号索引，评审只读正在问的节点的条目。
+- One reader, one request. One reviewer walks the tree in one context, with no subagents. Material only the author can supply is asked for once, in one message. A decline marks the dependent nodes *cannot tell* and does not stop the review.
+  一个读者，一次请示。一个评审者在一个上下文里走完整棵树，不开子代理。只有作者能提供的材料在一条消息里请示一次；被拒绝时，相关节点标为 *cannot tell*，评审不停。
+- A short report. Nodes judged *unlikely* share one line under each table. Rows with one cause get one class fix. A *possible* row must name a path to the failure, and a node is judged by its shape sentence, not by its `Suggest:`. These two rules keep padding rows out of the report.
+  报告简短。判为 *unlikely* 的节点在每张表下合成一行。同一原因的多行只给一个类别修复。*possible* 行必须指出通往失败的路径，节点只按形状句判定、不按 `Suggest:` 判定；这两条规则让报告没有凑数的行。
+- Efficiency never drops coverage. When unsure about a view, the reviewer loads it. Every loaded gate ends as a row, an Unlikely entry or a Not reached line. `evals/cases.md` checks both sides: known bugs are raised, and correct plans are not padded.
+  效率不以牺牲覆盖面为代价。对某个视图拿不准时就加载它。每个已加载的门最终都落在一行、一条 Unlikely 或一行 Not reached 里。`evals/cases.md` 从两头检验：已知缺陷要被提出，正确的方案不被凑数。
 
 ## Why it was reshaped / 为什么改
 
@@ -10,20 +62,29 @@ The machinery had grown past its findings. A plan could not be reviewed until it
 
 ## Vocabulary / 名词
 
-**Scenario / 场景, sub-scenario / 子场景.** The moment in a change that raises a family of questions: *the client sends a request › after the response returns*. Scenarios are lettered (A–K), sub-scenarios numbered within them (A3), questions numbered within those (A3.1). New questions are appended; numbers never shift, so an old report still points at the question it cited.
-一次变更里引出一组问题的那个时刻：*客户端发送请求 › 响应返回后*。场景用字母（A–K），子场景在场景内编号（A3），问题在子场景内编号（A3.1）。新问题追加在末尾；编号永不移动，旧报告引用的还是同一个问题。
+**View / 视图.** One of the five architecture views of Kruchten's 4+1 model, one file each: S scenarios, L logical, P process, D development, O operations. The index in `SKILL.md` picks the views a plan touches.
+Kruchten 4+1 模型的五个架构视图之一，每个一个文件：S 场景、L 逻辑、P 进程、D 开发、O 运维。`SKILL.md` 的索引按方案涉及的视图选文件。
 
-**Question / 问题.** One kind of problem, written as the shape it takes in a plan, then *Suggest:* the change. Asked whether or not the plan already guards against it; the guard makes it unlikely, not absent.
-一类问题，写成它在方案里的形状，然后是 *Suggest:* 该怎么改。不管方案是否已经防了它都要问；防住了是"不太可能"，不是"不存在"。
+**Gate / 门.** A top question in a view file (`S1`, `L2`). It asks whether the plan has the surface its subtree needs. Each gate carries one CWE-1000 pillar. If the plan has no surface for a gate, the whole subtree is skipped with a Not reached line.
+视图文件里的顶层问题（`S1`、`L2`）。它问方案有没有其子树需要的接触面。每个门对应一个 CWE-1000 支柱。方案对某个门没有接触面时，整棵子树跳过，只写一行 Not reached。
 
-**Possibility / 可能性.** *Likely*, *possible* or *cannot tell*, each with its why, as a row of the report; *unlikely* questions are listed by number under the scenario's table with the guard that makes them so.
-*likely*、*possible*、*cannot tell*，各带理由，占报告一行；*unlikely* 的问题按编号列在该场景表格下面的一行里，附上让它不太可能的那个防护。
+**Node / 节点.** One defect shape under a gate, at any depth, written as one shape sentence and one `Suggest:` with the change. A node is a child of another only if it needs the parent's surface. A node is asked even when the plan guards against it: the guard makes it *unlikely*, not absent, and its children are still asked.
+门下任意层的一个缺陷形状，写成一句形状描述加一句 `Suggest:`（怎么改）。只有需要父节点的接触面时，节点才是父节点的子节点。方案已经防住的节点也要问：防住了是 *unlikely*，不是不存在，它的子节点照样要问。
 
-**Material / 材料.** What only the author can supply: which paths write a table, a lock order, an arrival estimate, which exits end a journey on purpose, which spec rule governs. Asked for once, in one message; declining it turns the dependent questions into *cannot tell* and nothing else. Files the plan names and greps over the tree are reading, not material, and need no asking.
-只有作者能提供的东西：哪些路径写这张表、加锁顺序、到达率估计、哪些出口是有意结束旅程的、哪条 spec 规则管着。一条消息里请示一次；拒绝只会让依赖它的问题变成 *cannot tell*，没有别的后果。方案点名的文件和对代码树的 grep 是阅读，不是材料，不需要请示。
+**Change kind / 变更种类.** A term coined for this skill: the kind of change a plan makes, such as removing a constraint or running over many items. Each kind always loads some gates, whatever the views. The list is in the index of `SKILL.md`.
+本 skill 自创的术语：方案所做变更的种类，例如移除约束、批量处理很多条目。每种变更种类不论视图都会加载固定的几个门。清单在 `SKILL.md` 的索引里。
 
-**Outside the catalog / 目录之外.** A problem no question names; one line in the report, and a candidate for the next harvest.
-没有任何问题点到的毛病；报告里一行，下一次收割的候选。
+**Binding / 绑定.** An entry in `references/stacks/<technology>.md`, keyed by node number, that says how the node shows up in one technology and the fix there. A binding never adds a shape.
+`references/stacks/<technology>.md` 里按节点编号索引的条目，说明该节点在某项技术里的样子和那里的修法。绑定从不新增形状。
+
+**Possibility / 可能性.** The label on a report row, each with its reason. *likely*: the plan describes the defect. *unspecified*: the plan is silent where it must decide. *possible*: the plan opens a path to the failure, named in the reason. *cannot tell*: it depends on material that was declined. Nodes judged *unlikely* are listed on one line under the view's table, with the guard.
+报告中每一行的标签，各带理由。*likely*：方案写出了缺陷。*unspecified*：方案在必须决定的地方没说。*possible*：方案打开了一条通往失败的路径，理由里要指出来。*cannot tell*：取决于被拒绝提供的材料。判为 *unlikely* 的节点在该视图表格下合成一行，附上防护。
+
+**Material / 材料.** What only the author can supply: which paths write a table, a lock order, an arrival estimate, which spec rule governs. It is asked for once, in one message. A decline turns the dependent nodes into *cannot tell* and changes nothing else. Files the plan names and greps over the tree are reading, not material, and need no asking.
+只有作者能提供的东西：哪些路径写这张表、加锁顺序、到达率估计、哪条 spec 规则管着。一条消息里请示一次；拒绝只会让依赖它的节点变成 *cannot tell*，没有别的后果。方案点名的文件和对代码树的 grep 是阅读，不是材料，不需要请示。
+
+**Outside the tree / 树之外.** A problem no node names. It takes one line in the report and is a candidate for the next harvest.
+没有任何节点点到的问题。在报告里占一行，是下一次收割的候选。
 
 ## Where each rule went / 每条规则去了哪
 
@@ -479,6 +540,11 @@ The catalog had grown to 168 questions in 79 KB, about 20,000 tokens loaded for 
 - K: K1.1→L4.1, K2.1→P6.1, K2.2→P6.2, K2.3→P6.4, K2.4→P6.4, K2.5→P6.2, K2.6→P6.3, K2.7→P6.5, K3.1→P4.1, K3.2→P4.2, K4.1→P6.6.1, K4.2→P6.6.2, K4.3→P6.6.3
 - L: L1.1→O2.2, L1.2→O2.2, L2.1→O2.1, L3.1→O2.3, L4.1→O2.4, L5.1→O3.1, L5.2→O3.2, L6.1→O2.5
 - M: M1.1→O4.2, M2.1→O4.3
+
+## S7 — Reach, from a stated requirement (2026-11-20) / S7——可达性，来自明确需求
+
+A comparison with the owner's quality dimensions (Logseq page `d/quality-dimensions`) found that the tree asked nothing about Reach: what machine visitors (search crawlers, link previews, AI agents) and people using assistive technology, another language or another device receive. Gate S7 adds S7.1 (machine visitors) and S7.2 (people). It comes from a stated requirement, not an incident, like Rule 24. Its basis is CWE-435 (a correct site and a correct crawler that fail together) and the ISO/IEC 25010 sub-characteristics interoperability and inclusivity. The products (`robots.txt`, canonical links, Open Graph, MCP, ARIA) are in the `web-platform` binding. The gate sits first in `views/scenarios.md` because files are ordered by pillar, and keeps the number S7 because numbers are appended. Cost was considered in the same comparison and left out by the owner's decision.
+与作者的质量维度（Logseq 页面 `d/quality-dimensions`）对照后发现，问题树没有问 Reach：机器访客（搜索爬虫、链接预览、AI 代理）以及使用辅助技术、其他语言或其他设备的人收到什么。S7 门新增 S7.1（机器访客）和 S7.2（人）。它来自明确需求而非事故，与 Rule 24 相同。依据是 CWE-435（正确的网站与正确的爬虫一起出错）以及 ISO/IEC 25010 的子特性 interoperability 和 inclusivity。产品细节（`robots.txt`、canonical、Open Graph、MCP、ARIA）放在 `web-platform` 绑定。按支柱排序，该门排在 `views/scenarios.md` 最前；编号按追加规则保留为 S7。同一次对照也考虑了 Cost，按作者决定不纳入。
 
 ## How to maintain / 怎么维护
 

@@ -6,6 +6,15 @@ Each entry: **shows up as** · **look for** · **fix**.
 
 ## S · Scenarios
 
+**S7.1 — what a crawler or a link preview receives.**
+- *Shows up as:* a page moved behind sign-in or rendered only in the browser, so crawlers and previews get a login page or an empty shell. A redirect with 302 where 301 was meant. A changed URL with no `rel="canonical"` or redirect from the old one.
+- *Look for:* `robots.txt`, `<meta name="robots">`, `X-Robots-Tag`, `rel="canonical"`, Open Graph tags (`og:title`, `og:image`), the sitemap, and the status code per route.
+- *Fix:* per changed route, state the status, the server-rendered content and the indexing tags. Keep public pages server-rendered. Move a URL with a 301 and update the sitemap. An AI-agent interface (for example MCP) exposing actions also passes L1.
+
+**S7.2 — a control only some people can use.**
+- *Look for:* a `div` or `span` with a click handler and no `role`, `tabindex` or key handler. An icon button with no `aria-label`. A hard-coded string beside translated ones. A fixed width with no media query.
+- *Fix:* use a native `button` or link. Give every control an accessible name. Route text through the translation layer. Check the smallest supported viewport and a keyboard-only pass (axe or a similar checker).
+
 **S3.1 — a second Enter.**
 - *Shows up as:* a form submitted by Enter while a previous submit is in flight; disabling the button does not stop Enter in a text field unless the submit handler checks too.
 - *Fix:* the submit handler returns early while pending.

@@ -16,7 +16,7 @@ Pick the views by what the plan does and which files it changes. Then add the ga
 
 | view | file | load when the plan touches | gates |
 |---|---|---|---|
-| S · Scenarios | [`views/scenarios.md`](references/views/scenarios.md) | a screen, a form, a client request, a route, a redirect, a sign-in round trip | S1 late responses · S2 after a write · S3 controls · S4 journeys · S5 compared values · S6 failures |
+| S · Scenarios | [`views/scenarios.md`](references/views/scenarios.md) | a screen, a form, a client request, a route, a redirect, a sign-in round trip, what crawlers or link previews receive | S7 reach · S1 late responses · S2 after a write · S3 controls · S4 journeys · S5 compared values · S6 failures |
 | L · Logical | [`views/logical.md`](references/views/logical.md) | who can do what, an entity or its states, a branch over a value, a constraint or schema, a decision rule | L1 access · L2 entities · L3 constraints · L4 decision rules · L5 branches |
 | P · Process | [`views/process.md`](references/views/process.md) | a server write, concurrent callers, a lock or retry, one call with several effects, a deadline, a check or sensor that concludes something, a latency target | P1 concurrent writers · P2 load · P3 time · P4 latency · P5 several effects · P6 observations |
 | D · Development | [`views/development.md`](references/views/development.md) | a new mechanism or module, a library or SDK, a rule or name stated in several places, a test or check, parallel workers | D1 parallel workers · D2 checks · D3 new mechanisms · D4 copies · D5 dependencies |

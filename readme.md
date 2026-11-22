@@ -12,7 +12,7 @@ The model never loads a skill on its own. You call it by name. Claude Code reads
 |---|---|
 | Agent setup | `ai-harness`, `ai-skill-audit`, `project-docs`, `harvest-exp`, `espanso-prompts` |
 | Build | `tiered-research`, `explain`, `code-plan-review`, `codex-review`, `fix-bugs`, `derive-project-plan`, `gather-code-references`, `warm-product-design` |
-| app |  `anki-cards`, `logseq-ops`, `obsidian-vault-ops` |  `android-study-phone`, `arduino-uno-r4-ota`, `playwright-real-phone`, `windows-c-drive-cleanup`, `create-scoop-manifest` |
+| App | `anki-cards`, `logseq-ops`, `obsidian-vault-ops`, `android-study-phone`, `arduino-uno-r4-ota`, `playwright-real-phone`, `windows-c-drive-cleanup`, `create-scoop-manifest` |
 
 ## The two docs skills
 

@@ -23,7 +23,7 @@ Source: MITRE CWE, view CWE-1000 "Research Concepts", its ten pillars. A pillar 
 | pillar | name | gates here |
 |---|---|---|
 | CWE-284 | Improper Access Control | L1 |
-| CWE-435 | Improper Interaction Between Multiple Correctly-Behaving Entities | D1 |
+| CWE-435 | Improper Interaction Between Multiple Correctly-Behaving Entities | S7, D1 |
 | CWE-664 | Improper Control of a Resource Through its Lifetime | S1, S2, L2, L3, P1, P2, P3, P4, O1 |
 | CWE-682 | Incorrect Calculation | L4 |
 | CWE-691 | Insufficient Control Flow Management | S3, S4, O2, O3 |
